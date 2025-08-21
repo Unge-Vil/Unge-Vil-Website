@@ -4,10 +4,20 @@
  */
 add_action('wp_enqueue_scripts', function() {
     wp_enqueue_style('uv-child', get_stylesheet_uri(), [], wp_get_theme()->get('Version'));
-    
-    // Poppins (Google Fonts) with display swap
-    wp_enqueue_style('uv-fonts', 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap', [], null);
-    wp_enqueue_style('uv-child-extra', get_stylesheet_directory_uri() . '/assets/css/theme.css', ['uv-child'], wp_get_theme()->get('Version'));
+
+    wp_enqueue_style(
+        'uv-fonts',
+        get_stylesheet_directory_uri() . '/assets/css/fonts.css',
+        [],
+        wp_get_theme()->get('Version')
+    );
+
+    wp_enqueue_style(
+        'uv-child-extra',
+        get_stylesheet_directory_uri() . '/assets/css/theme.css',
+        ['uv-child', 'uv-fonts'],
+        wp_get_theme()->get('Version')
+    );
 });
 
 // Image sizes for cards/avatars
