@@ -63,6 +63,7 @@ add_action('init', function(){
 add_action('uv_location_add_form_fields', function(){
     ?>
     <div class="form-field">
+      <?php wp_nonce_field('uv_location_image_action', 'uv_location_image_nonce'); ?>
       <label for="uv_location_image"><?php _e('Location Image', 'uv-core'); ?></label>
       <input type="hidden" id="uv_location_image" name="uv_location_image" value="">
       <button class="button uv-upload"><?php _e('Select Image', 'uv-core'); ?></button>
@@ -92,6 +93,7 @@ add_action('uv_location_edit_form_fields', function($term){
     <tr class="form-field">
       <th scope="row"><label for="uv_location_image"><?php _e('Location Image', 'uv-core'); ?></label></th>
       <td>
+        <?php wp_nonce_field('uv_location_image_action', 'uv_location_image_nonce'); ?>
         <input type="hidden" id="uv_location_image" name="uv_location_image" value="<?php echo esc_attr($val); ?>">
         <button class="button uv-upload"><?php _e('Select Image', 'uv-core'); ?></button>
         <div><?php echo $img; ?></div>
@@ -115,11 +117,17 @@ add_action('uv_location_edit_form_fields', function($term){
 }, 10, 1);
 
 add_action('created_uv_location', function($term_id){
+    if(!isset($_POST['uv_location_image_nonce'])) return;
+    if(!current_user_can('manage_categories')) return;
+    check_admin_referer('uv_location_image_action', 'uv_location_image_nonce');
     if(isset($_POST['uv_location_image'])){
         update_term_meta($term_id, 'uv_location_image', intval($_POST['uv_location_image']));
     }
 }, 10, 1);
 add_action('edited_uv_location', function($term_id){
+    if(!isset($_POST['uv_location_image_nonce'])) return;
+    if(!current_user_can('manage_categories')) return;
+    check_admin_referer('uv_location_image_action', 'uv_location_image_nonce');
     if(isset($_POST['uv_location_image'])){
         update_term_meta($term_id, 'uv_location_image', intval($_POST['uv_location_image']));
     }
@@ -237,10 +245,14 @@ add_shortcode('uv_partners','uv_core_partners');
 add_action('add_meta_boxes_uv_partner', function(){
     add_meta_box('uv_partner_url', __('External URL','uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_url', true);
+        wp_nonce_field('uv_partner_url_action', 'uv_partner_url_nonce');
         echo '<label>'.__('Website','uv-core').'</label><input type="url" style="width:100%" name="uv_partner_url" value="'.esc_attr($val).'">';
     }, 'side');
 });
 add_action('save_post_uv_partner', function($post_id){
+    if(!isset($_POST['uv_partner_url_nonce'])) return;
+    if(!current_user_can('edit_post', $post_id)) return;
+    check_admin_referer('uv_partner_url_action', 'uv_partner_url_nonce');
     if(isset($_POST['uv_partner_url'])){
         update_post_meta($post_id, 'uv_partner_url', esc_url_raw($_POST['uv_partner_url']));
     }
