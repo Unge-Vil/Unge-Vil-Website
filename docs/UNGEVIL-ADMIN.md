@@ -1,7 +1,7 @@
 # Unge Vil Admin (branding & control panel)
 
 The `uv-admin` plugin provides:
-- A **Control Panel** (Dashboard and top-level menu) with big buttons for common tasks.
+- A **Control Panel** (Dashboard and top-level menu) with big buttons for common tasks and a personalized greeting via `[uv_display_name]`.
 - A **Docs URL** setting (link to your Google Workspace website with guides).
 - A **custom admin color scheme** (purple accent) and **branded login screen**.
 - Cleaner dashboards for editors (hides noisy widgets and certain plugin menus).

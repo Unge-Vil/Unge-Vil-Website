@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UV Events Bridge
  * Description: Adds uv_location taxonomy to The Events Calendar events and provides an upcoming events shortcode.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Text Domain: uv-events-bridge
