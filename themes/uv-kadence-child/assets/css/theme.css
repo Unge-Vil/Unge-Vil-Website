@@ -1,0 +1,16 @@
+:root{
+  --uv-purple:#9900ff;
+  --uv-radius:16px;
+}
+.uv-card-list{list-style:none;display:grid;gap:1rem;padding:0}
+.uv-card{border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
+.uv-card a{display:block;text-decoration:none}
+.uv-card .uv-card-body{padding:12px}
+.uv-primary-contact{outline:3px solid var(--uv-purple)}
+.uv-team-grid{display:grid;gap:1rem}
+@media(min-width:768px){.uv-team-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1024px){.uv-team-grid{grid-template-columns:repeat(4,1fr)}}
+.uv-person{background:#fff;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);padding:1rem}
+.uv-person h3{margin:.3rem 0 0;font-size:1.1rem}
+.uv-person .uv-role{font-size:.95rem;opacity:.8}
+.uv-person .uv-quote{margin-top:.5rem;font-style:italic}

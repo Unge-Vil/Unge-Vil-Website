@@ -1,0 +1,247 @@
+<?php
+/**
+ * Plugin Name: UV Core
+ * Description: CPTs, taxonomies, term images, and lightweight shortcodes.
+ * Version: 0.1.0
+ * Text Domain: uv-core
+ */
+
+if (!defined('ABSPATH')) exit;
+
+add_action('init', function(){
+    // Taxonomies
+    register_taxonomy('uv_location', ['post','uv_activity','uv_partner','uv_experience'], [
+        'label' => __('Locations', 'uv-core'),
+        'public' => true,
+        'hierarchical' => true,
+        'show_in_rest' => true,
+    ]);
+    register_taxonomy('uv_activity_type', ['uv_activity'], [
+        'label' => __('Activity Types', 'uv-core'),
+        'public' => true,
+        'hierarchical' => true,
+        'show_in_rest' => true,
+    ]);
+    register_taxonomy('uv_partner_type', ['uv_partner'], [
+        'label' => __('Partner Types', 'uv-core'),
+        'public' => true,
+        'hierarchical' => true,
+        'show_in_rest' => true,
+    ]);
+
+    // CPTs
+    register_post_type('uv_activity', [
+        'label' => __('Activities', 'uv-core'),
+        'public' => true,
+        'show_in_rest' => true,
+        'has_archive' => true,
+        'menu_icon' => 'dashicons-forms',
+        'supports' => ['title','editor','thumbnail','excerpt'],
+        'taxonomies' => ['uv_location','uv_activity_type'],
+    ]);
+    register_post_type('uv_partner', [
+        'label' => __('Partners', 'uv-core'),
+        'public' => true,
+        'show_in_rest' => true,
+        'has_archive' => true,
+        'menu_icon' => 'dashicons-heart',
+        'supports' => ['title','editor','thumbnail','excerpt'],
+        'taxonomies' => ['uv_location','uv_partner_type'],
+    ]);
+    register_post_type('uv_experience', [
+        'label' => __('Experiences', 'uv-core'),
+        'public' => true,
+        'show_in_rest' => true,
+        'has_archive' => true,
+        'menu_icon' => 'dashicons-awards',
+        'supports' => ['title','editor','thumbnail','excerpt','custom-fields'],
+        'taxonomies' => ['uv_location'],
+    ]);
+});
+
+// Term image: uv_location
+add_action('uv_location_add_form_fields', function(){
+    ?>
+    <div class="form-field">
+      <label for="uv_location_image"><?php _e('Location Image', 'uv-core'); ?></label>
+      <input type="hidden" id="uv_location_image" name="uv_location_image" value="">
+      <button class="button uv-upload"><?php _e('Select Image', 'uv-core'); ?></button>
+      <p class="description"><?php _e('Used on location cards.', 'uv-core'); ?></p>
+    </div>
+    <script>
+    jQuery(function($){
+        var frame;
+        $('.uv-upload').on('click', function(e){
+            e.preventDefault();
+            frame = wp.media({title:'Select Image', multiple:false});
+            frame.on('select', function(){
+                var att = frame.state().get('selection').first().toJSON();
+                $('#uv_location_image').val(att.id);
+            });
+            frame.open();
+        });
+    });
+    </script>
+    <?php
+});
+
+add_action('uv_location_edit_form_fields', function($term){
+    $val = get_term_meta($term->term_id, 'uv_location_image', true);
+    $img = $val ? wp_get_attachment_image($val, 'thumbnail') : '';
+    ?>
+    <tr class="form-field">
+      <th scope="row"><label for="uv_location_image"><?php _e('Location Image', 'uv-core'); ?></label></th>
+      <td>
+        <input type="hidden" id="uv_location_image" name="uv_location_image" value="<?php echo esc_attr($val); ?>">
+        <button class="button uv-upload"><?php _e('Select Image', 'uv-core'); ?></button>
+        <div><?php echo $img; ?></div>
+      </td>
+    </tr>
+    <script>
+    jQuery(function($){
+        var frame;
+        $('.uv-upload').on('click', function(e){
+            e.preventDefault();
+            frame = wp.media({title:'Select Image', multiple:false});
+            frame.on('select', function(){
+                var att = frame.state().get('selection').first().toJSON();
+                $('#uv_location_image').val(att.id);
+            });
+            frame.open();
+        });
+    });
+    </script>
+    <?php
+}, 10, 1);
+
+add_action('created_uv_location', function($term_id){
+    if(isset($_POST['uv_location_image'])){
+        update_term_meta($term_id, 'uv_location_image', intval($_POST['uv_location_image']));
+    }
+}, 10, 1);
+add_action('edited_uv_location', function($term_id){
+    if(isset($_POST['uv_location_image'])){
+        update_term_meta($term_id, 'uv_location_image', intval($_POST['uv_location_image']));
+    }
+}, 10, 1);
+
+// Shortcodes
+function uv_core_locations_grid($atts){
+    $a = shortcode_atts(['columns'=>3,'show_links'=>1], $atts);
+    $terms = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
+    if(is_wp_error($terms) || empty($terms)) return '';
+    $cols = intval($a['columns']);
+    $out = '<ul class="uv-card-list" style="grid-template-columns:repeat('.$cols.',1fr)">';
+    foreach($terms as $t){
+        $img_id = get_term_meta($t->term_id, 'uv_location_image', true);
+        $img = $img_id ? wp_get_attachment_image($img_id, 'uv_card', false, ['alt'=>esc_attr($t->name)]) : '';
+        $url = get_term_link($t);
+        $out .= '<li class="uv-card">';
+        if($a['show_links']) $out .= '<a href="'.esc_url($url).'">';
+        $out .= $img;
+        $out .= '<div class="uv-card-body"><strong>'.esc_html($t->name).'</strong></div>';
+        if($a['show_links']) $out .= '</a>';
+        $out .= '</li>';
+    }
+    $out .= '</ul>';
+    return $out;
+}
+add_shortcode('uv_locations_grid','uv_core_locations_grid');
+
+function uv_core_posts_news($atts){
+    $a = shortcode_atts(['location'=>'','count'=>3], $atts);
+    $args = ['post_type'=>'post','posts_per_page'=>intval($a['count'])];
+    if($a['location']){
+        $args['tax_query'] = [[
+            'taxonomy'=>'uv_location',
+            'field'=>'slug',
+            'terms'=>$a['location']
+        ]];
+    }
+    $q = new WP_Query($args);
+    ob_start();
+    if($q->have_posts()){
+        echo '<ul class="uv-card-list" style="grid-template-columns:repeat(3,1fr)">';
+        while($q->have_posts()){ $q->the_post();
+            echo '<li class="uv-card"><a href="'.esc_url(get_permalink()).'">';
+            if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
+            echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div></a></li>';
+        }
+        echo '</ul>';
+        wp_reset_postdata();
+    }
+    return ob_get_clean();
+}
+add_shortcode('uv_news','uv_core_posts_news');
+
+function uv_core_activities($atts){
+    $a = shortcode_atts(['location'=>'','columns'=>3], $atts);
+    $args = ['post_type'=>'uv_activity','posts_per_page'=>-1];
+    if($a['location']){
+        $args['tax_query'] = [[
+            'taxonomy'=>'uv_location','field'=>'slug','terms'=>$a['location']
+        ]];
+    }
+    $q = new WP_Query($args);
+    ob_start();
+    if($q->have_posts()){
+        $cols = intval($a['columns']);
+        echo '<ul class="uv-card-list" style="grid-template-columns:repeat('.$cols.',1fr)">';
+        while($q->have_posts()){ $q->the_post();
+            echo '<li class="uv-card"><a href="'.esc_url(get_permalink()).'">';
+            if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
+            echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong>';
+            if(has_excerpt()) echo '<div>'.esc_html(get_the_excerpt()).'</div>';
+            echo '</div></a></li>';
+        }
+        echo '</ul>';
+        wp_reset_postdata();
+    }
+    return ob_get_clean();
+}
+add_shortcode('uv_activities','uv_core_activities');
+
+function uv_core_partners($atts){
+    $a = shortcode_atts(['location'=>'','type'=>'','columns'=>4], $atts);
+    $args = ['post_type'=>'uv_partner','posts_per_page'=>-1];
+    $taxq = [];
+    if($a['location']){
+        $taxq[] = ['taxonomy'=>'uv_location','field'=>'slug','terms'=>$a['location']];
+    }
+    if($a['type']){
+        $taxq[] = ['taxonomy'=>'uv_partner_type','field'=>'slug','terms'=>$a['type']];
+    }
+    if($taxq) $args['tax_query'] = $taxq;
+    $q = new WP_Query($args);
+    ob_start();
+    if($q->have_posts()){
+        $cols = intval($a['columns']);
+        echo '<ul class="uv-card-list" style="grid-template-columns:repeat('.$cols.',1fr)">';
+        while($q->have_posts()){ $q->the_post();
+            $link = get_post_meta(get_the_ID(), 'uv_partner_url', true);
+            echo '<li class="uv-card">';
+            echo $link ? '<a href="'.esc_url($link).'" rel="noopener nofollow">' : '<a href="'.esc_url(get_permalink()).'">';
+            if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
+            echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong>';
+            if(has_excerpt()) echo '<div>'.esc_html(get_the_excerpt()).'</div>';
+            echo '</div></a></li>';
+        }
+        echo '</ul>';
+        wp_reset_postdata();
+    }
+    return ob_get_clean();
+}
+add_shortcode('uv_partners','uv_core_partners');
+
+// Partner external URL meta box
+add_action('add_meta_boxes_uv_partner', function(){
+    add_meta_box('uv_partner_url', __('External URL','uv-core'), function($post){
+        $val = get_post_meta($post->ID, 'uv_partner_url', true);
+        echo '<label>'.__('Website','uv-core').'</label><input type="url" style="width:100%" name="uv_partner_url" value="'.esc_attr($val).'">';
+    }, 'side');
+});
+add_action('save_post_uv_partner', function($post_id){
+    if(isset($_POST['uv_partner_url'])){
+        update_post_meta($post_id, 'uv_partner_url', esc_url_raw($_POST['uv_partner_url']));
+    }
+});
