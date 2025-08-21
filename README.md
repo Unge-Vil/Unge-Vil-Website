@@ -70,10 +70,10 @@ The website prioritizes **accessibility**, **privacy**, and **performance**, and
 - Provide translations via Polylang or `.po` files in each plugin’s `languages/` folder.
 
 ## Staging on Shared Host
-- Create a subdomain `staging.ungevil.no` (or `/staging` subfolder) with a **separate database**.
+- In **DirectAdmin → Subdomain Management**, create `staging.ungevil.no` (or a `/staging` subfolder). Then use **MySQL Management** to add a fresh database and user.
+- Copy the production site into this folder and update `wp-config.php` with the new database credentials. Free plugins like **WP STAGING**, **UpdraftPlus**, or **Duplicator** can handle the clone for you.
 - Block indexing via **Settings → Reading → Discourage search engines** and a `robots.txt` with `Disallow: /`.
-- Optionally add HTTP Basic Auth (.htaccess) to staging.
-- Use **UpdraftPlus** or **Duplicator** to clone prod → staging and back.
+- Optionally add HTTP Basic Auth (.htaccess) to staging and request a free **Let's Encrypt** certificate in DirectAdmin.
 - Maintain separate Google OAuth credentials for staging (callback URL must match).
 
 ## Maintenance Mode
