@@ -6,6 +6,7 @@
 .uv-card{border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
 .uv-card a{display:block;text-decoration:none}
 .uv-card .uv-card-body{padding:12px}
+.uv-card:focus-visible,.uv-card a:focus-visible,a:focus-visible,.uv-person:focus-visible{outline:3px solid var(--uv-purple);outline-offset:2px;transition:outline-offset .2s ease-in-out}
 .uv-primary-contact{outline:3px solid var(--uv-purple)}
 .uv-team-grid{display:grid;gap:1rem}
 @media(min-width:768px){.uv-team-grid{grid-template-columns:repeat(3,1fr)}}
