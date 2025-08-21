@@ -19,3 +19,7 @@ Suggested order:
 2. Team (primary contact first)
 3. Local news
 4. Partners & sponsors
+
+## Team Assignments
+- Use **Team Assignments** to link a person to a Location.
+- Select the person from the dropdown list instead of entering a numeric ID.
