@@ -20,3 +20,27 @@ add_action('after_setup_theme', function() {
 add_action('after_setup_theme', function() {
     load_child_theme_textdomain('uv-kadence-child', get_stylesheet_directory() . '/languages');
 });
+
+// Register block patterns for shortcode blocks
+add_action('init', function() {
+    if (!function_exists('register_block_pattern')) {
+        return;
+    }
+    $patterns = [
+        'locations-grid' => __('Locations Grid', 'uv-kadence-child'),
+        'news-list'      => __('News List', 'uv-kadence-child'),
+        'activities'     => __('Activities', 'uv-kadence-child'),
+        'partners'       => __('Partners', 'uv-kadence-child'),
+        'team-grid'      => __('Team Grid', 'uv-kadence-child'),
+    ];
+    foreach ($patterns as $slug => $title) {
+        register_block_pattern(
+            'uv-kadence-child/' . $slug,
+            [
+                'title'   => $title,
+                'content' => include get_theme_file_path('patterns/' . $slug . '.php'),
+            ]
+        );
+    }
+});
+
