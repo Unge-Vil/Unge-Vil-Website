@@ -5,10 +5,10 @@ UV Admin provides a branded control panel and cleaner editor UI.
 2. Activate from the WordPress admin.
 
 ## Shortcodes
-This plugin does not expose public shortcodes.
+`[uv_display_name]` – outputs the current user's display name.
 
 ## Usage
-Once activated the WordPress dashboard and editor are automatically styled; no additional configuration or shortcodes are required.
+Once activated the WordPress dashboard and editor are automatically styled. Set the `uv_admin_control_panel_page_id` option to use a custom page for the Control Panel. That page can include the `[uv_display_name]` shortcode for personalized greetings.
 
 ## Requirements
 - WordPress 6.0+

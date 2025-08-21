@@ -93,6 +93,17 @@ add_action('admin_menu', function(){
 });
 
 function uv_admin_control_panel(){
+    $page_id = intval( get_option('uv_admin_control_panel_page_id', 0) );
+    if ( $page_id ) {
+        $page = get_post( $page_id );
+        if ( $page instanceof \WP_Post ) {
+            echo '<div class="wrap uv-control-panel">';
+            echo apply_filters('the_content', $page->post_content);
+            echo '</div>';
+            return;
+        }
+    }
+
     $docs = uv_admin_get_docs_url();
     $cards = [
         ['News','edit.php','dashicons-megaphone'],
@@ -105,10 +116,10 @@ function uv_admin_control_panel(){
     ];
     if(post_type_exists('tribe_events')) $cards[] = ['Events','edit.php?post_type=tribe_events','dashicons-calendar-alt'];
     echo '<div class="wrap uv-control-panel">';
-    echo '<div class="uvcp-header"><img alt="Unge Vil" src="' . esc_url(get_stylesheet_directory_uri().'/assets/img/logo.svg') . '"><h1>Unge Vil — ' . esc_html( __('Control Panel','uv-admin') ) . '</h1></div>';
+    echo '<div class="uvcp-header"><img alt="Unge Vil" src="' . esc_url(get_stylesheet_directory_uri().'/assets/img/logo.svg') . '\"><h1>Unge Vil — ' . esc_html( __('Control Panel','uv-admin') ) . '</h1></div>';
     echo '<div class="uvcp-grid">';
     foreach($cards as $c){
-        echo '<a class="uvcp-card" href="' . esc_url( admin_url($c[1]) ) . '"><span class="dashicons ' . esc_attr($c[2]) . '"></span><strong>' . esc_html( __($c[0], 'uv-admin') ) . '</strong></a>';
+        echo '<a class="uvcp-card" href="' . esc_url( admin_url($c[1]) ) . '\"><span class="dashicons ' . esc_attr($c[2]) . '\"></span><strong>' . esc_html( __($c[0], 'uv-admin') ) . '</strong></a>';
     }
     echo '</div>';
     if($docs){
@@ -118,6 +129,12 @@ function uv_admin_control_panel(){
     }
     echo '</div>';
 }
+
+add_shortcode('uv_display_name', function(){
+    $user = wp_get_current_user();
+    return $user && $user->exists() ? esc_html( $user->display_name ) : '';
+});
+
 
 // Admin bar shortcut
 add_action('admin_bar_menu', function($bar){
