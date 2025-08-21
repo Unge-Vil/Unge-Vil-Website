@@ -70,6 +70,10 @@ add_action('admin_enqueue_scripts', function($hook){
     $screen = get_current_screen();
     if($screen && $screen->taxonomy === 'uv_location'){
         wp_enqueue_media();
+        wp_enqueue_script('uv-term-image', plugins_url('assets/term-image.js', __FILE__), ['jquery'], '0.2.0', true);
+        wp_localize_script('uv-term-image', 'uvTermImage', [
+            'selectImage' => __('Select Image', 'uv-core'),
+        ]);
     }
 });
 
@@ -83,20 +87,6 @@ add_action('uv_location_add_form_fields', function(){
       <button class="button uv-upload"><?php _e('Select Image', 'uv-core'); ?></button>
       <p class="description"><?php _e('Used on location cards.', 'uv-core'); ?></p>
     </div>
-    <script>
-    jQuery(function($){
-        var frame;
-        $('.uv-upload').on('click', function(e){
-            e.preventDefault();
-            frame = wp.media({title:'Select Image', multiple:false});
-            frame.on('select', function(){
-                var att = frame.state().get('selection').first().toJSON();
-                $('#uv_location_image').val(att.id);
-            });
-            frame.open();
-        });
-    });
-    </script>
     <?php
 });
 
@@ -113,20 +103,6 @@ add_action('uv_location_edit_form_fields', function($term){
         <div><?php echo $img; ?></div>
       </td>
     </tr>
-    <script>
-    jQuery(function($){
-        var frame;
-        $('.uv-upload').on('click', function(e){
-            e.preventDefault();
-            frame = wp.media({title:'Select Image', multiple:false});
-            frame.on('select', function(){
-                var att = frame.state().get('selection').first().toJSON();
-                $('#uv_location_image').val(att.id);
-            });
-            frame.open();
-        });
-    });
-    </script>
     <?php
 }, 10, 1);
 
