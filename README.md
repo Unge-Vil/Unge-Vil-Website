@@ -92,6 +92,7 @@ While deploying or migrating, enable **Maintenance** plugin (already installed),
 ## Building ZIPs from GitHub
 Tag a release like `v0.1.0` and GitHub Actions will attach zips for the child theme and each plugin.
 On shared hosting, download the zips from the release and install via **Plugins → Add New → Upload**.
+See [docs/UPDATING.md](docs/UPDATING.md) for step-by-step update instructions.
 
 ---
 © 2025 Unge Vil. MIT License.
