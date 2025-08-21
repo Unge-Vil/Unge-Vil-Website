@@ -1,0 +1,56 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the uv-admin package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: uv-admin 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-21 08:36+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: plugins/uv-admin/uv-admin.php:23 plugins/uv-admin/uv-admin.php:32
+msgid "Unge Vil Admin"
+msgstr ""
+
+#: plugins/uv-admin/uv-admin.php:29
+msgid "Saved."
+msgstr ""
+
+#: plugins/uv-admin/uv-admin.php:36
+msgid "Docs URL"
+msgstr ""
+
+#: plugins/uv-admin/uv-admin.php:37
+msgid "https://sites.google.com/..."
+msgstr ""
+
+#: plugins/uv-admin/uv-admin.php:39
+msgid "Save"
+msgstr ""
+
+#: plugins/uv-admin/uv-admin.php:46
+msgid "Unge Vil"
+msgstr ""
+
+#: plugins/uv-admin/uv-admin.php:90 plugins/uv-admin/uv-admin.php:106
+#: plugins/uv-admin/uv-admin.php:125
+msgid "Control Panel"
+msgstr ""
+
+#: plugins/uv-admin/uv-admin.php:113
+msgid "Open Team Docs"
+msgstr ""
+
+#: plugins/uv-admin/uv-admin.php:115
+#, php-format
+msgid "Tip: set your Docs URL in %sSettings → Unge Vil Admin%s."
+msgstr ""
