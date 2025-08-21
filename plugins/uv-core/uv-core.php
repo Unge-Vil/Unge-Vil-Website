@@ -10,6 +10,10 @@
 
 if (!defined('ABSPATH')) exit;
 
+add_action('plugins_loaded', function(){
+    load_plugin_textdomain('uv-core', false, dirname(plugin_basename(__FILE__)) . '/languages');
+});
+
 add_action('init', function(){
     // Taxonomies
     register_taxonomy('uv_location', ['post','uv_activity','uv_partner','uv_experience'], [
