@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UV Admin
  * Description: Branded admin UI, Control Panel, and editor-friendly dashboard for Unge Vil.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Text Domain: uv-admin
