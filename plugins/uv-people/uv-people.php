@@ -119,9 +119,12 @@ add_action('edit_user_profile','uv_people_profile_fields');
 add_action('personal_options_update','uv_people_profile_save');
 add_action('edit_user_profile_update','uv_people_profile_save');
 function uv_people_profile_save($user_id){
-    foreach(['uv_phone','uv_public_email','uv_quote_nb','uv_quote_en','uv_avatar_id'] as $k){
-        if(isset($_POST[$k])) update_user_meta($user_id, $k, sanitize_text_field($_POST[$k]));
-    }
+    if(!current_user_can('edit_user', $user_id)) return;
+    if(isset($_POST['uv_phone'])) update_user_meta($user_id, 'uv_phone', sanitize_text_field($_POST['uv_phone']));
+    if(isset($_POST['uv_public_email'])) update_user_meta($user_id, 'uv_public_email', sanitize_email($_POST['uv_public_email']));
+    if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
+    if(isset($_POST['uv_quote_en'])) update_user_meta($user_id, 'uv_quote_en', sanitize_textarea_field($_POST['uv_quote_en']));
+    if(isset($_POST['uv_avatar_id'])) update_user_meta($user_id, 'uv_avatar_id', sanitize_text_field($_POST['uv_avatar_id']));
     update_user_meta($user_id, 'uv_show_phone', isset($_POST['uv_show_phone']) ? '1' : '0');
     update_user_meta($user_id, 'uv_show_email', isset($_POST['uv_show_email']) ? '1' : '0');
 }
