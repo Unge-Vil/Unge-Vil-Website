@@ -22,7 +22,7 @@ if ( $term && ! is_wp_error( $term ) ) {
                 <div class="uv-card-body">
                     <h1><?php echo esc_html( $term->name ); ?></h1>
                     <?php if ( term_description() ) : ?>
-                        <div><?php echo term_description(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+                        <div><?php echo wp_kses_post( term_description() ); ?></div>
                     <?php endif; ?>
                 </div>
             </div>
