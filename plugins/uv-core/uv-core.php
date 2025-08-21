@@ -59,6 +59,14 @@ add_action('init', function(){
     ]);
 });
 
+add_action('admin_enqueue_scripts', function($hook){
+    if(!in_array($hook, ['edit-tags.php','term.php'])) return;
+    $screen = get_current_screen();
+    if($screen && $screen->taxonomy === 'uv_location'){
+        wp_enqueue_media();
+    }
+});
+
 // Term image: uv_location
 add_action('uv_location_add_form_fields', function(){
     ?>
