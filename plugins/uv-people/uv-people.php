@@ -31,7 +31,13 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         $user_id = get_post_meta($post->ID, 'uv_user_id', true);
         $user_ids = $user_id ? [$user_id] : [];
         $loc_id  = get_post_meta($post->ID, 'uv_location_id', true);
-        $role    = get_post_meta($post->ID, 'uv_role_title', true);
+        $role_nb = get_post_meta($post->ID, 'uv_role_nb', true);
+        $role_en = get_post_meta($post->ID, 'uv_role_en', true);
+        if(!$role_nb && !$role_en){
+            $legacy = get_post_meta($post->ID, 'uv_role_title', true);
+            $role_nb = $role_nb ?: $legacy;
+            $role_en = $role_en ?: $legacy;
+        }
         $primary = get_post_meta($post->ID, 'uv_is_primary', true);
         $order   = get_post_meta($post->ID, 'uv_order_weight', true);
         $locations = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
@@ -52,8 +58,10 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
             <option value="<?php echo esc_attr($t->term_id); ?>" <?php selected($loc_id, $t->term_id); ?>><?php echo esc_html($t->name); ?></option>
             <?php endforeach; ?>
         </select></p>
-        <p><label><?php _e('Role title','uv-people'); ?></label>
-        <input type="text" name="uv_role_title" value="<?php echo esc_attr($role); ?>" style="width:100%"></p>
+        <p><label><?php _e('Role title (Norwegian)','uv-people'); ?></label>
+        <input type="text" name="uv_role_nb" value="<?php echo esc_attr($role_nb); ?>" style="width:100%"></p>
+        <p><label><?php _e('Role title (English)','uv-people'); ?></label>
+        <input type="text" name="uv_role_en" value="<?php echo esc_attr($role_en); ?>" style="width:100%"></p>
         <p><label><input type="checkbox" name="uv_is_primary" value="1" <?php checked($primary, '1'); ?>> <?php _e('Primary contact','uv-people'); ?></label></p>
         <p><label><?php _e('Order weight (lower = earlier)','uv-people'); ?></label>
         <input type="number" name="uv_order_weight" value="<?php echo esc_attr($order?:'10'); ?>" style="width:100%"></p>
@@ -70,12 +78,14 @@ function uv_save_team_assignment($post_id){
 
     $user_ids = isset($_POST['uv_user_ids']) ? array_filter(array_map('absint', (array)$_POST['uv_user_ids'])) : [];
     $loc_id   = isset($_POST['uv_location_id']) ? absint($_POST['uv_location_id']) : 0;
-    $role     = isset($_POST['uv_role_title']) ? sanitize_text_field($_POST['uv_role_title']) : '';
+    $role_nb  = isset($_POST['uv_role_nb']) ? sanitize_text_field($_POST['uv_role_nb']) : '';
+    $role_en  = isset($_POST['uv_role_en']) ? sanitize_text_field($_POST['uv_role_en']) : '';
     $order    = isset($_POST['uv_order_weight']) ? sanitize_text_field($_POST['uv_order_weight']) : '';
     $primary  = isset($_POST['uv_is_primary']) ? '1' : '0';
 
     if($loc_id) update_post_meta($post_id, 'uv_location_id', $loc_id);
-    if($role !== '') update_post_meta($post_id, 'uv_role_title', $role);
+    if($role_nb !== '') update_post_meta($post_id, 'uv_role_nb', $role_nb);
+    if($role_en !== '') update_post_meta($post_id, 'uv_role_en', $role_en);
     if($order !== '') update_post_meta($post_id, 'uv_order_weight', $order);
     update_post_meta($post_id, 'uv_is_primary', $primary);
 
@@ -95,7 +105,8 @@ function uv_save_team_assignment($post_id){
             if($new_id){
                 update_post_meta($new_id, 'uv_user_id', $uid);
                 if($loc_id) update_post_meta($new_id, 'uv_location_id', $loc_id);
-                if($role !== '') update_post_meta($new_id, 'uv_role_title', $role);
+                if($role_nb !== '') update_post_meta($new_id, 'uv_role_nb', $role_nb);
+                if($role_en !== '') update_post_meta($new_id, 'uv_role_en', $role_en);
                 update_post_meta($new_id, 'uv_is_primary', $primary);
                 if($order !== '') update_post_meta($new_id, 'uv_order_weight', $order);
             }
@@ -263,7 +274,9 @@ function uv_people_team_grid($atts){
         $items[] = [
             'id'=>get_the_ID(),
             'user_id'=>get_post_meta(get_the_ID(),'uv_user_id',true),
-            'role'=>get_post_meta(get_the_ID(),'uv_role_title',true),
+            'role_nb'=>get_post_meta(get_the_ID(),'uv_role_nb',true),
+            'role_en'=>get_post_meta(get_the_ID(),'uv_role_en',true),
+            'role_legacy'=>get_post_meta(get_the_ID(),'uv_role_title',true),
             'primary'=>get_post_meta(get_the_ID(),'uv_is_primary',true) === '1',
             'order'=>intval(get_post_meta(get_the_ID(),'uv_order_weight',true) ?: 10),
         ];
@@ -277,6 +290,7 @@ function uv_people_team_grid($atts){
         $bn = get_the_author_meta('display_name', $b['user_id']);
         return strcasecmp($an, $bn);
     });
+    $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
     ob_start();
     echo '<div class="uv-team-grid" style="grid-template-columns:repeat('.$cols.',1fr)">';
     foreach($items as $it){
@@ -291,10 +305,13 @@ function uv_people_team_grid($atts){
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
         echo '<h3>'.esc_html($name).'</h3>';
-        if($it['role']) echo '<div class="uv-role">'.esc_html($it['role']).'</div>';
+        $role_nb = $it['role_nb'];
+        $role_en = $it['role_en'];
+        $legacy_role = $it['role_legacy'];
+        $role = ($lang==='en') ? ($role_en ?: $role_nb ?: $legacy_role) : ($role_nb ?: $role_en ?: $legacy_role);
+        if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
 
         // choose quote by language
-        $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
         $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
         $quote_en = get_user_meta($uid,'uv_quote_en',true);
         $legacy_q = get_user_meta($uid,'uv_quote',true);

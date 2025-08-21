@@ -37,8 +37,12 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: plugins/uv-people/uv-people.php:45
-msgid "Role title"
+#: plugins/uv-people/uv-people.php:61
+msgid "Role title (Norwegian)"
+msgstr ""
+
+#: plugins/uv-people/uv-people.php:63
+msgid "Role title (English)"
 msgstr ""
 
 #: plugins/uv-people/uv-people.php:47
