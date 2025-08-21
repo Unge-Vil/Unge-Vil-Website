@@ -1,0 +1,38 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the uv-kadence-child package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: uv-kadence-child 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-21 08:37+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: themes/uv-kadence-child/functions.php:30
+msgid "Locations Grid"
+msgstr ""
+
+#: themes/uv-kadence-child/functions.php:31
+msgid "News List"
+msgstr ""
+
+#: themes/uv-kadence-child/functions.php:32
+msgid "Activities"
+msgstr ""
+
+#: themes/uv-kadence-child/functions.php:33
+msgid "Partners"
+msgstr ""
+
+#: themes/uv-kadence-child/functions.php:34
+msgid "Team Grid"
+msgstr ""
