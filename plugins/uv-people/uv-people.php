@@ -59,19 +59,35 @@ add_action('save_post_uv_team_assignment', function($post_id){
 
 // User profile fields (phone, public email, quote, socials, avatar attachment)
 function uv_people_profile_fields($user){
-    $phone = get_user_meta($user->ID, 'uv_phone', true);
-    $pub_email = get_user_meta($user->ID, 'uv_public_email', true);
-    $quote = get_user_meta($user->ID, 'uv_quote', true);
-    $avatar_id = get_user_meta($user->ID, 'uv_avatar_id', true);
+    $phone      = get_user_meta($user->ID, 'uv_phone', true);
+    $pub_email  = get_user_meta($user->ID, 'uv_public_email', true);
+    $quote_nb   = get_user_meta($user->ID, 'uv_quote_nb', true);
+    $quote_en   = get_user_meta($user->ID, 'uv_quote_en', true);
+    $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
+    $show_email = get_user_meta($user->ID, 'uv_show_email', true) === '1';
+    $avatar_id  = get_user_meta($user->ID, 'uv_avatar_id', true);
+    if(!$quote_nb && !$quote_en){
+        $legacy = get_user_meta($user->ID, 'uv_quote', true);
+        $quote_nb = $quote_nb ?: $legacy;
+        $quote_en = $quote_en ?: $legacy;
+    }
     ?>
     <h2><?php _e('Public Profile (Unge Vil)','uv-people'); ?></h2>
     <table class="form-table">
       <tr><th><label for="uv_phone"><?php _e('Phone (public optional)','uv-people'); ?></label></th>
-        <td><input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text"></td></tr>
+        <td>
+            <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
+            <br><label><input type="checkbox" name="uv_show_phone" value="1" <?php checked($show_phone); ?>> <?php _e('Show on profile','uv-people'); ?></label>
+        </td></tr>
       <tr><th><label for="uv_public_email"><?php _e('Public Email (optional)','uv-people'); ?></label></th>
-        <td><input type="email" name="uv_public_email" id="uv_public_email" value="<?php echo esc_attr($pub_email); ?>" class="regular-text"></td></tr>
-      <tr><th><label for="uv_quote"><?php _e('Volunteer Quote','uv-people'); ?></label></th>
-        <td><textarea name="uv_quote" id="uv_quote" rows="4" class="large-text"><?php echo esc_textarea($quote); ?></textarea></td></tr>
+        <td>
+            <input type="email" name="uv_public_email" id="uv_public_email" value="<?php echo esc_attr($pub_email); ?>" class="regular-text">
+            <br><label><input type="checkbox" name="uv_show_email" value="1" <?php checked($show_email); ?>> <?php _e('Show on profile','uv-people'); ?></label>
+        </td></tr>
+      <tr><th><label for="uv_quote_nb"><?php _e('Volunteer Quote (Norwegian)','uv-people'); ?></label></th>
+        <td><textarea name="uv_quote_nb" id="uv_quote_nb" rows="4" class="large-text"><?php echo esc_textarea($quote_nb); ?></textarea></td></tr>
+      <tr><th><label for="uv_quote_en"><?php _e('Volunteer Quote (English)','uv-people'); ?></label></th>
+        <td><textarea name="uv_quote_en" id="uv_quote_en" rows="4" class="large-text"><?php echo esc_textarea($quote_en); ?></textarea></td></tr>
       <tr><th><?php _e('Avatar (Media Library)','uv-people'); ?></th>
         <td>
           <input type="hidden" id="uv_avatar_id" name="uv_avatar_id" value="<?php echo esc_attr($avatar_id); ?>">
@@ -103,9 +119,11 @@ add_action('edit_user_profile','uv_people_profile_fields');
 add_action('personal_options_update','uv_people_profile_save');
 add_action('edit_user_profile_update','uv_people_profile_save');
 function uv_people_profile_save($user_id){
-    foreach(['uv_phone','uv_public_email','uv_quote_nb','uv_quote_en','uv_avatar_id','uv_show_phone','uv_show_email'] as $k){
+    foreach(['uv_phone','uv_public_email','uv_quote_nb','uv_quote_en','uv_avatar_id'] as $k){
         if(isset($_POST[$k])) update_user_meta($user_id, $k, sanitize_text_field($_POST[$k]));
     }
+    update_user_meta($user_id, 'uv_show_phone', isset($_POST['uv_show_phone']) ? '1' : '0');
+    update_user_meta($user_id, 'uv_show_email', isset($_POST['uv_show_email']) ? '1' : '0');
 }
 
 // Helper: get user avatar URL by our field
@@ -157,7 +175,6 @@ function uv_people_team_grid($atts){
     foreach($items as $it){
         $uid = intval($it['user_id']);
         $name = get_the_author_meta('display_name', $uid);
-        $quote = get_user_meta($uid,'uv_quote',true);
         $phone = get_user_meta($uid,'uv_phone',true);
         $pub_email = get_user_meta($uid,'uv_public_email',true);
         $classes = 'uv-person';
