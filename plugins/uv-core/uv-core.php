@@ -267,3 +267,19 @@ add_action('save_post_uv_partner', function($post_id){
         update_post_meta($post_id, 'uv_partner_url', esc_url_raw($_POST['uv_partner_url']));
     }
 });
+
+// Block registration
+add_action('init', function(){
+    register_block_type(__DIR__ . '/blocks/locations-grid', [
+        'render_callback' => 'uv_core_locations_grid'
+    ]);
+    register_block_type(__DIR__ . '/blocks/news', [
+        'render_callback' => 'uv_core_posts_news'
+    ]);
+    register_block_type(__DIR__ . '/blocks/activities', [
+        'render_callback' => 'uv_core_activities'
+    ]);
+    register_block_type(__DIR__ . '/blocks/partners', [
+        'render_callback' => 'uv_core_partners'
+    ]);
+});

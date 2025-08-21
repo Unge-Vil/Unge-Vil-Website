@@ -1,0 +1,13 @@
+{
+  "apiVersion": 2,
+  "name": "uv/news",
+  "title": "News",
+  "category": "widgets",
+  "icon": "megaphone",
+  "attributes": {
+    "location": {"type": "string", "default": ""},
+    "count": {"type": "number", "default": 3}
+  },
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css"
+}
