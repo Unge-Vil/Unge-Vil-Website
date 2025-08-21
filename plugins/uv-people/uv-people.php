@@ -103,7 +103,7 @@ add_action('edit_user_profile','uv_people_profile_fields');
 add_action('personal_options_update','uv_people_profile_save');
 add_action('edit_user_profile_update','uv_people_profile_save');
 function uv_people_profile_save($user_id){
-    foreach(['uv_phone','uv_public_email','uv_quote','uv_avatar_id'] as $k){
+    foreach(['uv_phone','uv_public_email','uv_quote_nb','uv_quote_en','uv_avatar_id','uv_show_phone','uv_show_email'] as $k){
         if(isset($_POST[$k])) update_user_meta($user_id, $k, sanitize_text_field($_POST[$k]));
     }
 }
@@ -166,14 +166,24 @@ function uv_people_team_grid($atts){
         echo uv_people_get_avatar($uid);
         echo '<h3>'.esc_html($name).'</h3>';
         if($it['role']) echo '<div class="uv-role">'.esc_html($it['role']).'</div>';
-        if($quote) echo '<div class="uv-quote">“'.esc_html($quote).'”</div>';
-        if($phone || $pub_email){
-            echo '<div class="uv-contact">';
-            if($phone) echo '<div><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
-            if($pub_email) echo '<div><a href="mailto:'.esc_attr($pub_email).'">'.esc_html($pub_email).'</a></div>';
-            echo '</div>';
-        }
-        echo '</div>';
+        
+// choose quote by language
+$lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
+$quote_nb = get_user_meta($uid,'uv_quote_nb',true);
+$quote_en = get_user_meta($uid,'uv_quote_en',true);
+$legacy_q = get_user_meta($uid,'uv_quote',true);
+$quote = ($lang==='en') ? ($quote_en ?: $quote_nb ?: $legacy_q) : ($quote_nb ?: $quote_en ?: $legacy_q);
+if($quote) echo '<div class="uv-quote">“'.esc_html($quote).'”</div>';
+// contact visibility
+$show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
+$show_email = get_user_meta($uid,'uv_show_email',true)==='1';
+if(($phone && $show_phone) || ($pub_email && $show_email)){
+    echo '<div class="uv-contact">';
+    if($phone && $show_phone) echo '<div><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
+    if($pub_email && $show_email) echo '<div><a href="mailto:'.esc_attr($pub_email).'">'.esc_html($pub_email).'</a></div>';
+    echo '</div>';
+}
+echo '</div>';
     }
     echo '</div>';
     return ob_get_clean();

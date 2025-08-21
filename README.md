@@ -1,5 +1,13 @@
 # Unge Vil Website – Starter Kit
 
+## Executive Summary (Plain Language)
+- **Goal by Sept 1:** Launch a fast, accessible site with Home, core info pages, and location-based **Team pages** (primary contacts highlighted). Norwegian first; English ready.
+- **Later (phase 2+):** Activities, Events, Partners, Experiences, deeper translations.
+- **Admin:** Clean, branded Control Panel in English; link to our Google Workspace docs.
+- **Accessibility & SEO:** Built-in best practices; editors add alt text and clear headings.
+- **Future-proof:** Small, readable plugins; easy to extend. Volunteers welcome — this is largely vibe-coded with help from ChatGPT, so expert contributors are invited!
+
+
 This repository bootstraps the **Kadence child theme** and three lightweight plugins for the Unge Vil website.
 It’s designed for **shared hosting**, with a focus on **accessibility, performance, and translation readiness**.
 
