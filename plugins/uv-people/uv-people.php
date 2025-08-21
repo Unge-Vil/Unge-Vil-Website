@@ -120,11 +120,9 @@ add_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
 // User profile fields (phone, public email, quote, socials, avatar attachment)
 function uv_people_profile_fields($user){
     $phone      = get_user_meta($user->ID, 'uv_phone', true);
-    $pub_email  = get_user_meta($user->ID, 'uv_public_email', true);
     $quote_nb   = get_user_meta($user->ID, 'uv_quote_nb', true);
     $quote_en   = get_user_meta($user->ID, 'uv_quote_en', true);
     $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
-    $show_email = get_user_meta($user->ID, 'uv_show_email', true) === '1';
     $avatar_id  = get_user_meta($user->ID, 'uv_avatar_id', true);
     $locations  = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
     $assigned   = get_user_meta($user->ID, 'uv_location_terms', true);
@@ -150,11 +148,6 @@ function uv_people_profile_fields($user){
         <td>
             <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
             <br><label><input type="checkbox" name="uv_show_phone" value="1" <?php checked($show_phone); ?>> <?php _e('Show on profile','uv-people'); ?></label>
-        </td></tr>
-      <tr><th><label for="uv_public_email"><?php _e('Public Email (optional)','uv-people'); ?></label></th>
-        <td>
-            <input type="email" name="uv_public_email" id="uv_public_email" value="<?php echo esc_attr($pub_email); ?>" class="regular-text">
-            <br><label><input type="checkbox" name="uv_show_email" value="1" <?php checked($show_email); ?>> <?php _e('Show on profile','uv-people'); ?></label>
         </td></tr>
       <tr><th><label for="uv_quote_nb"><?php _e('Volunteer Quote (Norwegian)','uv-people'); ?></label></th>
         <td><textarea name="uv_quote_nb" id="uv_quote_nb" rows="4" class="large-text"><?php echo esc_textarea($quote_nb); ?></textarea></td></tr>
@@ -193,12 +186,10 @@ add_action('edit_user_profile_update','uv_people_profile_save');
 function uv_people_profile_save($user_id){
     if(!current_user_can('edit_user', $user_id)) return;
     if(isset($_POST['uv_phone'])) update_user_meta($user_id, 'uv_phone', sanitize_text_field($_POST['uv_phone']));
-    if(isset($_POST['uv_public_email'])) update_user_meta($user_id, 'uv_public_email', sanitize_email($_POST['uv_public_email']));
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
     if(isset($_POST['uv_quote_en'])) update_user_meta($user_id, 'uv_quote_en', sanitize_textarea_field($_POST['uv_quote_en']));
     if(isset($_POST['uv_avatar_id'])) update_user_meta($user_id, 'uv_avatar_id', sanitize_text_field($_POST['uv_avatar_id']));
     update_user_meta($user_id, 'uv_show_phone', isset($_POST['uv_show_phone']) ? '1' : '0');
-    update_user_meta($user_id, 'uv_show_email', isset($_POST['uv_show_email']) ? '1' : '0');
     if(isset($_POST['uv_locations'])){
         $loc_ids = array_filter(array_map('intval', (array)$_POST['uv_locations']));
         update_user_meta($user_id, 'uv_location_terms', $loc_ids);
@@ -297,7 +288,7 @@ function uv_people_team_grid($atts){
         $uid = intval($it['user_id']);
         $name = get_the_author_meta('display_name', $uid);
         $phone = get_user_meta($uid,'uv_phone',true);
-        $pub_email = get_user_meta($uid,'uv_public_email',true);
+        $email = get_the_author_meta('user_email', $uid);
         $classes = 'uv-person';
         if($a['highlight_primary'] && $it['primary']) $classes .= ' uv-primary-contact';
         $url = get_author_posts_url($uid);
@@ -319,11 +310,10 @@ function uv_people_team_grid($atts){
         if($quote) echo '<div class="uv-quote">“'.esc_html($quote).'”</div>';
         // contact visibility
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
-        $show_email = get_user_meta($uid,'uv_show_email',true)==='1';
-        if(($phone && $show_phone) || ($pub_email && $show_email)){
+        if(($phone && $show_phone) || $email){
             echo '<div class="uv-contact">';
             if($phone && $show_phone) echo '<div><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
-            if($pub_email && $show_email) echo '<div><a href="mailto:'.esc_attr($pub_email).'">'.esc_html($pub_email).'</a></div>';
+            if($email) echo '<div><a href="mailto:'.esc_attr($email).'">'.esc_html($email).'</a></div>';
             echo '</div>';
         }
         echo '</div>';
