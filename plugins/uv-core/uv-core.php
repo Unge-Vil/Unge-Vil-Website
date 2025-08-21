@@ -268,6 +268,32 @@ add_action('save_post_uv_partner', function($post_id){
     }
 });
 
+// Related post meta box for experiences
+add_action('add_meta_boxes_uv_experience', function(){
+    add_meta_box('uv_related_post', __('Related Post','uv-core'), function($post){
+        wp_nonce_field('uv_related_post_action', 'uv_related_post_nonce');
+        $selected = get_post_meta($post->ID, 'uv_related_post', true);
+        wp_dropdown_pages([
+            'post_type' => 'post',
+            'name' => 'uv_related_post',
+            'selected' => $selected,
+            'show_option_none' => __('— None —', 'uv-core'),
+        ]);
+    }, 'side');
+});
+
+add_action('save_post_uv_experience', function($post_id){
+    if(!isset($_POST['uv_related_post_nonce'])) return;
+    if(!current_user_can('edit_post', $post_id)) return;
+    check_admin_referer('uv_related_post_action', 'uv_related_post_nonce');
+    $val = isset($_POST['uv_related_post']) ? intval($_POST['uv_related_post']) : 0;
+    if($val){
+        update_post_meta($post_id, 'uv_related_post', $val);
+    }else{
+        delete_post_meta($post_id, 'uv_related_post');
+    }
+});
+
 // Block registration
 add_action('init', function(){
     register_block_type(__DIR__ . '/blocks/locations-grid', [
