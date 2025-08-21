@@ -29,22 +29,21 @@ add_action('init', function(){
 add_action('add_meta_boxes_uv_team_assignment', function(){
     add_meta_box('uv_ta_fields', __('Assignment', 'uv-people'), function($post){
         $user_id = get_post_meta($post->ID, 'uv_user_id', true);
+        $user_ids = $user_id ? [$user_id] : [];
         $loc_id  = get_post_meta($post->ID, 'uv_location_id', true);
         $role    = get_post_meta($post->ID, 'uv_role_title', true);
         $primary = get_post_meta($post->ID, 'uv_is_primary', true);
         $order   = get_post_meta($post->ID, 'uv_order_weight', true);
         $locations = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
+        $users = get_users();
         ?>
         <?php wp_nonce_field('uv_ta_save', 'uv_ta_nonce'); ?>
-        <p><label><?php _e('User','uv-people'); ?></label>
-        <?php
-            wp_dropdown_users([
-                'name'              => 'uv_user_id',
-                'selected'          => $user_id,
-                'show_option_none'  => __('Select','uv-people'),
-                'class'             => 'widefat'
-            ]);
-        ?>
+        <p><label><?php _e('Users','uv-people'); ?></label>
+        <select name="uv_user_ids[]" multiple style="width:100%;height:8em;">
+            <?php foreach($users as $u): ?>
+            <option value="<?php echo esc_attr($u->ID); ?>" <?php selected(in_array($u->ID, $user_ids)); ?>><?php echo esc_html($u->display_name); ?></option>
+            <?php endforeach; ?>
+        </select>
         </p>
         <p><label><?php _e('Location','uv-people'); ?></label>
         <select name="uv_location_id" style="width:100%">
@@ -61,18 +60,51 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         <?php
     }, 'normal');
 });
-add_action('save_post_uv_team_assignment', function($post_id){
+
+function uv_save_team_assignment($post_id){
     if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-    if(!isset($_POST['uv_ta_nonce']) || !check_admin_referer('uv_ta_save', 'uv_ta_nonce', false)) return;
+    if(!isset($_POST['uv_ta_nonce']) || !wp_verify_nonce($_POST['uv_ta_nonce'], 'uv_ta_save')) return;
     if(!current_user_can('edit_post', $post_id)) return;
-    if(isset($_POST['uv_user_id'])){
-        update_post_meta($post_id, 'uv_user_id', absint($_POST['uv_user_id']));
+
+    remove_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
+
+    $user_ids = isset($_POST['uv_user_ids']) ? array_filter(array_map('absint', (array)$_POST['uv_user_ids'])) : [];
+    $loc_id   = isset($_POST['uv_location_id']) ? absint($_POST['uv_location_id']) : 0;
+    $role     = isset($_POST['uv_role_title']) ? sanitize_text_field($_POST['uv_role_title']) : '';
+    $order    = isset($_POST['uv_order_weight']) ? sanitize_text_field($_POST['uv_order_weight']) : '';
+    $primary  = isset($_POST['uv_is_primary']) ? '1' : '0';
+
+    if($loc_id) update_post_meta($post_id, 'uv_location_id', $loc_id);
+    if($role !== '') update_post_meta($post_id, 'uv_role_title', $role);
+    if($order !== '') update_post_meta($post_id, 'uv_order_weight', $order);
+    update_post_meta($post_id, 'uv_is_primary', $primary);
+
+    if($user_ids){
+        $first = array_shift($user_ids);
+        update_post_meta($post_id, 'uv_user_id', $first);
+
+        $term = get_term($loc_id, 'uv_location');
+        foreach($user_ids as $uid){
+            $title = get_the_author_meta('display_name', $uid) . ' - ' . ($term ? $term->name : '');
+            $new_id = wp_insert_post([
+                'post_type'   => 'uv_team_assignment',
+                'post_status' => 'publish',
+                'post_title'  => $title,
+                'post_author' => $uid,
+            ]);
+            if($new_id){
+                update_post_meta($new_id, 'uv_user_id', $uid);
+                if($loc_id) update_post_meta($new_id, 'uv_location_id', $loc_id);
+                if($role !== '') update_post_meta($new_id, 'uv_role_title', $role);
+                update_post_meta($new_id, 'uv_is_primary', $primary);
+                if($order !== '') update_post_meta($new_id, 'uv_order_weight', $order);
+            }
+        }
     }
-    foreach(['uv_location_id','uv_role_title','uv_order_weight'] as $key){
-        if(isset($_POST[$key])) update_post_meta($post_id, $key, sanitize_text_field($_POST[$key]));
-    }
-    update_post_meta($post_id, 'uv_is_primary', isset($_POST['uv_is_primary']) ? '1' : '0');
-});
+
+    add_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
+}
+add_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
 
 // User profile fields (phone, public email, quote, socials, avatar attachment)
 function uv_people_profile_fields($user){
