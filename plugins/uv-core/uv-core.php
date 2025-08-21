@@ -3,6 +3,8 @@
  * Plugin Name: UV Core
  * Description: CPTs, taxonomies, term images, and lightweight shortcodes.
  * Version: 0.1.0
+ * Requires at least: 6.0
+ * Requires PHP: 7.4
  * Text Domain: uv-core
  */
 
