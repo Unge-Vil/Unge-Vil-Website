@@ -83,6 +83,9 @@ function uv_people_profile_fields($user){
     $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
     $show_email = get_user_meta($user->ID, 'uv_show_email', true) === '1';
     $avatar_id  = get_user_meta($user->ID, 'uv_avatar_id', true);
+    $locations  = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
+    $assigned   = get_user_meta($user->ID, 'uv_location_terms', true);
+    if(!is_array($assigned)) $assigned = [];
     if(!$quote_nb && !$quote_en){
         $legacy = get_user_meta($user->ID, 'uv_quote', true);
         $quote_nb = $quote_nb ?: $legacy;
@@ -91,6 +94,15 @@ function uv_people_profile_fields($user){
     ?>
     <h2><?php _e('Public Profile (Unge Vil)','uv-people'); ?></h2>
     <table class="form-table">
+      <tr><th><label for="uv_locations"><?php _e('Locations','uv-people'); ?></label></th>
+        <td>
+            <input type="hidden" name="uv_locations[]" value="">
+            <select name="uv_locations[]" id="uv_locations" multiple style="height:8em;width:100%">
+                <?php foreach($locations as $loc): ?>
+                <option value="<?php echo esc_attr($loc->term_id); ?>" <?php selected(in_array($loc->term_id, $assigned)); ?>><?php echo esc_html($loc->name); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </td></tr>
       <tr><th><label for="uv_phone"><?php _e('Phone (public optional)','uv-people'); ?></label></th>
         <td>
             <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
@@ -144,6 +156,48 @@ function uv_people_profile_save($user_id){
     if(isset($_POST['uv_avatar_id'])) update_user_meta($user_id, 'uv_avatar_id', sanitize_text_field($_POST['uv_avatar_id']));
     update_user_meta($user_id, 'uv_show_phone', isset($_POST['uv_show_phone']) ? '1' : '0');
     update_user_meta($user_id, 'uv_show_email', isset($_POST['uv_show_email']) ? '1' : '0');
+    if(isset($_POST['uv_locations'])){
+        $loc_ids = array_filter(array_map('intval', (array)$_POST['uv_locations']));
+        update_user_meta($user_id, 'uv_location_terms', $loc_ids);
+
+        $existing = get_posts([
+            'post_type'      => 'uv_team_assignment',
+            'posts_per_page' => -1,
+            'post_status'    => 'any',
+            'meta_query'     => [
+                ['key' => 'uv_user_id', 'value' => $user_id, 'compare' => '='],
+            ],
+        ]);
+        $existing_map = [];
+        foreach($existing as $p){
+            $lid = get_post_meta($p->ID, 'uv_location_id', true);
+            $existing_map[$lid] = $p->ID;
+        }
+        foreach($loc_ids as $lid){
+            if(isset($existing_map[$lid])){
+                unset($existing_map[$lid]);
+                continue;
+            }
+            $term = get_term($lid, 'uv_location');
+            $title = get_the_author_meta('display_name', $user_id) . ' - ' . ($term ? $term->name : '');
+            $post_id = wp_insert_post([
+                'post_type'   => 'uv_team_assignment',
+                'post_status' => 'publish',
+                'post_title'  => $title,
+                'post_author' => $user_id,
+            ]);
+            if($post_id){
+                update_post_meta($post_id, 'uv_user_id', $user_id);
+                update_post_meta($post_id, 'uv_location_id', $lid);
+                update_post_meta($post_id, 'uv_role_title', '');
+                update_post_meta($post_id, 'uv_is_primary', '0');
+                update_post_meta($post_id, 'uv_order_weight', '10');
+            }
+        }
+        foreach($existing_map as $post_id){
+            wp_delete_post($post_id, true);
+        }
+    }
 }
 
 // Helper: get user avatar URL by our field
