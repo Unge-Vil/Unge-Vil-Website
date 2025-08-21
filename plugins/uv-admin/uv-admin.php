@@ -106,20 +106,22 @@ function uv_admin_control_panel(){
 
     $docs = uv_admin_get_docs_url();
     $cards = [
-        ['News','edit.php','dashicons-megaphone'],
-        ['Media','upload.php','dashicons-format-image'],
-        ['Pages','edit.php?post_type=page','dashicons-admin-page'],
-        ['Locations','edit-tags.php?taxonomy=uv_location','dashicons-location'],
-        ['Activities','edit.php?post_type=uv_activity','dashicons-forms'],
-        ['Partners','edit.php?post_type=uv_partner','dashicons-heart'],
-        ['Team Assignments','edit.php?post_type=uv_team_assignment','dashicons-groups'],
+        [__('News', 'uv-admin'), 'edit.php', 'dashicons-megaphone'],
+        [__('Media', 'uv-admin'), 'upload.php', 'dashicons-format-image'],
+        [__('Pages', 'uv-admin'), 'edit.php?post_type=page', 'dashicons-admin-page'],
+        [__('Locations', 'uv-admin'), 'edit-tags.php?taxonomy=uv_location', 'dashicons-location'],
+        [__('Activities', 'uv-admin'), 'edit.php?post_type=uv_activity', 'dashicons-forms'],
+        [__('Partners', 'uv-admin'), 'edit.php?post_type=uv_partner', 'dashicons-heart'],
+        [__('Team Assignments', 'uv-admin'), 'edit.php?post_type=uv_team_assignment', 'dashicons-groups'],
     ];
-    if(post_type_exists('tribe_events')) $cards[] = ['Events','edit.php?post_type=tribe_events','dashicons-calendar-alt'];
+    if ( post_type_exists( 'tribe_events' ) ) {
+        $cards[] = [ __('Events', 'uv-admin'), 'edit.php?post_type=tribe_events', 'dashicons-calendar-alt' ];
+    }
     echo '<div class="wrap uv-control-panel">';
     echo '<div class="uvcp-header"><img alt="Unge Vil" src="' . esc_url(get_stylesheet_directory_uri().'/assets/img/logo.svg') . '\"><h1>Unge Vil — ' . esc_html( __('Control Panel','uv-admin') ) . '</h1></div>';
     echo '<div class="uvcp-grid">';
     foreach($cards as $c){
-        echo '<a class="uvcp-card" href="' . esc_url( admin_url($c[1]) ) . '\"><span class="dashicons ' . esc_attr($c[2]) . '\"></span><strong>' . esc_html( __($c[0], 'uv-admin') ) . '</strong></a>';
+        echo '<a class="uvcp-card" href="' . esc_url( admin_url($c[1]) ) . '\"><span class="dashicons ' . esc_attr($c[2]) . '\"></span><strong>' . esc_html( $c[0] ) . '</strong></a>';
     }
     echo '</div>';
     if($docs){
