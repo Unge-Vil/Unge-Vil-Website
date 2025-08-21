@@ -80,13 +80,13 @@ function uv_save_team_assignment($post_id){
     $loc_id   = isset($_POST['uv_location_id']) ? absint($_POST['uv_location_id']) : 0;
     $role_nb  = isset($_POST['uv_role_nb']) ? sanitize_text_field($_POST['uv_role_nb']) : '';
     $role_en  = isset($_POST['uv_role_en']) ? sanitize_text_field($_POST['uv_role_en']) : '';
-    $order    = isset($_POST['uv_order_weight']) ? sanitize_text_field($_POST['uv_order_weight']) : '';
+    $order    = isset($_POST['uv_order_weight']) ? absint($_POST['uv_order_weight']) : '';
     $primary  = isset($_POST['uv_is_primary']) ? '1' : '0';
 
     if($loc_id) update_post_meta($post_id, 'uv_location_id', $loc_id);
     if($role_nb !== '') update_post_meta($post_id, 'uv_role_nb', $role_nb);
     if($role_en !== '') update_post_meta($post_id, 'uv_role_en', $role_en);
-    if($order !== '') update_post_meta($post_id, 'uv_order_weight', $order);
+    if($order !== '') update_post_meta($post_id, 'uv_order_weight', (int) $order);
     update_post_meta($post_id, 'uv_is_primary', $primary);
 
     if($user_ids){
@@ -108,7 +108,7 @@ function uv_save_team_assignment($post_id){
                 if($role_nb !== '') update_post_meta($new_id, 'uv_role_nb', $role_nb);
                 if($role_en !== '') update_post_meta($new_id, 'uv_role_en', $role_en);
                 update_post_meta($new_id, 'uv_is_primary', $primary);
-                if($order !== '') update_post_meta($new_id, 'uv_order_weight', $order);
+                if($order !== '') update_post_meta($new_id, 'uv_order_weight', (int) $order);
             }
         }
     }
