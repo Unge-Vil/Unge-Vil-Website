@@ -12,3 +12,6 @@ Go to **Settings → Unge Vil Admin**, paste your Google Sites URL (or any docs 
 
 ## Customize Logo
 Replace `themes/uv-kadence-child/assets/img/logo.svg` with your logo (same filename) to update the login screen and Control Panel header.
+
+## Design Control Panel Page
+Create a normal WordPress page and build its layout with Kadence blocks. Set its ID in the `uv_admin_control_panel_page_id` option so the plugin renders that page inside the Control Panel screen. Use the `[uv_display_name]` shortcode anywhere in the page to greet the current user.
