@@ -6,16 +6,18 @@ UV Events Bridge connects Locations to The Events Calendar.
 
 ## Shortcodes
 - `[uv_upcoming_events location="osl" count="5"]` – list upcoming Events optionally filtered by a Location term.
+  - `location` (optional) Location term slug.
+  - `count` (default: 5) number of events to display.
 
-## Requirements
-- WordPress 6.0+
-- The Events Calendar plugin must be active.
-
-## Example Usage
+## Usage
 
 ```html
 [uv_upcoming_events location="bergen" count="3"]
 ```
+
+## Requirements
+- WordPress 6.0+
+- The Events Calendar plugin must be active.
 
 ## Translation
 All strings use the `uv-events-bridge` text domain. Translation files can be placed in `languages/` or handled by translation plugins.
