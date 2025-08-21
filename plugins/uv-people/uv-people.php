@@ -212,6 +212,7 @@ function uv_people_get_avatar($user_id){
 
 // Shortcode: Team grid by location
 function uv_people_team_grid($atts){
+    wp_enqueue_style('uv-team-grid-style');
     $a = shortcode_atts(['location'=>'','columns'=>4,'highlight_primary'=>1], $atts);
     if(!$a['location']) return '';
     $term = get_term_by('slug', $a['location'], 'uv_location');
@@ -253,33 +254,43 @@ function uv_people_team_grid($atts){
         $pub_email = get_user_meta($uid,'uv_public_email',true);
         $classes = 'uv-person';
         if($a['highlight_primary'] && $it['primary']) $classes .= ' uv-primary-contact';
-        echo '<div class="'.esc_attr($classes).'">';
-        echo uv_people_get_avatar($uid);
+        $url = get_author_posts_url($uid);
+        echo '<a class="'.esc_attr($classes).'" href="'.esc_url($url).'">';
+        echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
+        echo '<div class="uv-info">';
         echo '<h3>'.esc_html($name).'</h3>';
         if($it['role']) echo '<div class="uv-role">'.esc_html($it['role']).'</div>';
-        
-// choose quote by language
-$lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
-$quote_nb = get_user_meta($uid,'uv_quote_nb',true);
-$quote_en = get_user_meta($uid,'uv_quote_en',true);
-$legacy_q = get_user_meta($uid,'uv_quote',true);
-$quote = ($lang==='en') ? ($quote_en ?: $quote_nb ?: $legacy_q) : ($quote_nb ?: $quote_en ?: $legacy_q);
-if($quote) echo '<div class="uv-quote">“'.esc_html($quote).'”</div>';
-// contact visibility
-$show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
-$show_email = get_user_meta($uid,'uv_show_email',true)==='1';
-if(($phone && $show_phone) || ($pub_email && $show_email)){
-    echo '<div class="uv-contact">';
-    if($phone && $show_phone) echo '<div><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
-    if($pub_email && $show_email) echo '<div><a href="mailto:'.esc_attr($pub_email).'">'.esc_html($pub_email).'</a></div>';
-    echo '</div>';
-}
-echo '</div>';
+
+        // choose quote by language
+        $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
+        $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
+        $quote_en = get_user_meta($uid,'uv_quote_en',true);
+        $legacy_q = get_user_meta($uid,'uv_quote',true);
+        $quote = ($lang==='en') ? ($quote_en ?: $quote_nb ?: $legacy_q) : ($quote_nb ?: $quote_en ?: $legacy_q);
+        if($quote) echo '<div class="uv-quote">“'.esc_html($quote).'”</div>';
+        // contact visibility
+        $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
+        $show_email = get_user_meta($uid,'uv_show_email',true)==='1';
+        if(($phone && $show_phone) || ($pub_email && $show_email)){
+            echo '<div class="uv-contact">';
+            if($phone && $show_phone) echo '<div><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
+            if($pub_email && $show_email) echo '<div><a href="mailto:'.esc_attr($pub_email).'">'.esc_html($pub_email).'</a></div>';
+            echo '</div>';
+        }
+        echo '</div>';
+        echo '</a>';
     }
     echo '</div>';
     return ob_get_clean();
 }
 add_shortcode('uv_team','uv_people_team_grid');
+
+// Block registration
+add_action('init', function(){
+    register_block_type(__DIR__ . '/blocks/team-grid', [
+        'render_callback' => 'uv_people_team_grid'
+    ]);
+});
 
 // Dashboard widget for team guide links
 add_action('wp_dashboard_setup', function(){

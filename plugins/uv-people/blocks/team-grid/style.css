@@ -1,0 +1,18 @@
+.uv-team-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+.uv-team-grid .uv-person {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    text-decoration: none;
+}
+.uv-team-grid .uv-avatar img {
+    border-radius: 12px;
+    max-width: 128px;
+    height: auto;
+}
+.uv-team-grid .uv-info > *:empty {
+    display: none;
+}
