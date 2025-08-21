@@ -1,0 +1,14 @@
+{
+  "apiVersion": 2,
+  "name": "uv/partners",
+  "title": "Partners",
+  "category": "widgets",
+  "icon": "heart",
+  "attributes": {
+    "location": {"type": "string", "default": ""},
+    "type": {"type": "string", "default": ""},
+    "columns": {"type": "number", "default": 4}
+  },
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css"
+}

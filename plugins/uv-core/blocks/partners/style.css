@@ -1,0 +1,7 @@
+.uv-card-list {
+    display: grid;
+    gap: 1.5rem;
+}
+.uv-card {
+    list-style: none;
+}

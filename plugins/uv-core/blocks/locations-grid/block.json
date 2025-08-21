@@ -1,0 +1,13 @@
+{
+  "apiVersion": 2,
+  "name": "uv/locations-grid",
+  "title": "Locations Grid",
+  "category": "widgets",
+  "icon": "location-alt",
+  "attributes": {
+    "columns": {"type": "number", "default": 3},
+    "show_links": {"type": "boolean", "default": true}
+  },
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css"
+}
