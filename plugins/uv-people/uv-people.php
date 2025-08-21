@@ -33,6 +33,7 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         $order   = get_post_meta($post->ID, 'uv_order_weight', true);
         $locations = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
         ?>
+        <?php wp_nonce_field('uv_ta_save', 'uv_ta_nonce'); ?>
         <p><label><?php _e('User ID','uv-people'); ?></label>
         <input type="number" name="uv_user_id" value="<?php echo esc_attr($user_id); ?>" style="width:100%"></p>
         <p><label><?php _e('Location','uv-people'); ?></label>
@@ -51,6 +52,9 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
     }, 'normal');
 });
 add_action('save_post_uv_team_assignment', function($post_id){
+    if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if(!isset($_POST['uv_ta_nonce']) || !check_admin_referer('uv_ta_save', 'uv_ta_nonce', false)) return;
+    if(!current_user_can('edit_post', $post_id)) return;
     foreach(['uv_user_id','uv_location_id','uv_role_title','uv_order_weight'] as $key){
         if(isset($_POST[$key])) update_post_meta($post_id, $key, sanitize_text_field($_POST[$key]));
     }
