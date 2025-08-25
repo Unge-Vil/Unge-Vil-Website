@@ -25,6 +25,7 @@
                             label: __( 'Show Links', 'uv-core' ),
                             checked: show_links,
                             onChange: function( value ) { setAttributes( { show_links: value } ); },
+                            __next40pxDefaultSize: true,
                             __nextHasNoMarginBottom: true
                         } )
                     )
