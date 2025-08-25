@@ -364,24 +364,32 @@ function uv_core_partners($atts){
             $classes = 'uv-card uv-partner uv-partner--'.esc_attr($display);
             echo '<li class="'.$classes.'">';
             echo $link ? '<a href="'.esc_url($link).'" rel="noopener nofollow">' : '<a href="'.esc_url(get_permalink()).'">';
+            $fallback = '<span class="uv-partner-icon"></span>';
+            $render_thumb = function($attrs = []) use ($fallback){
+                if(has_post_thumbnail()){
+                    $attrs = wp_parse_args($attrs, ['alt'=>esc_attr(get_the_title())]);
+                    the_post_thumbnail('uv_card', $attrs);
+                } else {
+                    echo $fallback;
+                }
+            };
             switch($display){
                 case 'logo_only':
-                    if(has_post_thumbnail()) the_post_thumbnail('uv_card',[ 'alt'=>esc_attr(get_the_title()) ]);
+                    $render_thumb();
                     break;
                 case 'circle_title':
-                    if(has_post_thumbnail()) the_post_thumbnail('uv_card',[ 'class'=>'is-circle', 'alt'=>esc_attr(get_the_title()) ]);
+                    $render_thumb(['class'=>'is-circle']);
                     echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div>';
                     break;
                 case 'icon_title':
-                    if(has_post_thumbnail()){
-                        the_post_thumbnail('uv_card',[ 'class'=>'is-icon', 'alt'=>esc_attr(get_the_title()) ]);
-                    } else {
-                        echo '<span class="uv-partner-icon"></span>';
-                    }
+                    $render_thumb(['class'=>'is-icon']);
+                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div>';
+                    break;
+                case 'title_only':
                     echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div>';
                     break;
                 default:
-                    if(has_post_thumbnail()) the_post_thumbnail('uv_card',[ 'alt'=>esc_attr(get_the_title()) ]);
+                    $render_thumb();
                     echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong>';
                     if(has_excerpt()) echo '<div>'.esc_html(get_the_excerpt()).'</div>';
                     echo '</div>';
@@ -414,6 +422,7 @@ add_action('add_meta_boxes_uv_partner', function(){
             'logo_title'  => esc_html__('Logo and title','uv-core'),
             'circle_title'=> esc_html__('Circle & title','uv-core'),
             'icon_title'  => esc_html__('Icon & title','uv-core'),
+            'title_only'  => esc_html__('Title only','uv-core'),
         ];
         foreach($opts as $k=>$label){
             echo '<option value="'.esc_attr($k).'"'.selected($val,$k,false).'>'.$label.'</option>';
@@ -434,7 +443,7 @@ add_action('save_post_uv_partner', function($post_id){
     if(isset($_POST['uv_partner_display_nonce'])){
         check_admin_referer('uv_partner_display_action', 'uv_partner_display_nonce');
         if(isset($_POST['uv_partner_display'])){
-            $allowed = ['logo_only','logo_title','circle_title','icon_title'];
+            $allowed = ['logo_only','logo_title','circle_title','icon_title','title_only'];
             $val = in_array($_POST['uv_partner_display'],$allowed) ? $_POST['uv_partner_display'] : 'logo_title';
             update_post_meta($post_id, 'uv_partner_display', $val);
         }
