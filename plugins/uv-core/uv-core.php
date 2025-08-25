@@ -42,9 +42,11 @@ if (!defined('UV_CORE_VERSION')) {
     define('UV_CORE_VERSION', '0.5.1');
 }
 
-$update_checker_path = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
+$update_checker_path = dirname(__DIR__, 2) . '/plugin-update-checker/plugin-update-checker.php';
 if (file_exists($update_checker_path)) {
-    require $update_checker_path;
+    if (!class_exists('\\YahnisElsts\\PluginUpdateChecker\\v5\\PucFactory')) {
+        require $update_checker_path;
+    }
     $uvCoreUpdateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
         'https://github.com/Unge-Vil/Unge-Vil-Website/',
         __FILE__,
