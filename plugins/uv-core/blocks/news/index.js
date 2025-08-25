@@ -1,21 +1,22 @@
 ( function( wp ) {
-    const { createElement } = wp.element;
+    const { createElement, useEffect, useState } = wp.element;
+    const apiFetch = wp.apiFetch;
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
     const { InspectorControls, useBlockProps } = wp.blockEditor;
     const { PanelBody, SelectControl, RangeControl } = wp.components;
-    const { useSelect } = wp.data;
     const ServerSideRender = wp.serverSideRender;
 
     registerBlockType( 'uv/news', {
         edit: function( props ) {
             const { attributes: { location, count }, setAttributes } = props;
-            const terms = useSelect( function( select ) {
-                return select( 'core' ).getEntityRecords( 'taxonomy', 'uv_location', { per_page: -1 } );
+            const [ terms, setTerms ] = useState( [] );
+            useEffect( function() {
+                apiFetch( { path: '/wp/v2/uv_location?per_page=-1' } ).then( setTerms );
             }, [] );
-            const options = terms ? terms.map( function( t ) {
+            const options = terms.map( function( t ) {
                 return { label: t.name, value: t.slug };
-            } ) : [];
+            } );
             return createElement( wp.element.Fragment, {},
                 createElement( InspectorControls, {},
                     createElement( PanelBody, { title: __( 'Settings', 'uv-core' ), initialOpen: true },
