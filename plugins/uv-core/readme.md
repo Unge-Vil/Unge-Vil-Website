@@ -34,6 +34,8 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Add `.po/.mo` files in a `languages/` folder or use a translation plugin like Polylang.
 
 ## Changelog
+### 0.5.2
+- Bug fixes and version bump.
 ### 0.5.1
 - Add runtime WordPress and PHP version checks.
 - Rename version constant to `UV_CORE_VERSION`.
