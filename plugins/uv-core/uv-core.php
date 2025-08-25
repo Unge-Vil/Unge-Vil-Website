@@ -10,6 +10,14 @@
 
 if (!defined('ABSPATH')) exit;
 
+add_filter('block_categories_all', function($categories) {
+    $categories[] = [
+        'slug'  => 'unge-vil',
+        'title' => __('Unge Vil blocks', 'uv-core'),
+    ];
+    return $categories;
+}, 10, 2);
+
 add_action('plugins_loaded', function(){
     load_plugin_textdomain('uv-core', false, dirname(plugin_basename(__FILE__)) . '/languages');
 });

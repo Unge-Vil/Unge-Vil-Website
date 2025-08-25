@@ -2,7 +2,7 @@
   "apiVersion": 2,
   "name": "uv/activities",
   "title": "Activities",
-  "category": "widgets",
+  "category": "unge-vil",
   "icon": "admin-site",
   "attributes": {
     "location": {"type": "string", "default": ""},

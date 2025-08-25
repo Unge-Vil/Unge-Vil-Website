@@ -2,7 +2,7 @@
   "apiVersion": 2,
   "name": "uv/team-grid",
   "title": "Team Grid",
-  "category": "widgets",
+  "category": "unge-vil",
   "icon": "groups",
   "attributes": {
     "location": {

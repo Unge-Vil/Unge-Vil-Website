@@ -2,7 +2,7 @@
   "apiVersion": 2,
   "name": "uv/partners",
   "title": "Partners",
-  "category": "widgets",
+  "category": "unge-vil",
   "icon": "heart",
   "attributes": {
     "location": {"type": "string", "default": ""},

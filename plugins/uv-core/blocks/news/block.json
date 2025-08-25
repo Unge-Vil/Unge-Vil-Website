@@ -2,7 +2,7 @@
   "apiVersion": 2,
   "name": "uv/news",
   "title": "News",
-  "category": "widgets",
+  "category": "unge-vil",
   "icon": "megaphone",
   "attributes": {
     "location": {"type": "string", "default": ""},
