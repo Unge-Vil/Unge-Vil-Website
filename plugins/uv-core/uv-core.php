@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UV Core
  * Description: CPTs, taxonomies, term images, and lightweight shortcodes.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Text Domain: uv-core
@@ -217,12 +217,35 @@ function uv_core_partners($atts){
         echo '<ul class="uv-card-list" style="grid-template-columns:repeat('.$cols.',1fr)">';
         while($q->have_posts()){ $q->the_post();
             $link = get_post_meta(get_the_ID(), 'uv_partner_url', true);
-            echo '<li class="uv-card">';
+            $display = get_post_meta(get_the_ID(), 'uv_partner_display', true);
+            if(!$display) $display = 'logo_title';
+            $classes = 'uv-card uv-partner uv-partner--'.esc_attr($display);
+            echo '<li class="'.$classes.'">';
             echo $link ? '<a href="'.esc_url($link).'" rel="noopener nofollow">' : '<a href="'.esc_url(get_permalink()).'">';
-            if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
-            echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong>';
-            if(has_excerpt()) echo '<div>'.esc_html(get_the_excerpt()).'</div>';
-            echo '</div></a></li>';
+            switch($display){
+                case 'logo_only':
+                    if(has_post_thumbnail()) the_post_thumbnail('uv_card',[ 'alt'=>esc_attr(get_the_title()) ]);
+                    break;
+                case 'circle_title':
+                    if(has_post_thumbnail()) the_post_thumbnail('uv_card',[ 'class'=>'is-circle', 'alt'=>esc_attr(get_the_title()) ]);
+                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div>';
+                    break;
+                case 'icon_title':
+                    if(has_post_thumbnail()){
+                        the_post_thumbnail('uv_card',[ 'class'=>'is-icon', 'alt'=>esc_attr(get_the_title()) ]);
+                    } else {
+                        echo '<span class="uv-partner-icon"></span>';
+                    }
+                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div>';
+                    break;
+                default:
+                    if(has_post_thumbnail()) the_post_thumbnail('uv_card',[ 'alt'=>esc_attr(get_the_title()) ]);
+                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong>';
+                    if(has_excerpt()) echo '<div>'.esc_html(get_the_excerpt()).'</div>';
+                    echo '</div>';
+                    break;
+            }
+            echo '</a></li>';
         }
         echo '</ul>';
     }
@@ -231,20 +254,48 @@ function uv_core_partners($atts){
 }
 add_shortcode('uv_partners','uv_core_partners');
 
-// Partner external URL meta box
+// Partner meta boxes
 add_action('add_meta_boxes_uv_partner', function(){
     add_meta_box('uv_partner_url', __('External URL','uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_url', true);
         wp_nonce_field('uv_partner_url_action', 'uv_partner_url_nonce');
-        echo '<label>'.__('Website','uv-core').'</label><input type="url" style="width:100%" name="uv_partner_url" value="'.esc_attr($val).'">';
+        echo '<p><label>'.__('Website','uv-core').'</label><input type="url" style="width:100%" name="uv_partner_url" value="'.esc_attr($val).'"></p>';
+    }, 'side');
+    add_meta_box('uv_partner_display', __('Display','uv-core'), function($post){
+        $val = get_post_meta($post->ID, 'uv_partner_display', true);
+        if(!$val) $val = 'logo_title';
+        wp_nonce_field('uv_partner_display_action', 'uv_partner_display_nonce');
+        echo '<p><label class="screen-reader-text" for="uv_partner_display">'.__('Display','uv-core').'</label>';
+        echo '<select id="uv_partner_display" name="uv_partner_display">';
+        $opts = [
+            'logo_only'   => __('Logo only','uv-core'),
+            'logo_title'  => __('Logo and title','uv-core'),
+            'circle_title'=> __('Circle & title','uv-core'),
+            'icon_title'  => __('Icon & title','uv-core'),
+        ];
+        foreach($opts as $k=>$label){
+            echo '<option value="'.$k.'"'.selected($val,$k,false).'>'.$label.'</option>';
+        }
+        echo '</select></p>';
     }, 'side');
 });
 add_action('save_post_uv_partner', function($post_id){
-    if(!isset($_POST['uv_partner_url_nonce'])) return;
     if(!current_user_can('edit_post', $post_id)) return;
-    check_admin_referer('uv_partner_url_action', 'uv_partner_url_nonce');
-    if(isset($_POST['uv_partner_url'])){
-        update_post_meta($post_id, 'uv_partner_url', esc_url_raw($_POST['uv_partner_url']));
+
+    if(isset($_POST['uv_partner_url_nonce'])){
+        check_admin_referer('uv_partner_url_action', 'uv_partner_url_nonce');
+        if(isset($_POST['uv_partner_url'])){
+            update_post_meta($post_id, 'uv_partner_url', esc_url_raw($_POST['uv_partner_url']));
+        }
+    }
+
+    if(isset($_POST['uv_partner_display_nonce'])){
+        check_admin_referer('uv_partner_display_action', 'uv_partner_display_nonce');
+        if(isset($_POST['uv_partner_display'])){
+            $allowed = ['logo_only','logo_title','circle_title','icon_title'];
+            $val = in_array($_POST['uv_partner_display'],$allowed) ? $_POST['uv_partner_display'] : 'logo_title';
+            update_post_meta($post_id, 'uv_partner_display', $val);
+        }
     }
 });
 

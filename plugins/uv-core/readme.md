@@ -18,6 +18,7 @@ UV Core registers CPTs, taxonomies, and shortcodes.
   - `location` (optional) Location slug.
   - `type` (optional) Partner Type slug.
   - `columns` (default: 4) number of columns.
+  - Each Partner post has a **Display** option: `logo_only`, `logo_title`, `circle_title`, or `icon_title`.
 
 ## Usage
 
@@ -33,6 +34,8 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Add `.po/.mo` files in a `languages/` folder or use a translation plugin like Polylang.
 
 ## Changelog
+### 0.3.0
+- Added partner display meta field with logo and title layout options.
 ### 0.2.0
 - Enhanced shortcode parameters and updated documentation.
 ### 0.1.0

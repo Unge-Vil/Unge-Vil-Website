@@ -24,6 +24,7 @@
   - `location` (string, default empty)
   - `type` (string, default empty)
   - `columns` (number, default 4)
+- **Partner display options:** `logo_only`, `logo_title`, `circle_title`, `icon_title`
 
 ## Team Grid
 - **Block name:** `uv/team-grid`
