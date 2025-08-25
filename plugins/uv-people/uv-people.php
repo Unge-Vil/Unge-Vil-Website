@@ -41,15 +41,23 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         $primary = get_post_meta($post->ID, 'uv_is_primary', true);
         $order   = get_post_meta($post->ID, 'uv_order_weight', true);
         $locations = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
-        $users = get_users();
         ?>
         <?php wp_nonce_field('uv_ta_save', 'uv_ta_nonce'); ?>
         <p><label><?php _e('Users','uv-people'); ?></label>
-        <select name="uv_user_ids[]" multiple style="width:100%;height:8em;">
-            <?php foreach($users as $u): ?>
-            <option value="<?php echo esc_attr($u->ID); ?>" <?php selected(in_array($u->ID, $user_ids)); ?>><?php echo esc_html($u->display_name); ?></option>
-            <?php endforeach; ?>
-        </select>
+        <?php
+        $dropdown = wp_dropdown_users([
+            'name'             => 'uv_user_ids[]',
+            'id'               => 'uv_user_ids',
+            'selected'         => $user_ids,
+            'include_selected' => true,
+            'multi'            => true,
+            'show'             => 'display_name',
+            'number'           => 50,
+            'class'            => 'uv-user-select',
+            'echo'             => false,
+        ]);
+        echo str_replace('<select', '<select style="width:100%;height:8em;"', $dropdown);
+        ?>
         </p>
         <p><label><?php _e('Location','uv-people'); ?></label>
         <select name="uv_location_id" style="width:100%">
