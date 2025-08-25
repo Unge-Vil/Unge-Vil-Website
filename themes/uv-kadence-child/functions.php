@@ -103,6 +103,43 @@ add_filter('login_redirect', function($redirect_to, $request, $user) {
     return $redirect_to;
 }, 10, 3);
 
+// Enqueue styles for the Control Panel admin page
+add_action('admin_enqueue_scripts', function($hook) {
+    if ('toplevel_page_uv-control-panel' !== $hook) {
+        return;
+    }
+
+    $deps = [];
+
+    // Parent Kadence theme stylesheet
+    wp_enqueue_style(
+        'kadence-theme',
+        get_template_directory_uri() . '/style.css',
+        [],
+        wp_get_theme()->get('Version')
+    );
+    $deps[] = 'kadence-theme';
+
+    // Kadence Blocks global stylesheet, if plugin is active
+    if (defined('KADENCE_BLOCKS_VERSION') && defined('KADENCE_BLOCKS_MAIN_FILE')) {
+        wp_enqueue_style(
+            'kadence-blocks',
+            plugins_url('dist/blocks.style.build.css', KADENCE_BLOCKS_MAIN_FILE),
+            ['kadence-theme'],
+            KADENCE_BLOCKS_VERSION
+        );
+        $deps[] = 'kadence-blocks';
+    }
+
+    // Control Panel specific styles
+    wp_enqueue_style(
+        'uv-control-panel',
+        get_stylesheet_directory_uri() . '/assets/css/control-panel.css',
+        $deps,
+        wp_get_theme()->get('Version')
+    );
+});
+
 /**
  * Render the Control Panel admin page.
  */
