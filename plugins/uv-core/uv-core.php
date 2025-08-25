@@ -13,7 +13,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-$update_checker_path = __DIR__ . '/../../lib/plugin-update-checker/plugin-update-checker.php';
+$update_checker_path = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
 if (file_exists($update_checker_path)) {
     require $update_checker_path;
     $uvCoreUpdateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
