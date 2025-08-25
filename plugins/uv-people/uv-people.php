@@ -14,6 +14,15 @@ add_action('plugins_loaded', function(){
     load_plugin_textdomain('uv-people', false, dirname(plugin_basename(__FILE__)) . '/languages');
 });
 
+// Localize strings for inline scripts
+add_action('admin_enqueue_scripts', function($hook){
+    if('profile.php' === $hook || 'user-edit.php' === $hook){
+        wp_localize_script('jquery', 'UVPeople', [
+            'selectAvatar' => __('Select Avatar', 'uv-people'),
+        ]);
+    }
+});
+
 // CPT: uv_team_assignment (user ↔ location w/ role & order)
 add_action('init', function(){
     register_post_type('uv_team_assignment', [
@@ -174,7 +183,7 @@ function uv_people_profile_fields($user){
         var frame;
         $('#uv-avatar-upload').on('click', function(e){
             e.preventDefault();
-            frame = wp.media({title: 'Select Avatar', multiple:false});
+            frame = wp.media({title: UVPeople.selectAvatar, multiple:false});
             frame.on('select', function(){
                 var att = frame.state().get('selection').first().toJSON();
                 $('#uv_avatar_id').val(att.id);
