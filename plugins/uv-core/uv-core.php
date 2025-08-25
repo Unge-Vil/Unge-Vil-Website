@@ -28,10 +28,10 @@ if (file_exists($update_checker_path)) {
 }
 
 add_filter('block_categories_all', function($categories) {
-    $categories[] = [
+    array_unshift($categories, [
         'slug'  => 'unge-vil',
         'title' => __('Unge Vil blocks', 'uv-core'),
-    ];
+    ]);
     return $categories;
 }, 10, 2);
 
