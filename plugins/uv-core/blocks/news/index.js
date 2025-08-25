@@ -2,7 +2,7 @@
     const { createElement } = wp.element;
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
-    const { InspectorControls } = wp.blockEditor;
+    const { InspectorControls, useBlockProps } = wp.blockEditor;
     const { PanelBody, SelectControl, RangeControl } = wp.components;
     const { useSelect } = wp.data;
 
@@ -15,7 +15,7 @@
             const options = terms ? terms.map( function( t ) {
                 return { label: t.name, value: t.slug };
             } ) : [];
-            return [
+            return createElement( wp.element.Fragment, {},
                 createElement( InspectorControls, {},
                     createElement( PanelBody, { title: __( 'Settings', 'uv-core' ), initialOpen: true },
                         createElement( SelectControl, {
@@ -33,8 +33,8 @@
                         } )
                     )
                 ),
-                createElement( 'p', {}, __( 'News', 'uv-core' ) )
-            ];
+                createElement( 'div', useBlockProps(), __( 'News', 'uv-core' ) )
+            );
         },
         save: function() { return null; }
     } );
