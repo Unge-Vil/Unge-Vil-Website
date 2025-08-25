@@ -2,7 +2,7 @@
   "apiVersion": 2,
   "name": "uv/locations-grid",
   "title": "Locations Grid",
-  "category": "widgets",
+  "category": "unge-vil",
   "icon": "location-alt",
   "attributes": {
     "columns": {"type": "number", "default": 3},
