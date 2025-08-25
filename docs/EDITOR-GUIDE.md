@@ -27,5 +27,5 @@ Simple steps for managing common content types in the WordPress dashboard.
 ## News / Blog Posts
 1. Go to **Posts → Add New**.
 2. Write the title, content, and set a featured image if desired.
-3. In the **Categories** panel, choose the category that matches the location name (add a new category if required).
+3. In the **Locations** taxonomy box, select the Location that matches the location name (create a new Location term if needed).
 4. Publish the post.
