@@ -193,6 +193,7 @@ add_action('personal_options_update','uv_people_profile_save');
 add_action('edit_user_profile_update','uv_people_profile_save');
 function uv_people_profile_save($user_id){
     if(!current_user_can('edit_user', $user_id)) return;
+    check_admin_referer('update-user_' . $user_id);
     if(isset($_POST['uv_phone'])) update_user_meta($user_id, 'uv_phone', sanitize_text_field($_POST['uv_phone']));
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
     if(isset($_POST['uv_quote_en'])) update_user_meta($user_id, 'uv_quote_en', sanitize_textarea_field($_POST['uv_quote_en']));
