@@ -1,6 +1,7 @@
+import fetchTerms from '../utils/fetchTerms';
+
 ( function( wp ) {
     const { createElement } = wp.element;
-    const { useSelect } = wp.data;
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
     const { InspectorControls, useBlockProps } = wp.blockEditor;
@@ -11,13 +12,7 @@
         edit: function( props ) {
             const { attributes: { location, count }, setAttributes } = props;
             const query = { per_page: 100 };
-            const { terms, error } = useSelect( function( select ) {
-                const core = select( 'core' );
-                return {
-                    terms: core.getEntityRecords( 'taxonomy', 'uv_location', query ),
-                    error: core.getLastEntityRecordsError ? core.getLastEntityRecordsError( 'taxonomy', 'uv_location', query ) : null
-                };
-            }, [] );
+            const { terms, error } = fetchTerms( 'uv_location', query );
             const options = terms ? terms.map( function( t ) {
                 return { label: t.name, value: t.slug };
             } ) : [];
