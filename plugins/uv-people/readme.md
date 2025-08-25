@@ -10,6 +10,9 @@ UV People adds user profile fields, per-location assignments, and a team grid sh
   - `columns` (default: 4) number of columns in the grid.
   - `highlight_primary` (0 or 1) emphasize primary team members.
 
+### Sorting
+Primary contacts are shown first in the grid, followed by other members sorted by their custom order weight and then alphabetically by display name.
+
 ## Usage
 
 ```html

@@ -32,3 +32,22 @@
     font-style: italic;
     color: #333;
 }
+
+/* Highlight primary contacts */
+.uv-team-grid .uv-person.uv-primary-contact {
+    border: 2px solid var(--uv-purple, #7a00cc);
+    position: relative;
+}
+
+.uv-team-grid .uv-person.uv-primary-contact::after {
+    content: "★";
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: var(--uv-purple, #7a00cc);
+    color: #fff;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
