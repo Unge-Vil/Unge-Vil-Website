@@ -31,10 +31,20 @@ add_action('plugins_loaded', function(){
     load_plugin_textdomain('uv-people', false, dirname(plugin_basename(__FILE__)) . '/languages');
 });
 
-// Localize strings for inline scripts
+// Admin assets and localizations
 add_action('admin_enqueue_scripts', function($hook){
     if('profile.php' === $hook || 'user-edit.php' === $hook){
-        wp_localize_script('jquery', 'UVPeople', [
+        wp_enqueue_media();
+        wp_enqueue_style('select2');
+        wp_enqueue_script('select2');
+        wp_enqueue_script(
+            'uv-people-admin',
+            plugin_dir_url(__FILE__) . 'assets/admin.js',
+            ['jquery', 'select2'],
+            '0.1',
+            true
+        );
+        wp_localize_script('uv-people-admin', 'UVPeople', [
             'selectAvatar' => __('Select Avatar', 'uv-people'),
         ]);
     }
@@ -176,7 +186,7 @@ function uv_people_profile_fields($user){
       <tr><th><label for="uv_locations"><?php esc_html_e('Locations','uv-people'); ?></label></th>
         <td>
             <input type="hidden" name="uv_locations[]" value="">
-            <select name="uv_locations[]" id="uv_locations" multiple style="height:8em;width:100%">
+            <select name="uv_locations[]" id="uv_locations" class="uv-location-select" multiple style="width:100%">
                 <?php foreach($locations as $loc): ?>
                 <option value="<?php echo esc_attr($loc->term_id); ?>" <?php selected(in_array($loc->term_id, $assigned)); ?>><?php echo esc_html($loc->name); ?></option>
                 <?php endforeach; ?>
@@ -199,21 +209,6 @@ function uv_people_profile_fields($user){
           <p class="description"><?php esc_html_e('This replaces Gravatar and uses a local image.','uv-people'); ?></p>
         </td></tr>
     </table>
-    <script>
-    jQuery(function($){
-        var frame;
-        $('#uv-avatar-upload').on('click', function(e){
-            e.preventDefault();
-            frame = wp.media({title: UVPeople.selectAvatar, multiple:false});
-            frame.on('select', function(){
-                var att = frame.state().get('selection').first().toJSON();
-                $('#uv_avatar_id').val(att.id);
-                $('#uv-avatar-preview').html('<img src="'+att.url+'" style="max-width:128px;border-radius:12px;">');
-            });
-            frame.open();
-        });
-    });
-    </script>
     <?php
 }
 add_action('show_user_profile','uv_people_profile_fields');
