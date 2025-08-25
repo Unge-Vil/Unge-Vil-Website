@@ -32,9 +32,8 @@ The website prioritizes **accessibility**, **privacy**, and **performance**, and
 
 ## Admin & Docs
 - **WP Admin language:** English is the default for all custom UI. (Public site content can be Norwegian/English.)
-- **Control Panel:** The `uv-admin` plugin (included) adds a clean **Unge Vil Control Panel** for editors (big buttons for common tasks), an admin bar shortcut, a custom admin color scheme, and a branded login screen.
-- **Docs:** Host internal guides on your Google Workspace Site. Put the URL in **Settings → Unge Vil Admin** and the Control Panel will link to it.
-- **Minimal dashboards:** For non‑admins, the Control Panel hides noisy widgets (e.g., Site Kit, Wordfence) to reduce clutter.
+- **Control Panel:** Create a WordPress page to serve as the Control Panel for editors. Build it with Kadence blocks and add big buttons linking to common admin tasks (News, Media, Pages, etc.).
+- **Docs:** Host internal guides on your Google Workspace Site and link to them from your Control Panel page.
 
 ## Quick Start (local or shared host)
 1. Install WordPress 6.x and the free **Kadence** theme.
