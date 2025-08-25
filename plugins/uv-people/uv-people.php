@@ -354,7 +354,7 @@ function uv_people_team_grid($atts){
         $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
         $quote_en = get_user_meta($uid,'uv_quote_en',true);
         $quote = ($lang==='en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
-        if($quote) echo '<div class="uv-quote">“'.esc_html($quote).'”</div>';
+        if($quote) echo '<blockquote class="uv-quote">'.esc_html($quote).'</blockquote>';
         // contact visibility
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
         if(($phone && $show_phone) || $email){
