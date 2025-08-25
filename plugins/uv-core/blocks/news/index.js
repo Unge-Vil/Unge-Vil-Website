@@ -25,8 +25,7 @@
                             value: location,
                             options: [ { label: __( 'Select', 'uv-core' ), value: '' } ].concat( options ),
                             onChange: function( value ) { setAttributes( { location: value } ); },
-                            __next40pxDefaultSize: true,
-                            __nextHasNoMarginBottom: true
+                            style: { height: '40px', marginBottom: 0 }
                         } ),
                         createElement( RangeControl, {
                             label: __( 'Count', 'uv-core' ),
@@ -34,8 +33,7 @@
                             max: 10,
                             value: count,
                             onChange: function( value ) { setAttributes( { count: value } ); },
-                            __next40pxDefaultSize: true,
-                            __nextHasNoMarginBottom: true
+                            style: { height: '40px', marginBottom: 0 }
                         } )
                     )
                 ),
