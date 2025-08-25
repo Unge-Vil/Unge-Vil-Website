@@ -11,7 +11,7 @@ This repository bootstraps the **Kadence child theme** and three lightweight plu
 It’s designed for **shared hosting**, with a focus on **accessibility, performance, and translation readiness**.
 
 ## Roadmap
-- **v0.5.0:** Deeper translation coverage and basic automation for packaging and releases.
+- **v0.5.1:** Runtime environment checks and unique version constants.
 - **v1.0.0:** Fully bilingual content with streamlined deployment and contributor workflows.
 
 ## Contents
@@ -92,7 +92,7 @@ While deploying or migrating, enable **Maintenance** plugin (already installed),
 - Add your how-to videos/links in **Dashboard → Team Guide** widget (config in `uv-people`).
 
 ## Building ZIPs from GitHub
-Tag a release like `v0.5.0` and GitHub Actions will attach zips for the child theme and each plugin.
+Tag a release like `v0.5.1` and GitHub Actions will attach zips for the child theme and each plugin.
 On shared hosting, download the zips from the release and install via **Plugins → Add New → Upload**.
 See [docs/UPDATING.md](docs/UPDATING.md) for step-by-step update instructions.
 
