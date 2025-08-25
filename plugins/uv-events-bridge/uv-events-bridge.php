@@ -30,8 +30,9 @@ function uv_upcoming_events_sc($atts){
         ]
     ];
     if($a['location']){
+        $location = sanitize_title($a['location']);
         $args['tax_query'] = [[
-            'taxonomy'=>'uv_location','field'=>'slug','terms'=>$a['location']
+            'taxonomy'=>'uv_location','field'=>'slug','terms'=>$location
         ]];
     }
     $q = new WP_Query($args);
