@@ -12,6 +12,10 @@
  */
 if (!defined('ABSPATH')) exit;
 
+if (!defined('PLUGIN_VERSION')) {
+    define('PLUGIN_VERSION', '0.5.0');
+}
+
 $update_checker_path = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
 if (file_exists($update_checker_path)) {
     require $update_checker_path;
@@ -41,7 +45,7 @@ add_action('admin_enqueue_scripts', function($hook){
             'uv-people-admin',
             plugin_dir_url(__FILE__) . 'assets/admin.js',
             ['jquery', 'select2'],
-            '0.5.0',
+            PLUGIN_VERSION,
             true
         );
         wp_localize_script('uv-people-admin', 'UVPeople', [
@@ -289,7 +293,7 @@ function uv_people_get_avatar($user_id){
 
 // Shortcode: Team grid by location
 function uv_people_team_grid($atts){
-    wp_enqueue_style('uv-team-grid-style');
+    wp_enqueue_style('uv-team-grid-style', plugin_dir_url(__FILE__) . 'blocks/team-grid/style.css', [], PLUGIN_VERSION);
     $a = shortcode_atts(['location'=>'','columns'=>4,'highlight_primary'=>1], $atts);
     if(!$a['location']) return '';
     // Guard against missing uv_location taxonomy when uv-core is inactive or removed
