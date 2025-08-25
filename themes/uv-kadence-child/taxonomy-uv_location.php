@@ -27,8 +27,11 @@ if ( $term && ! is_wp_error( $term ) ) {
                 </div>
             </div>
 
+            <h2><?php esc_html_e( 'Team', 'uv-kadence-child' ); ?></h2>
             <?php echo do_shortcode( '[uv_team location="' . esc_attr( $slug ) . '"]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            <h2><?php esc_html_e( 'News', 'uv-kadence-child' ); ?></h2>
             <?php echo do_shortcode( '[uv_news location="' . esc_attr( $slug ) . '"]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            <h2><?php esc_html_e( 'Activities', 'uv-kadence-child' ); ?></h2>
             <?php echo do_shortcode( '[uv_activities location="' . esc_attr( $slug ) . '"]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
         </article>
     </main>

@@ -244,12 +244,14 @@ function uv_people_profile_save($user_id){
 
 // Helper: get user avatar URL by our field
 function uv_people_get_avatar($user_id){
-    $id = get_user_meta($user_id,'uv_avatar_id',true);
+    $id   = get_user_meta($user_id,'uv_avatar_id',true);
+    $name = get_the_author_meta('display_name', $user_id);
+    $alt  = $name ? esc_attr($name) : '';
     if($id){
-        $img = wp_get_attachment_image($id, 'uv_avatar', false, ['alt'=>'']);
+        $img = wp_get_attachment_image($id, 'uv_avatar', false, ['alt'=>$alt]);
         return $img;
     }
-    return get_avatar($user_id); // fallback
+    return get_avatar($user_id, 96, '', $alt); // fallback
 }
 
 // Shortcode: Team grid by location
@@ -301,7 +303,8 @@ function uv_people_team_grid($atts){
         if($a['highlight_primary'] && $it['primary']) $classes .= ' uv-primary-contact';
         // Link each card to custom team template
         $url = add_query_arg('team', '1', get_author_posts_url($uid));
-        echo '<a class="'.esc_attr($classes).'" href="'.esc_url($url).'">';
+        $label = sprintf(__('View profile for %s','uv-people'), $name);
+        echo '<a class="'.esc_attr($classes).'" href="'.esc_url($url).'" aria-label="'.esc_attr($label).'">';
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
         echo '<h3>'.esc_html($name).'</h3>';
