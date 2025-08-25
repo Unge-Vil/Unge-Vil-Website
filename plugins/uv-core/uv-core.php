@@ -137,7 +137,7 @@ function uv_core_locations_grid($atts){
         $out .= '<li class="uv-card">';
         if($a['show_links']) $out .= '<a href="'.esc_url($url).'">';
         $out .= $img;
-        $out .= '<div class="uv-card-body"><strong>'.esc_html($t->name).'</strong></div>';
+        $out .= '<div class="uv-card-body"><h3>'.esc_html($t->name).'</h3></div>';
         if($a['show_links']) $out .= '</a>';
         $out .= '</li>';
     }
@@ -163,7 +163,7 @@ function uv_core_posts_news($atts){
         while($q->have_posts()){ $q->the_post();
             echo '<li class="uv-card"><a href="'.esc_url(get_permalink()).'">';
             if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
-            echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div></a></li>';
+            echo '<div class="uv-card-body"><h3>'.esc_html(get_the_title()).'</h3></div></a></li>';
         }
         echo '</ul>';
     }
@@ -188,7 +188,7 @@ function uv_core_activities($atts){
         while($q->have_posts()){ $q->the_post();
             echo '<li class="uv-card"><a href="'.esc_url(get_permalink()).'">';
             if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
-            echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong>';
+            echo '<div class="uv-card-body"><h3>'.esc_html(get_the_title()).'</h3>';
             if(has_excerpt()) echo '<div>'.esc_html(get_the_excerpt()).'</div>';
             echo '</div></a></li>';
         }

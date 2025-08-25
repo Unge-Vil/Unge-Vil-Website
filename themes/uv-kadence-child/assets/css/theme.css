@@ -1,19 +1,20 @@
 :root{
-  --uv-purple:#9900ff;
+  --uv-purple:#7a00cc;
   --uv-radius:16px;
 }
 .uv-card-list{list-style:none;display:grid;gap:1rem;padding:0}
 .uv-card{border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
 .uv-card a{display:block;text-decoration:none}
 .uv-card .uv-card-body{padding:12px}
-.uv-card:focus-visible,.uv-card a:focus-visible,a:focus-visible,.uv-person:focus-visible{outline:3px solid var(--uv-purple);outline-offset:2px;transition:outline-offset .2s ease-in-out}
+.uv-card:focus-visible,.uv-card a:focus-visible,a:focus-visible,.uv-person:focus-visible{outline:3px solid var(--uv-purple);outline-offset:4px;transition:outline-offset .2s ease-in-out}
 .uv-primary-contact{outline:3px solid var(--uv-purple)}
 .uv-team-grid{display:grid;gap:1rem}
 @media(min-width:768px){.uv-team-grid{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:1024px){.uv-team-grid{grid-template-columns:repeat(4,1fr)}}
 .uv-person{background:#fff;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);padding:1rem}
 .uv-person h3{margin:.3rem 0 0;font-size:1.1rem}
-.uv-person .uv-role{font-size:.95rem;opacity:.8}
-.uv-person .uv-quote{margin-top:.5rem;font-style:italic}
+.uv-person .uv-role{font-size:.95rem;color:#555}
+.uv-person .uv-quote{margin-top:.5rem;font-style:italic;color:#333}
+.uv-card-body h3{margin:0;font-size:1rem}
 
-body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#222}
