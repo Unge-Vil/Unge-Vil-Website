@@ -12,6 +12,7 @@ It’s designed for **shared hosting**, with a focus on **accessibility, perform
 
 ## Roadmap
 - **v0.5.1:** Runtime environment checks and unique version constants.
+- **v0.5.2:** Bug fixes and maintenance release.
 - **v1.0.0:** Fully bilingual content with streamlined deployment and contributor workflows.
 
 ## Contents
@@ -92,19 +93,19 @@ While deploying or migrating, enable **Maintenance** plugin (already installed),
 - Add your how-to videos/links in **Dashboard → Team Guide** widget (config in `uv-people`).
 
 ## Building ZIPs from GitHub
-Tag a release like `v0.5.1` and GitHub Actions will attach zips for the child theme and each plugin.
+Tag a release like `v0.5.2` and GitHub Actions will attach zips for the child theme and each plugin.
 On shared hosting, download the zips from the release and install via **Plugins → Add New → Upload**.
 See [docs/UPDATING.md](docs/UPDATING.md) for step-by-step update instructions.
 
 ### Tagging and making releases
 1. Commit your changes and push them to GitHub.
 2. In the repository, click **Releases** → **Draft a new release**.
-3. In **Tag version**, enter a new tag like `v0.5.1` (use `MAJOR.MINOR.PATCH` with a `v` prefix).
+3. In **Tag version**, enter a new tag like `v0.5.2` (use `MAJOR.MINOR.PATCH` with a `v` prefix).
 4. Choose **Create new tag on publish**, leaving the target branch as `main`.
 5. Add a title and notes, then click **Publish release**. GitHub Actions will build ZIPs for the theme and each plugin and attach them to the release.
 6. After the workflow completes, download the ZIPs from the release page and upload them to WordPress to update.
 
-> To tag from the command line instead, run `git tag v0.5.1 && git push origin v0.5.1` before drafting the release.
+> To tag from the command line instead, run `git tag v0.5.2 && git push origin v0.5.2` before drafting the release.
 
 ---
 © 2025 Unge Vil. MIT License.

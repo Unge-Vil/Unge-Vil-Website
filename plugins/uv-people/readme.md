@@ -24,6 +24,8 @@ UV People adds user profile fields, per-location assignments, and a team grid sh
 All strings use the `uv-people` text domain. Place translation files in `languages/` or manage translations through Polylang or another translation plugin.
 
 ## Changelog
+### 0.5.2
+- Bug fixes and version bump.
 ### 0.5.1
 - Rename version constant to `UV_PEOPLE_VERSION`.
 ### 0.5.0
