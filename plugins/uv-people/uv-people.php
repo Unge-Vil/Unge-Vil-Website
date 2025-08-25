@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UV People
  * Description: Extends WordPress Users with public fields, media-library avatars, per-location assignments, and a Team grid shortcode.
- * Version: 0.4.1
+ * Version: 0.5.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Unge Vil
@@ -41,7 +41,7 @@ add_action('admin_enqueue_scripts', function($hook){
             'uv-people-admin',
             plugin_dir_url(__FILE__) . 'assets/admin.js',
             ['jquery', 'select2'],
-            '0.1',
+            '0.5.0',
             true
         );
         wp_localize_script('uv-people-admin', 'UVPeople', [
