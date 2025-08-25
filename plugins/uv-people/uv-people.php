@@ -57,11 +57,6 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         $loc_id  = get_post_meta($post->ID, 'uv_location_id', true);
         $role_nb = get_post_meta($post->ID, 'uv_role_nb', true);
         $role_en = get_post_meta($post->ID, 'uv_role_en', true);
-        if(!$role_nb && !$role_en){
-            $legacy = get_post_meta($post->ID, 'uv_role_title', true);
-            $role_nb = $role_nb ?: $legacy;
-            $role_en = $role_en ?: $legacy;
-        }
         $primary = get_post_meta($post->ID, 'uv_is_primary', true);
         $order   = get_post_meta($post->ID, 'uv_order_weight', true);
         // Guard against missing uv_location taxonomy when uv-core is inactive or removed
@@ -173,11 +168,6 @@ function uv_people_profile_fields($user){
     }
     $assigned   = get_user_meta($user->ID, 'uv_location_terms', true);
     if(!is_array($assigned)) $assigned = [];
-    if(!$quote_nb && !$quote_en){
-        $legacy = get_user_meta($user->ID, 'uv_quote', true);
-        $quote_nb = $quote_nb ?: $legacy;
-        $quote_en = $quote_en ?: $legacy;
-    }
     ?>
     <h2><?php esc_html_e('Public Profile (Unge Vil)','uv-people'); ?></h2>
     <table class="form-table">
@@ -270,7 +260,6 @@ function uv_people_profile_save($user_id){
             if($post_id){
                 update_post_meta($post_id, 'uv_user_id', $user_id);
                 update_post_meta($post_id, 'uv_location_id', $lid);
-                update_post_meta($post_id, 'uv_role_title', '');
                 update_post_meta($post_id, 'uv_is_primary', '0');
                 update_post_meta($post_id, 'uv_order_weight', '10');
             }
@@ -321,7 +310,6 @@ function uv_people_team_grid($atts){
             'user_id'=>get_post_meta(get_the_ID(),'uv_user_id',true),
             'role_nb'=>get_post_meta(get_the_ID(),'uv_role_nb',true),
             'role_en'=>get_post_meta(get_the_ID(),'uv_role_en',true),
-            'role_legacy'=>get_post_meta(get_the_ID(),'uv_role_title',true),
             'primary'=>get_post_meta(get_the_ID(),'uv_is_primary',true) === '1',
             'order'=>intval(get_post_meta(get_the_ID(),'uv_order_weight',true) ?: 10),
         ];
@@ -354,15 +342,13 @@ function uv_people_team_grid($atts){
         echo '<h3>'.esc_html($name).'</h3>';
         $role_nb = $it['role_nb'];
         $role_en = $it['role_en'];
-        $legacy_role = $it['role_legacy'];
-        $role = ($lang==='en') ? ($role_en ?: $role_nb ?: $legacy_role) : ($role_nb ?: $role_en ?: $legacy_role);
+        $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
         if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
 
         // choose quote by language
         $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
         $quote_en = get_user_meta($uid,'uv_quote_en',true);
-        $legacy_q = get_user_meta($uid,'uv_quote',true);
-        $quote = ($lang==='en') ? ($quote_en ?: $quote_nb ?: $legacy_q) : ($quote_nb ?: $quote_en ?: $legacy_q);
+        $quote = ($lang==='en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
         if($quote) echo '<div class="uv-quote">“'.esc_html($quote).'”</div>';
         // contact visibility
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
@@ -410,3 +396,49 @@ add_action('admin_menu', function(){
         remove_menu_page('themes.php');
     }
 }, 999);
+
+// WP-CLI command to migrate legacy meta fields
+if (defined('WP_CLI') && WP_CLI) {
+    WP_CLI::add_command('uv-people migrate-legacy-meta', function () {
+        $migrated = 0;
+
+        // Migrate user quotes
+        $users = get_users(['meta_key' => 'uv_quote']);
+        foreach ($users as $user) {
+            $legacy = get_user_meta($user->ID, 'uv_quote', true);
+            if ($legacy) {
+                if (!get_user_meta($user->ID, 'uv_quote_nb', true)) {
+                    update_user_meta($user->ID, 'uv_quote_nb', $legacy);
+                }
+                if (!get_user_meta($user->ID, 'uv_quote_en', true)) {
+                    update_user_meta($user->ID, 'uv_quote_en', $legacy);
+                }
+                delete_user_meta($user->ID, 'uv_quote');
+                $migrated++;
+            }
+        }
+
+        // Migrate assignment roles
+        $assignments = get_posts([
+            'post_type'      => 'uv_team_assignment',
+            'posts_per_page' => -1,
+            'post_status'    => 'any',
+            'meta_key'       => 'uv_role_title',
+        ]);
+        foreach ($assignments as $post) {
+            $legacy = get_post_meta($post->ID, 'uv_role_title', true);
+            if ($legacy) {
+                if (!get_post_meta($post->ID, 'uv_role_nb', true)) {
+                    update_post_meta($post->ID, 'uv_role_nb', $legacy);
+                }
+                if (!get_post_meta($post->ID, 'uv_role_en', true)) {
+                    update_post_meta($post->ID, 'uv_role_en', $legacy);
+                }
+                delete_post_meta($post->ID, 'uv_role_title');
+                $migrated++;
+            }
+        }
+
+        WP_CLI::success(sprintf('Migrated %d legacy meta entries.', $migrated));
+    });
+}

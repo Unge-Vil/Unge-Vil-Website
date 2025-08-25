@@ -26,8 +26,7 @@ if ($user instanceof WP_User) :
 
         $quote_nb = get_user_meta($uid, 'uv_quote_nb', true);
         $quote_en = get_user_meta($uid, 'uv_quote_en', true);
-        $legacy_q = get_user_meta($uid, 'uv_quote', true);
-        $quote    = ($lang === 'en') ? ($quote_en ?: $quote_nb ?: $legacy_q) : ($quote_nb ?: $quote_en ?: $legacy_q);
+        $quote    = ($lang === 'en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
         if ($quote) {
             echo '<blockquote class="uv-quote">“' . esc_html($quote) . '”</blockquote>';
         }
