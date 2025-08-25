@@ -5,6 +5,8 @@
  * Version: 0.4.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
+ * Author: Unge Vil
+ * Author URI: https://www.ungevil.no/
  * Text Domain: uv-events-bridge
  * Update URI: https://github.com/Unge-Vil/Unge-Vil-Website/plugins/uv-events-bridge
  */
