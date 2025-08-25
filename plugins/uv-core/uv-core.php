@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UV Core
  * Description: CPTs, taxonomies, term images, and lightweight shortcodes.
- * Version: 0.5.0
+ * Version: 0.5.1
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Unge Vil
@@ -39,7 +39,7 @@ if (!$uv_core_php_ok || !$uv_core_wp_ok) {
 }
 
 if (!defined('UV_CORE_VERSION')) {
-    define('UV_CORE_VERSION', '0.5.0');
+    define('UV_CORE_VERSION', '0.5.1');
 }
 
 $update_checker_path = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
