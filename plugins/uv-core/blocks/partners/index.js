@@ -1,6 +1,6 @@
 ( function( wp ) {
-    const { createElement, useEffect, useState } = wp.element;
-    const apiFetch = wp.apiFetch;
+    const { createElement } = wp.element;
+    const { useSelect } = wp.data;
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
     const { InspectorControls, useBlockProps } = wp.blockEditor;
@@ -10,17 +10,28 @@
     registerBlockType( 'uv/partners', {
         edit: function( props ) {
             const { attributes: { location, type, columns }, setAttributes } = props;
-            const [ locations, setLocations ] = useState( [] );
-            const [ types, setTypes ] = useState( [] );
-            useEffect( function() {
-                apiFetch( { path: '/wp/v2/uv_location?per_page=-1' } ).then( setLocations );
-                apiFetch( { path: '/wp/v2/uv_partner_type?per_page=-1' } ).then( setTypes );
+            const query = { per_page: 100 };
+            const {
+                locations,
+                types,
+                locationError,
+                typeError
+            } = useSelect( function( select ) {
+                const core = select( 'core' );
+                return {
+                    locations: core.getEntityRecords( 'taxonomy', 'uv_location', query ),
+                    types: core.getEntityRecords( 'taxonomy', 'uv_partner_type', query ),
+                    locationError: core.getLastEntityRecordsError ? core.getLastEntityRecordsError( 'taxonomy', 'uv_location', query ) : null,
+                    typeError: core.getLastEntityRecordsError ? core.getLastEntityRecordsError( 'taxonomy', 'uv_partner_type', query ) : null
+                };
             }, [] );
-            const locationOptions = locations.map( function( t ) { return { label: t.name, value: t.slug }; } );
-            const typeOptions = types.map( function( t ) { return { label: t.name, value: t.slug }; } );
+            const locationOptions = locations ? locations.map( function( t ) { return { label: t.name, value: t.slug }; } ) : [];
+            const typeOptions = types ? types.map( function( t ) { return { label: t.name, value: t.slug }; } ) : [];
             return createElement( wp.element.Fragment, {},
                 createElement( InspectorControls, {},
                     createElement( PanelBody, { title: __( 'Settings', 'uv-core' ), initialOpen: true },
+                        locationError ?
+                        createElement( 'p', { className: 'uv-block-placeholder' }, __( 'Failed to load locations.', 'uv-core' ) ) :
                         createElement( SelectControl, {
                             label: __( 'Location', 'uv-core' ),
                             value: location,
@@ -28,6 +39,8 @@
                             onChange: function( value ) { setAttributes( { location: value } ); },
                             style: { height: '40px', marginBottom: 0 }
                         } ),
+                        typeError ?
+                        createElement( 'p', { className: 'uv-block-placeholder' }, __( 'Failed to load types.', 'uv-core' ) ) :
                         createElement( SelectControl, {
                             label: __( 'Type', 'uv-core' ),
                             value: type,
