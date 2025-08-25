@@ -30,6 +30,13 @@
                     createElement( ServerSideRender, {
                         block: 'uv/locations-grid',
                         attributes: props.attributes,
+                        LoadingResponsePlaceholder: function() {
+                            return createElement(
+                                'p',
+                                { className: 'uv-block-placeholder' },
+                                __( 'Loading preview…', 'uv-core' )
+                            );
+                        }
                     } )
                 )
             );
