@@ -166,6 +166,8 @@ add_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
 // User profile fields (phone, public email, quote, socials, avatar attachment)
 function uv_people_profile_fields($user){
     $phone      = get_user_meta($user->ID, 'uv_phone', true);
+    $position_nb = get_user_meta($user->ID, 'uv_position_nb', true);
+    $position_en = get_user_meta($user->ID, 'uv_position_en', true);
     $quote_nb   = get_user_meta($user->ID, 'uv_quote_nb', true);
     $quote_en   = get_user_meta($user->ID, 'uv_quote_en', true);
     $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
@@ -197,6 +199,10 @@ function uv_people_profile_fields($user){
             <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
             <br><label><input type="checkbox" name="uv_show_phone" value="1" <?php checked($show_phone); ?>> <?php esc_html_e('Show on profile','uv-people'); ?></label>
         </td></tr>
+      <tr><th><label for="uv_position_nb"><?php esc_html_e('Position (Norwegian)','uv-people'); ?></label></th>
+        <td><input type="text" name="uv_position_nb" id="uv_position_nb" value="<?php echo esc_attr($position_nb); ?>" class="regular-text"></td></tr>
+      <tr><th><label for="uv_position_en"><?php esc_html_e('Position (English)','uv-people'); ?></label></th>
+        <td><input type="text" name="uv_position_en" id="uv_position_en" value="<?php echo esc_attr($position_en); ?>" class="regular-text"></td></tr>
       <tr><th><label for="uv_quote_nb"><?php esc_html_e('Volunteer Quote (Norwegian)','uv-people'); ?></label></th>
         <td><textarea name="uv_quote_nb" id="uv_quote_nb" rows="4" class="large-text"><?php echo esc_textarea($quote_nb); ?></textarea></td></tr>
       <tr><th><label for="uv_quote_en"><?php esc_html_e('Volunteer Quote (English)','uv-people'); ?></label></th>
@@ -220,6 +226,8 @@ function uv_people_profile_save($user_id){
     if(!current_user_can('edit_user', $user_id)) return;
     check_admin_referer('update-user_' . $user_id);
     if(isset($_POST['uv_phone'])) update_user_meta($user_id, 'uv_phone', sanitize_text_field($_POST['uv_phone']));
+    if(isset($_POST['uv_position_nb'])) update_user_meta($user_id, 'uv_position_nb', sanitize_text_field($_POST['uv_position_nb']));
+    if(isset($_POST['uv_position_en'])) update_user_meta($user_id, 'uv_position_en', sanitize_text_field($_POST['uv_position_en']));
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
     if(isset($_POST['uv_quote_en'])) update_user_meta($user_id, 'uv_quote_en', sanitize_textarea_field($_POST['uv_quote_en']));
     if(isset($_POST['uv_avatar_id'])) update_user_meta($user_id, 'uv_avatar_id', absint($_POST['uv_avatar_id']));
@@ -337,8 +345,8 @@ function uv_people_team_grid($atts){
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
         echo '<h3>'.esc_html($name).'</h3>';
-        $role_nb = $it['role_nb'];
-        $role_en = $it['role_en'];
+        $role_nb = $it['role_nb'] ?: get_user_meta($uid,'uv_position_nb',true);
+        $role_en = $it['role_en'] ?: get_user_meta($uid,'uv_position_en',true);
         $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
         if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
 
