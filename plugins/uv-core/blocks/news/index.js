@@ -24,14 +24,18 @@
                             label: __( 'Location', 'uv-core' ),
                             value: location,
                             options: [ { label: __( 'Select', 'uv-core' ), value: '' } ].concat( options ),
-                            onChange: function( value ) { setAttributes( { location: value } ); }
+                            onChange: function( value ) { setAttributes( { location: value } ); },
+                            __next40pxDefaultSize: true,
+                            __nextHasNoMarginBottom: true
                         } ),
                         createElement( RangeControl, {
                             label: __( 'Count', 'uv-core' ),
                             min: 1,
                             max: 10,
                             value: count,
-                            onChange: function( value ) { setAttributes( { count: value } ); }
+                            onChange: function( value ) { setAttributes( { count: value } ); },
+                            __next40pxDefaultSize: true,
+                            __nextHasNoMarginBottom: true
                         } )
                     )
                 ),

@@ -17,12 +17,15 @@
                             min: 1,
                             max: 6,
                             value: columns,
-                            onChange: function( value ) { setAttributes( { columns: value } ); }
+                            onChange: function( value ) { setAttributes( { columns: value } ); },
+                            __next40pxDefaultSize: true,
+                            __nextHasNoMarginBottom: true
                         } ),
                         createElement( ToggleControl, {
                             label: __( 'Show Links', 'uv-core' ),
                             checked: show_links,
-                            onChange: function( value ) { setAttributes( { show_links: value } ); }
+                            onChange: function( value ) { setAttributes( { show_links: value } ); },
+                            __nextHasNoMarginBottom: true
                         } )
                     )
                 ),
