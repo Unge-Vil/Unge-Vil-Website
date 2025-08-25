@@ -17,19 +17,19 @@ add_action('plugins_loaded', function(){
 add_action('init', function(){
     // Taxonomies
     register_taxonomy('uv_location', ['post','uv_activity','uv_partner','uv_experience'], [
-        'label' => __('Locations', 'uv-core'),
+        'label' => esc_html__('Locations', 'uv-core'),
         'public' => true,
         'hierarchical' => true,
         'show_in_rest' => true,
     ]);
     register_taxonomy('uv_activity_type', ['uv_activity'], [
-        'label' => __('Activity Types', 'uv-core'),
+        'label' => esc_html__('Activity Types', 'uv-core'),
         'public' => true,
         'hierarchical' => true,
         'show_in_rest' => true,
     ]);
     register_taxonomy('uv_partner_type', ['uv_partner'], [
-        'label' => __('Partner Types', 'uv-core'),
+        'label' => esc_html__('Partner Types', 'uv-core'),
         'public' => true,
         'hierarchical' => true,
         'show_in_rest' => true,
@@ -37,7 +37,7 @@ add_action('init', function(){
 
     // CPTs
     register_post_type('uv_activity', [
-        'label' => __('Activities', 'uv-core'),
+        'label' => esc_html__('Activities', 'uv-core'),
         'public' => true,
         'show_in_rest' => true,
         'has_archive' => true,
@@ -46,7 +46,7 @@ add_action('init', function(){
         'taxonomies' => ['uv_location','uv_activity_type'],
     ]);
     register_post_type('uv_partner', [
-        'label' => __('Partners', 'uv-core'),
+        'label' => esc_html__('Partners', 'uv-core'),
         'public' => true,
         'show_in_rest' => true,
         'has_archive' => true,
@@ -55,7 +55,7 @@ add_action('init', function(){
         'taxonomies' => ['uv_location','uv_partner_type'],
     ]);
     register_post_type('uv_experience', [
-        'label' => __('Experiences', 'uv-core'),
+        'label' => esc_html__('Experiences', 'uv-core'),
         'public' => true,
         'show_in_rest' => true,
         'has_archive' => true,
@@ -72,7 +72,7 @@ add_action('admin_enqueue_scripts', function($hook){
         wp_enqueue_media();
         wp_enqueue_script('uv-term-image', plugins_url('assets/term-image.js', __FILE__), ['jquery'], '0.2.0', true);
         wp_localize_script('uv-term-image', 'uvTermImage', [
-            'selectImage' => __('Select Image', 'uv-core'),
+            'selectImage' => esc_html__('Select Image', 'uv-core'),
         ]);
     }
 });
@@ -260,25 +260,25 @@ add_shortcode('uv_partners','uv_core_partners');
 
 // Partner meta boxes
 add_action('add_meta_boxes_uv_partner', function(){
-    add_meta_box('uv_partner_url', __('External URL','uv-core'), function($post){
+    add_meta_box('uv_partner_url', esc_html__('External URL','uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_url', true);
         wp_nonce_field('uv_partner_url_action', 'uv_partner_url_nonce');
-        echo '<p><label>'.__('Website','uv-core').'</label><input type="url" style="width:100%" name="uv_partner_url" value="'.esc_attr($val).'"></p>';
+        echo '<p><label>'.esc_html__('Website','uv-core').'</label><input type="url" style="width:100%" name="uv_partner_url" value="'.esc_attr($val).'"></p>';
     }, 'side');
-    add_meta_box('uv_partner_display', __('Display','uv-core'), function($post){
+    add_meta_box('uv_partner_display', esc_html__('Display','uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_display', true);
         if(!$val) $val = 'logo_title';
         wp_nonce_field('uv_partner_display_action', 'uv_partner_display_nonce');
         echo '<p><label class="screen-reader-text" for="uv_partner_display">'.esc_html__('Display','uv-core').'</label>';
         echo '<select id="uv_partner_display" name="uv_partner_display">';
         $opts = [
-            'logo_only'   => __('Logo only','uv-core'),
-            'logo_title'  => __('Logo and title','uv-core'),
-            'circle_title'=> __('Circle & title','uv-core'),
-            'icon_title'  => __('Icon & title','uv-core'),
+            'logo_only'   => esc_html__('Logo only','uv-core'),
+            'logo_title'  => esc_html__('Logo and title','uv-core'),
+            'circle_title'=> esc_html__('Circle & title','uv-core'),
+            'icon_title'  => esc_html__('Icon & title','uv-core'),
         ];
         foreach($opts as $k=>$label){
-            echo '<option value="'.esc_attr($k).'"'.selected($val,$k,false).'>'.esc_html($label).'</option>';
+            echo '<option value="'.esc_attr($k).'"'.selected($val,$k,false).'>'.$label.'</option>';
         }
         echo '</select></p>';
     }, 'side');
@@ -305,14 +305,14 @@ add_action('save_post_uv_partner', function($post_id){
 
 // Related post meta box for experiences
 add_action('add_meta_boxes_uv_experience', function(){
-    add_meta_box('uv_related_post', __('Related Post','uv-core'), function($post){
+    add_meta_box('uv_related_post', esc_html__('Related Post','uv-core'), function($post){
         wp_nonce_field('uv_related_post_action', 'uv_related_post_nonce');
         $selected = get_post_meta($post->ID, 'uv_related_post', true);
         wp_dropdown_pages([
             'post_type' => 'post',
             'name' => 'uv_related_post',
             'selected' => $selected,
-            'show_option_none' => __('— None —', 'uv-core'),
+            'show_option_none' => esc_html__('— None —', 'uv-core'),
             'option_none_value' => 0,
         ]);
     }, 'side');
@@ -332,7 +332,7 @@ add_action('save_post_uv_experience', function($post_id){
 
 // Experience users meta box
 add_action('add_meta_boxes_uv_experience', function(){
-    add_meta_box('uv_experience_users', __('Team Members','uv-core'), function($post){
+    add_meta_box('uv_experience_users', esc_html__('Team Members','uv-core'), function($post){
         wp_nonce_field('uv_experience_users_action', 'uv_experience_users_nonce');
         $selected = get_post_meta($post->ID, 'uv_experience_users', false);
         $dropdown = wp_dropdown_users([
