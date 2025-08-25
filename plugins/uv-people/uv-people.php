@@ -356,16 +356,16 @@ add_action('init', function(){
 
 // Dashboard widget for team guide links
 add_action('wp_dashboard_setup', function(){
-    wp_add_dashboard_widget('uv_team_guide', __('Team Guide','uv-people'), function(){
-        echo '<p>'.__('Quick links for editors:', 'uv-people').'</p>';
+    wp_add_dashboard_widget('uv_team_guide', esc_html__('Team Guide','uv-people'), function(){
+        echo '<p>'.esc_html__('Quick links for editors:', 'uv-people').'</p>';
         echo '<ul>
-            <li><a href="edit-tags.php?taxonomy=uv_location">'.__('Manage Locations','uv-people').'</a></li>
-            <li><a href="edit.php?post_type=uv_activity">'.__('Activities','uv-people').'</a></li>
-            <li><a href="edit.php?post_type=uv_partner">'.__('Partners','uv-people').'</a></li>
-            <li><a href="edit.php">'.__('News Posts','uv-people').'</a></li>
-            <li><a href="edit.php?post_type=uv_team_assignment">'.__('Team Assignments','uv-people').'</a></li>
+            <li><a href="edit-tags.php?taxonomy=uv_location">'.esc_html__('Manage Locations','uv-people').'</a></li>
+            <li><a href="edit.php?post_type=uv_activity">'.esc_html__('Activities','uv-people').'</a></li>
+            <li><a href="edit.php?post_type=uv_partner">'.esc_html__('Partners','uv-people').'</a></li>
+            <li><a href="edit.php">'.esc_html__('News Posts','uv-people').'</a></li>
+            <li><a href="edit.php?post_type=uv_team_assignment">'.esc_html__('Team Assignments','uv-people').'</a></li>
         </ul>';
-        echo '<p>'.__('Add your own how-to video links here (edit uv-people plugin).','uv-people').'</p>';
+        echo '<p>'.esc_html__('Add your own how-to video links here (edit uv-people plugin).','uv-people').'</p>';
     });
 });
 
