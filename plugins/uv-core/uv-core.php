@@ -274,6 +274,60 @@ add_action('save_post_uv_experience', function($post_id){
     }
 });
 
+// Experience users meta box
+add_action('add_meta_boxes_uv_experience', function(){
+    add_meta_box('uv_experience_users', __('Team Members','uv-core'), function($post){
+        wp_nonce_field('uv_experience_users_action', 'uv_experience_users_nonce');
+        $selected = get_post_meta($post->ID, 'uv_experience_users', false);
+        $dropdown = wp_dropdown_users([
+            'name'             => 'uv_experience_users[]',
+            'id'               => 'uv_experience_users',
+            'selected'         => $selected,
+            'include_selected' => true,
+            'multi'            => true,
+            'show'             => 'display_name',
+            'number'           => 50,
+            'class'            => 'uv-user-select',
+            'echo'             => false,
+        ]);
+        echo str_replace('<select', '<select style="width:100%;height:8em;"', $dropdown);
+    }, 'side');
+});
+
+add_action('save_post_uv_experience', function($post_id){
+    if(!isset($_POST['uv_experience_users_nonce'])) return;
+    if(!current_user_can('edit_post', $post_id)) return;
+    check_admin_referer('uv_experience_users_action', 'uv_experience_users_nonce');
+    $user_ids = isset($_POST['uv_experience_users']) ? array_filter(array_map('absint', (array)$_POST['uv_experience_users'])) : [];
+    delete_post_meta($post_id, 'uv_experience_users');
+    foreach($user_ids as $uid){
+        add_post_meta($post_id, 'uv_experience_users', $uid);
+    }
+});
+
+// Register meta for querying
+add_action('init', function(){
+    register_post_meta('uv_experience', 'uv_experience_users', [
+        'single' => false,
+        'type' => 'integer',
+        'show_in_rest' => true,
+        'sanitize_callback' => 'absint',
+        'auth_callback' => function(){ return current_user_can('edit_posts'); },
+    ]);
+});
+
+function uv_core_get_experiences_for_user($user_id){
+    return get_posts([
+        'post_type' => 'uv_experience',
+        'posts_per_page' => -1,
+        'meta_query' => [[
+            'key' => 'uv_experience_users',
+            'value' => absint($user_id),
+            'compare' => '=',
+        ]]
+    ]);
+}
+
 // Block registration
 add_action('init', function(){
     register_block_type(__DIR__ . '/blocks/locations-grid', [
