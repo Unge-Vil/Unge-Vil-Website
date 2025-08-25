@@ -131,6 +131,44 @@ add_action('uv_location_edit_form_fields', function($term){
     <?php
 }, 10, 1);
 
+// Term page: uv_location
+add_action('uv_location_add_form_fields', function(){
+    ?>
+    <div class="form-field">
+      <?php wp_nonce_field('uv_location_page_action', 'uv_location_page_nonce'); ?>
+      <label for="uv_location_page"><?php esc_html_e('Location Page', 'uv-core'); ?></label>
+      <?php wp_dropdown_pages([
+          'post_type' => 'page',
+          'name' => 'uv_location_page',
+          'id' => 'uv_location_page',
+          'show_option_none' => esc_html__('— None —', 'uv-core'),
+          'option_none_value' => 0,
+      ]); ?>
+      <p class="description"><?php esc_html_e('Links will use this page if set.', 'uv-core'); ?></p>
+    </div>
+    <?php
+});
+
+add_action('uv_location_edit_form_fields', function($term){
+    $val = get_term_meta($term->term_id, 'uv_location_page', true);
+    ?>
+    <tr class="form-field">
+      <th scope="row"><label for="uv_location_page"><?php esc_html_e('Location Page', 'uv-core'); ?></label></th>
+      <td>
+        <?php wp_nonce_field('uv_location_page_action', 'uv_location_page_nonce'); ?>
+        <?php wp_dropdown_pages([
+            'post_type' => 'page',
+            'name' => 'uv_location_page',
+            'id' => 'uv_location_page',
+            'selected' => $val,
+            'show_option_none' => esc_html__('— None —', 'uv-core'),
+            'option_none_value' => 0,
+        ]); ?>
+      </td>
+    </tr>
+    <?php
+}, 10, 1);
+
 add_action('created_uv_location', function($term_id){
     if(!isset($_POST['uv_location_image_nonce'])) return;
     if(!current_user_can('manage_categories')) return;
@@ -148,6 +186,33 @@ add_action('edited_uv_location', function($term_id){
     }
 }, 10, 1);
 
+add_action('created_uv_location', function($term_id){
+    if(!isset($_POST['uv_location_page_nonce'])) return;
+    if(!current_user_can('manage_categories')) return;
+    check_admin_referer('uv_location_page_action', 'uv_location_page_nonce');
+    if(isset($_POST['uv_location_page'])){
+        $page_id = absint($_POST['uv_location_page']);
+        if($page_id){
+            update_term_meta($term_id, 'uv_location_page', $page_id);
+        } else {
+            delete_term_meta($term_id, 'uv_location_page');
+        }
+    }
+}, 10, 1);
+add_action('edited_uv_location', function($term_id){
+    if(!isset($_POST['uv_location_page_nonce'])) return;
+    if(!current_user_can('manage_categories')) return;
+    check_admin_referer('uv_location_page_action', 'uv_location_page_nonce');
+    if(isset($_POST['uv_location_page'])){
+        $page_id = absint($_POST['uv_location_page']);
+        if($page_id){
+            update_term_meta($term_id, 'uv_location_page', $page_id);
+        } else {
+            delete_term_meta($term_id, 'uv_location_page');
+        }
+    }
+}, 10, 1);
+
 // Shortcodes
 function uv_core_locations_grid($atts){
     $a = shortcode_atts(['columns'=>3,'show_links'=>1], $atts);
@@ -158,7 +223,8 @@ function uv_core_locations_grid($atts){
     foreach($terms as $t){
         $img_id = get_term_meta($t->term_id, 'uv_location_image', true);
         $img = $img_id ? wp_get_attachment_image($img_id, 'uv_card', false, ['alt'=>esc_attr($t->name)]) : '';
-        $url = get_term_link($t);
+        $page_id = get_term_meta($t->term_id, 'uv_location_page', true);
+        $url = $page_id ? get_permalink($page_id) : get_term_link($t);
         $out .= '<li class="uv-card">';
         if($a['show_links']) $out .= '<a href="'.esc_url($url).'">';
         $out .= $img;
@@ -170,6 +236,22 @@ function uv_core_locations_grid($atts){
     return $out;
 }
 add_shortcode('uv_locations_grid','uv_core_locations_grid');
+
+add_action('template_redirect', function(){
+    if(is_tax('uv_location')){
+        $term = get_queried_object();
+        if($term && !is_wp_error($term)){
+            $page_id = get_term_meta($term->term_id, 'uv_location_page', true);
+            if($page_id){
+                $url = get_permalink($page_id);
+                if($url){
+                    wp_safe_redirect($url, 301);
+                    exit;
+                }
+            }
+        }
+    }
+});
 
 function uv_core_posts_news($atts){
     $a = shortcode_atts(['location'=>'','count'=>3], $atts);
