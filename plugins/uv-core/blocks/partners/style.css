@@ -1,6 +1,7 @@
 .uv-card-list {
     display: grid;
     gap: 1.5rem;
+    align-items: stretch;
 }
 .uv-card {
     list-style: none;
