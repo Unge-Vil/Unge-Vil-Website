@@ -150,10 +150,11 @@ function uv_core_posts_news($atts){
     $a = shortcode_atts(['location'=>'','count'=>3], $atts);
     $args = ['post_type'=>'post','posts_per_page'=>intval($a['count'])];
     if($a['location']){
+        $loc = sanitize_title($a['location']);
         $args['tax_query'] = [[
             'taxonomy'=>'uv_location',
             'field'=>'slug',
-            'terms'=>$a['location']
+            'terms'=>$loc
         ]];
     }
     $q = new WP_Query($args);
@@ -176,8 +177,9 @@ function uv_core_activities($atts){
     $a = shortcode_atts(['location'=>'','columns'=>3], $atts);
     $args = ['post_type'=>'uv_activity','posts_per_page'=>-1];
     if($a['location']){
+        $loc = sanitize_title($a['location']);
         $args['tax_query'] = [[
-            'taxonomy'=>'uv_location','field'=>'slug','terms'=>$a['location']
+            'taxonomy'=>'uv_location','field'=>'slug','terms'=>$loc
         ]];
     }
     $q = new WP_Query($args);
@@ -203,11 +205,13 @@ function uv_core_partners($atts){
     $a = shortcode_atts(['location'=>'','type'=>'','columns'=>4], $atts);
     $args = ['post_type'=>'uv_partner','posts_per_page'=>-1];
     $taxq = [];
-    if($a['location']){
-        $taxq[] = ['taxonomy'=>'uv_location','field'=>'slug','terms'=>$a['location']];
+    $loc = $a['location'] ? sanitize_title($a['location']) : '';
+    $type = $a['type'] ? sanitize_title($a['type']) : '';
+    if($loc){
+        $taxq[] = ['taxonomy'=>'uv_location','field'=>'slug','terms'=>$loc];
     }
-    if($a['type']){
-        $taxq[] = ['taxonomy'=>'uv_partner_type','field'=>'slug','terms'=>$a['type']];
+    if($type){
+        $taxq[] = ['taxonomy'=>'uv_partner_type','field'=>'slug','terms'=>$type];
     }
     if($taxq) $args['tax_query'] = $taxq;
     $q = new WP_Query($args);
