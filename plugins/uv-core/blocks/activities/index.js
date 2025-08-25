@@ -5,6 +5,7 @@
     const { InspectorControls, useBlockProps } = wp.blockEditor;
     const { PanelBody, SelectControl, RangeControl } = wp.components;
     const { useSelect } = wp.data;
+    const ServerSideRender = wp.serverSideRender;
 
     registerBlockType( 'uv/activities', {
         edit: function( props ) {
@@ -33,7 +34,12 @@
                         } )
                     )
                 ),
-                createElement( 'div', useBlockProps(), __( 'Activities', 'uv-core' ) )
+                createElement( 'div', useBlockProps(),
+                    createElement( ServerSideRender, {
+                        block: 'uv/activities',
+                        attributes: props.attributes,
+                    } )
+                )
             );
         },
         save: function() { return null; }

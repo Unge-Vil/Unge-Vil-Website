@@ -5,6 +5,7 @@
     const { InspectorControls, useBlockProps } = wp.blockEditor;
     const { PanelBody, SelectControl, RangeControl } = wp.components;
     const { useSelect } = wp.data;
+    const ServerSideRender = wp.serverSideRender;
 
     registerBlockType( 'uv/team-grid', {
         edit: function( props ) {
@@ -33,7 +34,12 @@
                         } )
                     )
                 ),
-                createElement( 'div', useBlockProps(), __( 'Team Grid', 'uv-people' ) )
+                createElement( 'div', useBlockProps(),
+                    createElement( ServerSideRender, {
+                        block: 'uv/team-grid',
+                        attributes: props.attributes,
+                    } )
+                )
             );
         },
         save: function() {

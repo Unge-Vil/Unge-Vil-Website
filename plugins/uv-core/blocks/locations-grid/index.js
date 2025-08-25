@@ -4,6 +4,7 @@
     const { __ } = wp.i18n;
     const { InspectorControls, useBlockProps } = wp.blockEditor;
     const { PanelBody, RangeControl, ToggleControl } = wp.components;
+    const ServerSideRender = wp.serverSideRender;
 
     registerBlockType( 'uv/locations-grid', {
         edit: function( props ) {
@@ -25,7 +26,12 @@
                         } )
                     )
                 ),
-                createElement( 'div', useBlockProps(), __( 'Locations Grid', 'uv-core' ) )
+                createElement( 'div', useBlockProps(),
+                    createElement( ServerSideRender, {
+                        block: 'uv/locations-grid',
+                        attributes: props.attributes,
+                    } )
+                )
             );
         },
         save: function() { return null; }
