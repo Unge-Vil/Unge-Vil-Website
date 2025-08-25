@@ -82,10 +82,10 @@ add_action('uv_location_add_form_fields', function(){
     ?>
     <div class="form-field">
       <?php wp_nonce_field('uv_location_image_action', 'uv_location_image_nonce'); ?>
-      <label for="uv_location_image"><?php _e('Location Image', 'uv-core'); ?></label>
+      <label for="uv_location_image"><?php esc_html_e('Location Image', 'uv-core'); ?></label>
       <input type="hidden" id="uv_location_image" name="uv_location_image" value="">
-      <button class="button uv-upload"><?php _e('Select Image', 'uv-core'); ?></button>
-      <p class="description"><?php _e('Used on location cards.', 'uv-core'); ?></p>
+      <button class="button uv-upload"><?php esc_html_e('Select Image', 'uv-core'); ?></button>
+      <p class="description"><?php esc_html_e('Used on location cards.', 'uv-core'); ?></p>
     </div>
     <?php
 });
@@ -95,11 +95,11 @@ add_action('uv_location_edit_form_fields', function($term){
     $img = $val ? wp_get_attachment_image($val, 'thumbnail') : '';
     ?>
     <tr class="form-field">
-      <th scope="row"><label for="uv_location_image"><?php _e('Location Image', 'uv-core'); ?></label></th>
+      <th scope="row"><label for="uv_location_image"><?php esc_html_e('Location Image', 'uv-core'); ?></label></th>
       <td>
         <?php wp_nonce_field('uv_location_image_action', 'uv_location_image_nonce'); ?>
         <input type="hidden" id="uv_location_image" name="uv_location_image" value="<?php echo esc_attr($val); ?>">
-        <button class="button uv-upload"><?php _e('Select Image', 'uv-core'); ?></button>
+        <button class="button uv-upload"><?php esc_html_e('Select Image', 'uv-core'); ?></button>
         <div><?php echo $img; ?></div>
       </td>
     </tr>

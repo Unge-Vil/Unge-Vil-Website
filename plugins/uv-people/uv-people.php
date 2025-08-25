@@ -52,7 +52,7 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         $locations = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
         ?>
         <?php wp_nonce_field('uv_ta_save', 'uv_ta_nonce'); ?>
-        <p><label><?php _e('Users','uv-people'); ?></label>
+        <p><label><?php esc_html_e('Users','uv-people'); ?></label>
         <?php
         $dropdown = wp_dropdown_users([
             'name'             => 'uv_user_ids[]',
@@ -68,19 +68,19 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         echo str_replace('<select', '<select style="width:100%;height:8em;"', $dropdown);
         ?>
         </p>
-        <p><label><?php _e('Location','uv-people'); ?></label>
+        <p><label><?php esc_html_e('Location','uv-people'); ?></label>
         <select name="uv_location_id" style="width:100%">
-            <option value=""><?php _e('Select','uv-people'); ?></option>
+            <option value=""><?php esc_html_e('Select','uv-people'); ?></option>
             <?php foreach($locations as $t): ?>
             <option value="<?php echo esc_attr($t->term_id); ?>" <?php selected($loc_id, $t->term_id); ?>><?php echo esc_html($t->name); ?></option>
             <?php endforeach; ?>
         </select></p>
-        <p><label><?php _e('Role title (Norwegian)','uv-people'); ?></label>
+        <p><label><?php esc_html_e('Role title (Norwegian)','uv-people'); ?></label>
         <input type="text" name="uv_role_nb" value="<?php echo esc_attr($role_nb); ?>" style="width:100%"></p>
-        <p><label><?php _e('Role title (English)','uv-people'); ?></label>
+        <p><label><?php esc_html_e('Role title (English)','uv-people'); ?></label>
         <input type="text" name="uv_role_en" value="<?php echo esc_attr($role_en); ?>" style="width:100%"></p>
-        <p><label><input type="checkbox" name="uv_is_primary" value="1" <?php checked($primary, '1'); ?>> <?php _e('Primary contact','uv-people'); ?></label></p>
-        <p><label><?php _e('Order weight (lower = earlier)','uv-people'); ?></label>
+        <p><label><input type="checkbox" name="uv_is_primary" value="1" <?php checked($primary, '1'); ?>> <?php esc_html_e('Primary contact','uv-people'); ?></label></p>
+        <p><label><?php esc_html_e('Order weight (lower = earlier)','uv-people'); ?></label>
         <input type="number" name="uv_order_weight" value="<?php echo esc_attr($order?:'10'); ?>" style="width:100%"></p>
         <?php
     }, 'normal');
@@ -150,9 +150,9 @@ function uv_people_profile_fields($user){
         $quote_en = $quote_en ?: $legacy;
     }
     ?>
-    <h2><?php _e('Public Profile (Unge Vil)','uv-people'); ?></h2>
+    <h2><?php esc_html_e('Public Profile (Unge Vil)','uv-people'); ?></h2>
     <table class="form-table">
-      <tr><th><label for="uv_locations"><?php _e('Locations','uv-people'); ?></label></th>
+      <tr><th><label for="uv_locations"><?php esc_html_e('Locations','uv-people'); ?></label></th>
         <td>
             <input type="hidden" name="uv_locations[]" value="">
             <select name="uv_locations[]" id="uv_locations" multiple style="height:8em;width:100%">
@@ -161,21 +161,21 @@ function uv_people_profile_fields($user){
                 <?php endforeach; ?>
             </select>
         </td></tr>
-      <tr><th><label for="uv_phone"><?php _e('Phone (public optional)','uv-people'); ?></label></th>
+      <tr><th><label for="uv_phone"><?php esc_html_e('Phone (public optional)','uv-people'); ?></label></th>
         <td>
             <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
-            <br><label><input type="checkbox" name="uv_show_phone" value="1" <?php checked($show_phone); ?>> <?php _e('Show on profile','uv-people'); ?></label>
+            <br><label><input type="checkbox" name="uv_show_phone" value="1" <?php checked($show_phone); ?>> <?php esc_html_e('Show on profile','uv-people'); ?></label>
         </td></tr>
-      <tr><th><label for="uv_quote_nb"><?php _e('Volunteer Quote (Norwegian)','uv-people'); ?></label></th>
+      <tr><th><label for="uv_quote_nb"><?php esc_html_e('Volunteer Quote (Norwegian)','uv-people'); ?></label></th>
         <td><textarea name="uv_quote_nb" id="uv_quote_nb" rows="4" class="large-text"><?php echo esc_textarea($quote_nb); ?></textarea></td></tr>
-      <tr><th><label for="uv_quote_en"><?php _e('Volunteer Quote (English)','uv-people'); ?></label></th>
+      <tr><th><label for="uv_quote_en"><?php esc_html_e('Volunteer Quote (English)','uv-people'); ?></label></th>
         <td><textarea name="uv_quote_en" id="uv_quote_en" rows="4" class="large-text"><?php echo esc_textarea($quote_en); ?></textarea></td></tr>
-      <tr><th><?php _e('Avatar (Media Library)','uv-people'); ?></th>
+      <tr><th><?php esc_html_e('Avatar (Media Library)','uv-people'); ?></th>
         <td>
           <input type="hidden" id="uv_avatar_id" name="uv_avatar_id" value="<?php echo esc_attr($avatar_id); ?>">
-          <button class="button" id="uv-avatar-upload"><?php _e('Select Image','uv-people'); ?></button>
+          <button class="button" id="uv-avatar-upload"><?php esc_html_e('Select Image','uv-people'); ?></button>
           <div id="uv-avatar-preview"><?php echo $avatar_id ? wp_get_attachment_image($avatar_id,'uv_avatar') : ''; ?></div>
-          <p class="description"><?php _e('This replaces Gravatar and uses a local image.','uv-people'); ?></p>
+          <p class="description"><?php esc_html_e('This replaces Gravatar and uses a local image.','uv-people'); ?></p>
         </td></tr>
     </table>
     <script>
