@@ -6,9 +6,24 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Text Domain: uv-core
+ * Update URI: https://github.com/Unge-Vil/Unge-Vil-Website/plugins/uv-core
  */
 
 if (!defined('ABSPATH')) exit;
+
+$update_checker_path = __DIR__ . '/../../lib/plugin-update-checker/plugin-update-checker.php';
+if (file_exists($update_checker_path)) {
+    require $update_checker_path;
+    $uvCoreUpdateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+        'https://github.com/Unge-Vil/Unge-Vil-Website/',
+        __FILE__,
+        'uv-core'
+    );
+    $uvCoreUpdateChecker->setBranch('main');
+    if (method_exists($uvCoreUpdateChecker, 'setPathInsideRepository')) {
+        $uvCoreUpdateChecker->setPathInsideRepository('plugins/uv-core');
+    }
+}
 
 add_filter('block_categories_all', function($categories) {
     $categories[] = [

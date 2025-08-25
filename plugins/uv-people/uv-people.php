@@ -6,8 +6,23 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Text Domain: uv-people
+ * Update URI: https://github.com/Unge-Vil/Unge-Vil-Website/plugins/uv-people
  */
 if (!defined('ABSPATH')) exit;
+
+$update_checker_path = __DIR__ . '/../../lib/plugin-update-checker/plugin-update-checker.php';
+if (file_exists($update_checker_path)) {
+    require $update_checker_path;
+    $uvPeopleUpdateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+        'https://github.com/Unge-Vil/Unge-Vil-Website/',
+        __FILE__,
+        'uv-people'
+    );
+    $uvPeopleUpdateChecker->setBranch('main');
+    if (method_exists($uvPeopleUpdateChecker, 'setPathInsideRepository')) {
+        $uvPeopleUpdateChecker->setPathInsideRepository('plugins/uv-people');
+    }
+}
 
 // Load textdomain
 add_action('plugins_loaded', function(){
