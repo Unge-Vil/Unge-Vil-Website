@@ -1,6 +1,6 @@
 ( function( wp ) {
-    const { createElement, useEffect, useState } = wp.element;
-    const apiFetch = wp.apiFetch;
+    const { createElement } = wp.element;
+    const { useSelect } = wp.data;
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
     const { InspectorControls, useBlockProps } = wp.blockEditor;
@@ -10,16 +10,22 @@
     registerBlockType( 'uv/activities', {
         edit: function( props ) {
             const { attributes: { location, columns }, setAttributes } = props;
-            const [ terms, setTerms ] = useState( [] );
-            useEffect( function() {
-                apiFetch( { path: '/wp/v2/uv_location?per_page=-1' } ).then( setTerms );
+            const query = { per_page: 100 };
+            const { terms, error } = useSelect( function( select ) {
+                const core = select( 'core' );
+                return {
+                    terms: core.getEntityRecords( 'taxonomy', 'uv_location', query ),
+                    error: core.getLastEntityRecordsError ? core.getLastEntityRecordsError( 'taxonomy', 'uv_location', query ) : null
+                };
             }, [] );
-            const options = terms.map( function( t ) {
+            const options = terms ? terms.map( function( t ) {
                 return { label: t.name, value: t.slug };
-            } );
+            } ) : [];
             return createElement( wp.element.Fragment, {},
                 createElement( InspectorControls, {},
                     createElement( PanelBody, { title: __( 'Settings', 'uv-core' ), initialOpen: true },
+                        error ?
+                        createElement( 'p', { className: 'uv-block-placeholder' }, __( 'Failed to load locations.', 'uv-core' ) ) :
                         createElement( SelectControl, {
                             label: __( 'Location', 'uv-core' ),
                             value: location,
