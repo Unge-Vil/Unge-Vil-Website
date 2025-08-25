@@ -299,7 +299,8 @@ function uv_people_team_grid($atts){
         $email = get_the_author_meta('user_email', $uid);
         $classes = 'uv-person';
         if($a['highlight_primary'] && $it['primary']) $classes .= ' uv-primary-contact';
-        $url = get_author_posts_url($uid);
+        // Link each card to custom team template
+        $url = add_query_arg('team', '1', get_author_posts_url($uid));
         echo '<a class="'.esc_attr($classes).'" href="'.esc_url($url).'">';
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
