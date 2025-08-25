@@ -13,8 +13,8 @@
 
 if (!defined('ABSPATH')) exit;
 
-if (!defined('PLUGIN_VERSION')) {
-    define('PLUGIN_VERSION', '0.5.0');
+if (!defined('UV_CORE_VERSION')) {
+    define('UV_CORE_VERSION', '0.5.0');
 }
 
 $update_checker_path = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
@@ -99,7 +99,7 @@ add_action('admin_enqueue_scripts', function($hook){
     $screen = get_current_screen();
     if($screen && $screen->taxonomy === 'uv_location'){
         wp_enqueue_media();
-        wp_enqueue_script('uv-term-image', plugins_url('assets/term-image.js', __FILE__), ['jquery'], PLUGIN_VERSION, true);
+        wp_enqueue_script('uv-term-image', plugins_url('assets/term-image.js', __FILE__), ['jquery'], UV_CORE_VERSION, true);
         wp_localize_script('uv-term-image', 'uvTermImage', [
             'selectImage' => esc_html__('Select Image', 'uv-core'),
         ]);
