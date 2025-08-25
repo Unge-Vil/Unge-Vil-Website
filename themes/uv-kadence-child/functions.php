@@ -65,3 +65,90 @@ add_filter('author_template', function($template) {
     return $template;
 });
 
+// Register Control Panel admin page and redirect users there after login
+add_action('admin_menu', function() {
+    add_menu_page(
+        __('Control Panel', 'uv-kadence-child'),
+        __('Control Panel', 'uv-kadence-child'),
+        'read',
+        'uv-control-panel',
+        'uv_render_control_panel',
+        'dashicons-admin-home',
+        2
+    );
+});
+
+add_filter('login_redirect', function($redirect_to, $request, $user) {
+    if (is_wp_error($user)) {
+        return $redirect_to;
+    }
+    $page_id = absint(get_option('uv_control_panel_page_id'));
+    if ($page_id) {
+        return admin_url('admin.php?page=uv-control-panel');
+    }
+    return $redirect_to;
+}, 10, 3);
+
+/**
+ * Render the Control Panel admin page.
+ */
+function uv_render_control_panel() {
+    echo '<div class="wrap">';
+    $page_id = absint(get_option('uv_control_panel_page_id'));
+    if ($page_id) {
+        $post = get_post($page_id);
+        if ($post) {
+            echo apply_filters('the_content', $post->post_content);
+        } else {
+            esc_html_e('Control Panel page not found.', 'uv-kadence-child');
+        }
+    } else {
+        esc_html_e('No Control Panel page has been set.', 'uv-kadence-child');
+    }
+    echo '</div>';
+}
+
+// Register option for Control Panel page ID
+add_action('admin_init', function() {
+    register_setting('uv_settings', 'uv_control_panel_page_id', [
+        'type'              => 'integer',
+        'sanitize_callback' => 'absint',
+    ]);
+});
+
+// Add settings page for Control Panel configuration
+add_action('admin_menu', function() {
+    add_options_page(
+        __('UV Settings', 'uv-kadence-child'),
+        __('UV Settings', 'uv-kadence-child'),
+        'manage_options',
+        'uv-settings',
+        'uv_render_settings_page'
+    );
+});
+
+/**
+ * Render the UV settings page.
+ */
+function uv_render_settings_page() {
+    ?>
+    <div class="wrap">
+        <h1><?php esc_html_e('UV Settings', 'uv-kadence-child'); ?></h1>
+        <form action="options.php" method="post">
+            <?php settings_fields('uv_settings'); ?>
+            <table class="form-table" role="presentation">
+                <tr>
+                    <th scope="row">
+                        <label for="uv_control_panel_page_id"><?php esc_html_e('Control Panel Page ID', 'uv-kadence-child'); ?></label>
+                    </th>
+                    <td>
+                        <input type="number" id="uv_control_panel_page_id" name="uv_control_panel_page_id" value="<?php echo esc_attr(get_option('uv_control_panel_page_id')); ?>" class="regular-text" />
+                    </td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
+}
+
