@@ -54,3 +54,14 @@ add_action('init', function() {
     }
 });
 
+// Use custom team author template when ?team is present on author URLs
+add_filter('author_template', function($template) {
+    if (isset($_GET['team'])) {
+        $team_template = locate_template('author-team.php');
+        if ($team_template) {
+            return $team_template;
+        }
+    }
+    return $template;
+});
+
