@@ -330,7 +330,7 @@ function uv_people_team_grid($atts){
     });
     $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
     ob_start();
-    echo '<div class="uv-team-grid" style="grid-template-columns:repeat('.$cols.',1fr)">';
+    echo '<div class="uv-team-grid" role="list" style="grid-template-columns:repeat('.$cols.',1fr)">';
     foreach($items as $it){
         $uid = intval($it['user_id']);
         $name = get_the_author_meta('display_name', $uid);
@@ -341,7 +341,7 @@ function uv_people_team_grid($atts){
         // Link each card to custom team template
         $url = add_query_arg('team', '1', get_author_posts_url($uid));
         $label = sprintf(__('View profile for %s','uv-people'), $name);
-        echo '<a class="'.esc_attr($classes).'" href="'.esc_url($url).'" aria-label="'.esc_attr($label).'">';
+        echo '<a class="'.esc_attr($classes).'" href="'.esc_url($url).'" aria-label="'.esc_attr($label).'" role="listitem">';
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
         echo '<h3>'.esc_html($name).'</h3>';
