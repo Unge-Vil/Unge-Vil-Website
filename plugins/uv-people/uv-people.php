@@ -211,8 +211,8 @@ function uv_people_profile_fields($user){
     </table>
     <?php
 }
-add_action('show_user_profile','uv_people_profile_fields');
-add_action('edit_user_profile','uv_people_profile_fields');
+add_action('show_user_profile','uv_people_profile_fields',5);
+add_action('edit_user_profile','uv_people_profile_fields',5);
 
 add_action('personal_options_update','uv_people_profile_save');
 add_action('edit_user_profile_update','uv_people_profile_save');
