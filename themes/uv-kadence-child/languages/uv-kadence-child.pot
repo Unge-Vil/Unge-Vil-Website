@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: uv-kadence-child 0.1.0\n"
+"Project-Id-Version: uv-kadence-child 0.5.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-08-21 08:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: themes/uv-kadence-child/functions.php:30
+#: themes/uv-kadence-child/functions.php:55
 msgid "Locations Grid"
 msgstr ""
 
-#: themes/uv-kadence-child/functions.php:31
+#: themes/uv-kadence-child/functions.php:56
 msgid "News List"
 msgstr ""
 
-#: themes/uv-kadence-child/functions.php:32
+#: themes/uv-kadence-child/functions.php:57
 msgid "Activities"
 msgstr ""
 
-#: themes/uv-kadence-child/functions.php:33
+#: themes/uv-kadence-child/functions.php:58
 msgid "Partners"
 msgstr ""
 
-#: themes/uv-kadence-child/functions.php:34
+#: themes/uv-kadence-child/functions.php:59
 msgid "Team Grid"
 msgstr ""
