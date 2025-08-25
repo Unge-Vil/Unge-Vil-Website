@@ -269,7 +269,8 @@ function uv_people_team_grid($atts){
     wp_enqueue_style('uv-team-grid-style');
     $a = shortcode_atts(['location'=>'','columns'=>4,'highlight_primary'=>1], $atts);
     if(!$a['location']) return '';
-    $term = get_term_by('slug', $a['location'], 'uv_location');
+    $loc = sanitize_title($a['location']);
+    $term = get_term_by('slug', $loc, 'uv_location');
     if(!$term) return '';
     $q = new WP_Query([
         'post_type'=>'uv_team_assignment',
