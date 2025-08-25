@@ -25,8 +25,7 @@
                             value: location,
                             options: [ { label: __( 'Select', 'uv-people' ), value: '' } ].concat( options ),
                             onChange: function( value ) { setAttributes( { location: value } ); },
-                            __next40pxDefaultSize: true,
-                            __nextHasNoMarginBottom: true
+                            style: { height: '40px', marginBottom: 0 }
                         } ),
                         createElement( RangeControl, {
                             label: __( 'Columns', 'uv-people' ),
@@ -34,8 +33,7 @@
                             max: 6,
                             value: columns,
                             onChange: function( value ) { setAttributes( { columns: value } ); },
-                            __next40pxDefaultSize: true,
-                            __nextHasNoMarginBottom: true
+                            style: { height: '40px', marginBottom: 0 }
                         } )
                     )
                 ),

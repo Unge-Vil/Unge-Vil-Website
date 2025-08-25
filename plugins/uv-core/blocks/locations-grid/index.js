@@ -18,15 +18,13 @@
                             max: 6,
                             value: columns,
                             onChange: function( value ) { setAttributes( { columns: value } ); },
-                            __next40pxDefaultSize: true,
-                            __nextHasNoMarginBottom: true
+                            style: { height: '40px', marginBottom: 0 }
                         } ),
                         createElement( ToggleControl, {
                             label: __( 'Show Links', 'uv-core' ),
                             checked: show_links,
                             onChange: function( value ) { setAttributes( { show_links: value } ); },
-                            __next40pxDefaultSize: true,
-                            __nextHasNoMarginBottom: true
+                            style: { height: '40px', marginBottom: 0 }
                         } )
                     )
                 ),

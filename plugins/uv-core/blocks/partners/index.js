@@ -26,16 +26,14 @@
                             value: location,
                             options: [ { label: __( 'Select', 'uv-core' ), value: '' } ].concat( locationOptions ),
                             onChange: function( value ) { setAttributes( { location: value } ); },
-                            __next40pxDefaultSize: true,
-                            __nextHasNoMarginBottom: true
+                            style: { height: '40px', marginBottom: 0 }
                         } ),
                         createElement( SelectControl, {
                             label: __( 'Type', 'uv-core' ),
                             value: type,
                             options: [ { label: __( 'Select', 'uv-core' ), value: '' } ].concat( typeOptions ),
                             onChange: function( value ) { setAttributes( { type: value } ); },
-                            __next40pxDefaultSize: true,
-                            __nextHasNoMarginBottom: true
+                            style: { height: '40px', marginBottom: 0 }
                         } ),
                         createElement( RangeControl, {
                             label: __( 'Columns', 'uv-core' ),
@@ -43,8 +41,7 @@
                             max: 6,
                             value: columns,
                             onChange: function( value ) { setAttributes( { columns: value } ); },
-                            __next40pxDefaultSize: true,
-                            __nextHasNoMarginBottom: true
+                            style: { height: '40px', marginBottom: 0 }
                         } )
                     )
                 ),
