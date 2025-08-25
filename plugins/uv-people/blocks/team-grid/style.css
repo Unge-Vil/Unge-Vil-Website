@@ -16,3 +16,10 @@
 .uv-team-grid .uv-info > *:empty {
     display: none;
 }
+
+.uv-team-grid .uv-quote {
+    margin: .5rem 0 0;
+    padding: 0;
+    font-style: italic;
+    color: #333;
+}
