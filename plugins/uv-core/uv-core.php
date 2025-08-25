@@ -13,6 +13,31 @@
 
 if (!defined('ABSPATH')) exit;
 
+$uv_core_min_php = '7.4';
+$uv_core_min_wp  = '6.0';
+$uv_core_php_ok  = version_compare(PHP_VERSION, $uv_core_min_php, '>=');
+$uv_core_wp_ok   = version_compare(get_bloginfo('version'), $uv_core_min_wp, '>=');
+
+if (!$uv_core_php_ok || !$uv_core_wp_ok) {
+    add_action('admin_notices', function () use ($uv_core_php_ok, $uv_core_wp_ok, $uv_core_min_php, $uv_core_min_wp) {
+        echo '<div class="notice notice-error"><p>';
+        if (!$uv_core_php_ok) {
+            printf(esc_html__('UV Core requires PHP %s or higher.', 'uv-core'), esc_html($uv_core_min_php));
+            echo '<br>';
+        }
+        if (!$uv_core_wp_ok) {
+            printf(esc_html__('UV Core requires WordPress %s or higher.', 'uv-core'), esc_html($uv_core_min_wp));
+        }
+        echo '</p></div>';
+    });
+
+    if (!function_exists('deactivate_plugins')) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+    deactivate_plugins(plugin_basename(__FILE__));
+    return;
+}
+
 if (!defined('UV_CORE_VERSION')) {
     define('UV_CORE_VERSION', '0.5.0');
 }
