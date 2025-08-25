@@ -7,9 +7,7 @@
 - English-ready (we start in Norwegian but can translate later)
 
 **Later phases (after launch):**
-- Activities catalog
-- Events calendar
-- Competency/Experiences
+- Partner directory
 - Advanced translations for content
 - More automation/import tools
 
