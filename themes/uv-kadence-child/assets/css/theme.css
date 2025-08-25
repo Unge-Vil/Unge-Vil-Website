@@ -3,7 +3,7 @@
   --uv-radius:16px;
 }
 .uv-card-list{list-style:none;display:grid;gap:1rem;padding:0}
-.uv-card{border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
+.uv-card{display:flex;flex-direction:column;min-height:200px;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
 .uv-card a{display:block;text-decoration:none}
 .uv-card .uv-card-body{padding:12px}
 .uv-card:focus-visible,.uv-card a:focus-visible,a:focus-visible,.uv-person:focus-visible{outline:3px solid var(--uv-purple);outline-offset:4px;transition:outline-offset .2s ease-in-out}
