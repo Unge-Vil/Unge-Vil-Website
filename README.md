@@ -2,7 +2,6 @@
 
 ## Executive Summary (Plain Language)
 - **Goal by Sept 1:** Launch a fast, accessible site with Home, core info pages, and location-based **Team pages** (primary contacts highlighted). Norwegian first; English ready.
-- **v0.4.0:** Activities, Events bridge, Partners, Experiences live. Still to do: deeper translations, automation, etc.
 - **Admin:** Clean, branded Control Panel in English; link to our Google Workspace docs.
 - **Accessibility & SEO:** Built-in best practices; editors add alt text and clear headings.
 - **Future-proof:** Small, readable plugins; easy to extend. Volunteers welcome — this is largely vibe-coded with help from ChatGPT, so expert contributors are invited!

@@ -24,4 +24,4 @@
 - SEO pass (titles, slugs, meta; internal links).
 - Set up sitemaps in SEO plugin; submit to Google Search Console.
 
-*Optional after launch: Activities, Events, Partners, Experiences.*
+*Optional after launch: Partner directory, English translations, automation/import tools.*
