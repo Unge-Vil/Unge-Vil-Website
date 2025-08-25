@@ -2,13 +2,13 @@
     const { createElement } = wp.element;
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
-    const { InspectorControls } = wp.blockEditor;
+    const { InspectorControls, useBlockProps } = wp.blockEditor;
     const { PanelBody, RangeControl, ToggleControl } = wp.components;
 
     registerBlockType( 'uv/locations-grid', {
         edit: function( props ) {
             const { attributes: { columns, show_links }, setAttributes } = props;
-            return [
+            return createElement( wp.element.Fragment, {},
                 createElement( InspectorControls, {},
                     createElement( PanelBody, { title: __( 'Settings', 'uv-core' ), initialOpen: true },
                         createElement( RangeControl, {
@@ -25,8 +25,8 @@
                         } )
                     )
                 ),
-                createElement( 'p', {}, __( 'Locations Grid', 'uv-core' ) )
-            ];
+                createElement( 'div', useBlockProps(), __( 'Locations Grid', 'uv-core' ) )
+            );
         },
         save: function() { return null; }
     } );
