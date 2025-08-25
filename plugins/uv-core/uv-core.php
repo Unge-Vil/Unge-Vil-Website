@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UV Core
  * Description: CPTs, taxonomies, term images, and lightweight shortcodes.
- * Version: 0.3.0
+ * Version: 0.4.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Text Domain: uv-core
@@ -93,7 +93,7 @@ add_action('admin_enqueue_scripts', function($hook){
     $screen = get_current_screen();
     if($screen && $screen->taxonomy === 'uv_location'){
         wp_enqueue_media();
-        wp_enqueue_script('uv-term-image', plugins_url('assets/term-image.js', __FILE__), ['jquery'], '0.3.0', true);
+        wp_enqueue_script('uv-term-image', plugins_url('assets/term-image.js', __FILE__), ['jquery'], '0.4.0', true);
         wp_localize_script('uv-term-image', 'uvTermImage', [
             'selectImage' => esc_html__('Select Image', 'uv-core'),
         ]);
