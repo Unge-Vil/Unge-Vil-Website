@@ -65,7 +65,7 @@ add_action('init', function() {
             'uv-kadence-child/' . $slug,
             [
                 'title'   => $title,
-                'content' => include get_theme_file_path('patterns/' . $slug . '.php'),
+                'content' => include get_theme_file_path('shortcode-patterns/' . $slug . '.php'),
             ]
         );
     }
