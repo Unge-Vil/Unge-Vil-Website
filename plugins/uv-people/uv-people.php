@@ -49,7 +49,14 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         }
         $primary = get_post_meta($post->ID, 'uv_is_primary', true);
         $order   = get_post_meta($post->ID, 'uv_order_weight', true);
-        $locations = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
+        // Guard against missing uv_location taxonomy when uv-core is inactive or removed
+        $locations = [];
+        if (taxonomy_exists('uv_location')) {
+            $locations = get_terms(['taxonomy' => 'uv_location', 'hide_empty' => false]);
+            if (is_wp_error($locations)) {
+                $locations = [];
+            }
+        }
         ?>
         <?php wp_nonce_field('uv_ta_save', 'uv_ta_nonce'); ?>
         <p><label><?php esc_html_e('Users','uv-people'); ?></label>
@@ -141,7 +148,14 @@ function uv_people_profile_fields($user){
     $quote_en   = get_user_meta($user->ID, 'uv_quote_en', true);
     $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
     $avatar_id  = get_user_meta($user->ID, 'uv_avatar_id', true);
-    $locations  = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
+    // Guard against missing uv_location taxonomy when uv-core is inactive or removed
+    $locations  = [];
+    if (taxonomy_exists('uv_location')) {
+        $locations = get_terms(['taxonomy' => 'uv_location', 'hide_empty' => false]);
+        if (is_wp_error($locations)) {
+            $locations = [];
+        }
+    }
     $assigned   = get_user_meta($user->ID, 'uv_location_terms', true);
     if(!is_array($assigned)) $assigned = [];
     if(!$quote_nb && !$quote_en){
@@ -269,6 +283,10 @@ function uv_people_team_grid($atts){
     wp_enqueue_style('uv-team-grid-style');
     $a = shortcode_atts(['location'=>'','columns'=>4,'highlight_primary'=>1], $atts);
     if(!$a['location']) return '';
+    // Guard against missing uv_location taxonomy when uv-core is inactive or removed
+    if (!taxonomy_exists('uv_location')) {
+        return '';
+    }
     $loc = sanitize_title($a['location']);
     $term = get_term_by('slug', $loc, 'uv_location');
     if(!$term) return '';
