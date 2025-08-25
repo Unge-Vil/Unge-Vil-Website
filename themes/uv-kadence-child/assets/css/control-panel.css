@@ -3,4 +3,41 @@
  * Ensures Kadence blocks display correctly in the admin control panel.
  */
 
-/* Add custom styles for the control panel here if needed. */
+:root {
+  --uv-purple: #7a00cc;
+  --uv-radius: 16px;
+}
+
+body.toplevel_page_uv-control-panel {
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  color: #222;
+  line-height: 1.6;
+}
+
+body.toplevel_page_uv-control-panel .wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+@media (min-width: 782px) {
+  body.toplevel_page_uv-control-panel .wrap {
+    padding: 2rem;
+  }
+}
+
+body.toplevel_page_uv-control-panel h1,
+body.toplevel_page_uv-control-panel h2,
+body.toplevel_page_uv-control-panel h3 {
+  color: var(--uv-purple);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+body.toplevel_page_uv-control-panel .wp-block-columns {
+  gap: 1.5rem;
+}
+
+body.toplevel_page_uv-control-panel .wp-block-button__link {
+  border-radius: var(--uv-radius);
+}

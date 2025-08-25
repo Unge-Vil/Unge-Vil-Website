@@ -123,6 +123,15 @@ add_action('admin_enqueue_scripts', function($hook) {
     );
     $deps[] = 'kadence-theme';
 
+    // UV font stylesheet
+    wp_enqueue_style(
+        'uv-fonts',
+        get_stylesheet_directory_uri() . '/assets/css/fonts.css',
+        [],
+        wp_get_theme()->get('Version')
+    );
+    $deps[] = 'uv-fonts';
+
     // Kadence Blocks global stylesheet, if plugin is active
     if (defined('KADENCE_BLOCKS_VERSION') && defined('KADENCE_BLOCKS_MAIN_FILE')) {
         wp_enqueue_style(
