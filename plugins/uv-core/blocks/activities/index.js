@@ -38,6 +38,13 @@
                     createElement( ServerSideRender, {
                         block: 'uv/activities',
                         attributes: props.attributes,
+                        LoadingResponsePlaceholder: function() {
+                            return createElement(
+                                'p',
+                                { className: 'uv-block-placeholder' },
+                                __( 'Loading preview…', 'uv-core' )
+                            );
+                        }
                     } )
                 )
             );
