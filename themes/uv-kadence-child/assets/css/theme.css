@@ -7,7 +7,8 @@
 .uv-card a{display:block;text-decoration:none}
 .uv-card .uv-card-body{padding:12px}
 .uv-card:focus-visible,.uv-card a:focus-visible,a:focus-visible,.uv-person:focus-visible{outline:3px solid var(--uv-purple);outline-offset:4px;transition:outline-offset .2s ease-in-out}
-.uv-primary-contact{outline:3px solid var(--uv-purple)}
+.uv-primary-contact{position:relative;border:2px solid var(--uv-purple);border-radius:var(--uv-radius)}
+.uv-primary-contact::after{content:"★";position:absolute;top:4px;right:4px;background:var(--uv-purple);color:#fff;font-size:.75rem;line-height:1;padding:2px 4px;border-radius:3px}
 .uv-person{background:#fff;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);padding:1rem;display:flex;flex-direction:row;align-items:flex-start;gap:clamp(.5rem,2vw,1rem);flex-wrap:wrap;height:100%}
 .uv-avatar img{width:80px;height:80px;border-radius:50%;object-fit:cover}
 .uv-info{flex:1 1 200px;min-width:0}
