@@ -166,8 +166,8 @@ function uv_core_posts_news($atts){
             echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div></a></li>';
         }
         echo '</ul>';
-        wp_reset_postdata();
     }
+    wp_reset_postdata();
     return ob_get_clean();
 }
 add_shortcode('uv_news','uv_core_posts_news');
@@ -193,8 +193,8 @@ function uv_core_activities($atts){
             echo '</div></a></li>';
         }
         echo '</ul>';
-        wp_reset_postdata();
     }
+    wp_reset_postdata();
     return ob_get_clean();
 }
 add_shortcode('uv_activities','uv_core_activities');
@@ -225,8 +225,8 @@ function uv_core_partners($atts){
             echo '</div></a></li>';
         }
         echo '</ul>';
-        wp_reset_postdata();
     }
+    wp_reset_postdata();
     return ob_get_clean();
 }
 add_shortcode('uv_partners','uv_core_partners');

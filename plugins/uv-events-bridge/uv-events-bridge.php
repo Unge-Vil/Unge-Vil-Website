@@ -47,8 +47,8 @@ function uv_upcoming_events_sc($atts){
             echo '</div></a></li>';
         }
         echo '</ul>';
-        wp_reset_postdata();
     }
+    wp_reset_postdata();
     return ob_get_clean();
 }
 add_shortcode('uv_upcoming_events','uv_upcoming_events_sc');
