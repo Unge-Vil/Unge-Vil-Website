@@ -18,7 +18,7 @@ if ( have_posts() ) :
                 <?php the_content(); ?>
             </div>
             <?php
-            $related = get_post_meta( get_the_ID(), 'uv_related_post', true );
+            $related = absint( get_post_meta( get_the_ID(), 'uv_related_post', true ) );
             if ( $related ) :
                 ?>
                 <div class="uv-related-post">

@@ -258,6 +258,7 @@ add_action('add_meta_boxes_uv_experience', function(){
             'name' => 'uv_related_post',
             'selected' => $selected,
             'show_option_none' => __('— None —', 'uv-core'),
+            'option_none_value' => 0,
         ]);
     }, 'side');
 });
@@ -266,7 +267,7 @@ add_action('save_post_uv_experience', function($post_id){
     if(!isset($_POST['uv_related_post_nonce'])) return;
     if(!current_user_can('edit_post', $post_id)) return;
     check_admin_referer('uv_related_post_action', 'uv_related_post_nonce');
-    $val = isset($_POST['uv_related_post']) ? intval($_POST['uv_related_post']) : 0;
+    $val = isset($_POST['uv_related_post']) ? absint($_POST['uv_related_post']) : 0;
     if($val){
         update_post_meta($post_id, 'uv_related_post', $val);
     }else{
@@ -307,6 +308,13 @@ add_action('save_post_uv_experience', function($post_id){
 
 // Register meta for querying
 add_action('init', function(){
+    register_post_meta('uv_experience', 'uv_related_post', [
+        'single' => true,
+        'type' => 'integer',
+        'show_in_rest' => true,
+        'sanitize_callback' => 'absint',
+        'auth_callback' => function(){ return current_user_can('edit_posts'); },
+    ]);
     register_post_meta('uv_experience', 'uv_experience_users', [
         'single' => false,
         'type' => 'integer',
