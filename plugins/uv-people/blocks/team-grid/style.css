@@ -5,16 +5,22 @@
 }
 .uv-team-grid .uv-person {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: clamp(.5rem, 2vw, 1rem);
+    flex-wrap: wrap;
     text-decoration: none;
     height: 100%;
 }
 .uv-team-grid .uv-avatar img {
-    border-radius: 12px;
-    width: 100%;
-    height: auto;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.uv-team-grid .uv-info {
+    flex: 1 1 200px;
+    min-width: 0;
 }
 .uv-team-grid .uv-info > *:empty {
     display: none;
