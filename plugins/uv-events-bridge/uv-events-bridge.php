@@ -6,8 +6,23 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Text Domain: uv-events-bridge
+ * Update URI: https://github.com/Unge-Vil/Unge-Vil-Website/plugins/uv-events-bridge
  */
 if (!defined('ABSPATH')) exit;
+
+$update_checker_path = __DIR__ . '/../../lib/plugin-update-checker/plugin-update-checker.php';
+if (file_exists($update_checker_path)) {
+    require $update_checker_path;
+    $uvEventsBridgeUpdateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+        'https://github.com/Unge-Vil/Unge-Vil-Website/',
+        __FILE__,
+        'uv-events-bridge'
+    );
+    $uvEventsBridgeUpdateChecker->setBranch('main');
+    if (method_exists($uvEventsBridgeUpdateChecker, 'setPathInsideRepository')) {
+        $uvEventsBridgeUpdateChecker->setPathInsideRepository('plugins/uv-events-bridge');
+    }
+}
 
 add_action('init', function(){
     if(post_type_exists('tribe_events')){

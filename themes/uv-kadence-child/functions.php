@@ -2,6 +2,20 @@
 /**
  * UV Kadence Child theme functions
  */
+$update_checker_path = __DIR__ . '/../../lib/plugin-update-checker/plugin-update-checker.php';
+if (file_exists($update_checker_path)) {
+    require $update_checker_path;
+    $uvThemeUpdateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+        'https://github.com/Unge-Vil/Unge-Vil-Website/',
+        __FILE__,
+        'uv-kadence-child',
+        'theme'
+    );
+    $uvThemeUpdateChecker->setBranch('main');
+    if (method_exists($uvThemeUpdateChecker, 'setPathInsideRepository')) {
+        $uvThemeUpdateChecker->setPathInsideRepository('themes/uv-kadence-child');
+    }
+}
 add_action('wp_enqueue_scripts', function() {
     wp_enqueue_style('uv-child', get_stylesheet_uri(), [], wp_get_theme()->get('Version'));
 
