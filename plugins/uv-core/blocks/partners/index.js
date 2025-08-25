@@ -1,6 +1,7 @@
+import fetchTerms from '../utils/fetchTerms';
+
 ( function( wp ) {
     const { createElement } = wp.element;
-    const { useSelect } = wp.data;
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
     const { InspectorControls, useBlockProps } = wp.blockEditor;
@@ -11,20 +12,12 @@
         edit: function( props ) {
             const { attributes: { location, type, columns }, setAttributes } = props;
             const query = { per_page: 100 };
-            const {
-                locations,
-                types,
-                locationError,
-                typeError
-            } = useSelect( function( select ) {
-                const core = select( 'core' );
-                return {
-                    locations: core.getEntityRecords( 'taxonomy', 'uv_location', query ),
-                    types: core.getEntityRecords( 'taxonomy', 'uv_partner_type', query ),
-                    locationError: core.getLastEntityRecordsError ? core.getLastEntityRecordsError( 'taxonomy', 'uv_location', query ) : null,
-                    typeError: core.getLastEntityRecordsError ? core.getLastEntityRecordsError( 'taxonomy', 'uv_partner_type', query ) : null
-                };
-            }, [] );
+            const locationData = fetchTerms( 'uv_location', query );
+            const typeData = fetchTerms( 'uv_partner_type', query );
+            const locations = locationData.terms;
+            const types = typeData.terms;
+            const locationError = locationData.error;
+            const typeError = typeData.error;
             const locationOptions = locations ? locations.map( function( t ) { return { label: t.name, value: t.slug }; } ) : [];
             const typeOptions = types ? types.map( function( t ) { return { label: t.name, value: t.slug }; } ) : [];
             return createElement( wp.element.Fragment, {},
