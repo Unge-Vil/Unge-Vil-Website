@@ -19,9 +19,9 @@ if ($user instanceof WP_User) :
             <?php endif; ?>
         </header>
         <?php
-        $bio = get_the_author_meta('description', $uid);
-        if ($bio) {
-            echo '<div class="uv-bio">' . wpautop($bio) . '</div>';
+        $bio = get_the_author_meta( 'description', $uid );
+        if ( $bio ) {
+            echo '<div class="uv-bio">' . wp_kses_post( wpautop( $bio ) ) . '</div>';
         }
 
         $quote_nb = get_user_meta($uid, 'uv_quote_nb', true);
