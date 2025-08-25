@@ -265,7 +265,7 @@ add_action('add_meta_boxes_uv_partner', function(){
         $val = get_post_meta($post->ID, 'uv_partner_display', true);
         if(!$val) $val = 'logo_title';
         wp_nonce_field('uv_partner_display_action', 'uv_partner_display_nonce');
-        echo '<p><label class="screen-reader-text" for="uv_partner_display">'.__('Display','uv-core').'</label>';
+        echo '<p><label class="screen-reader-text" for="uv_partner_display">'.esc_html__('Display','uv-core').'</label>';
         echo '<select id="uv_partner_display" name="uv_partner_display">';
         $opts = [
             'logo_only'   => __('Logo only','uv-core'),
@@ -274,7 +274,7 @@ add_action('add_meta_boxes_uv_partner', function(){
             'icon_title'  => __('Icon & title','uv-core'),
         ];
         foreach($opts as $k=>$label){
-            echo '<option value="'.$k.'"'.selected($val,$k,false).'>'.$label.'</option>';
+            echo '<option value="'.esc_attr($k).'"'.selected($val,$k,false).'>'.esc_html($label).'</option>';
         }
         echo '</select></p>';
     }, 'side');
