@@ -1,16 +1,19 @@
 .uv-team-grid {
     display: grid;
     gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 .uv-team-grid .uv-person {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
     gap: 1rem;
     text-decoration: none;
+    height: 100%;
 }
 .uv-team-grid .uv-avatar img {
     border-radius: 12px;
-    max-width: 128px;
+    width: 100%;
     height: auto;
 }
 .uv-team-grid .uv-info > *:empty {
