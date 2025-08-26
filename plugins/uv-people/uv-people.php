@@ -332,20 +332,23 @@ function uv_people_team_grid($atts){
     $cols = max(1, min(6, intval($a['columns'])));
     $items = [];
     while($q->have_posts()){ $q->the_post();
+        $uid = get_post_meta(get_the_ID(),'uv_user_id',true);
+        $rank = get_user_meta($uid, 'uv_rank_number', true);
+        $rank = ($rank === '' ? 999 : intval($rank));
         $items[] = [
             'id'=>get_the_ID(),
-            'user_id'=>get_post_meta(get_the_ID(),'uv_user_id',true),
+            'user_id'=>$uid,
             'role_nb'=>get_post_meta(get_the_ID(),'uv_role_nb',true),
             'role_en'=>get_post_meta(get_the_ID(),'uv_role_en',true),
             'primary'=>get_post_meta(get_the_ID(),'uv_is_primary',true) === '1',
-            'order'=>intval(get_post_meta(get_the_ID(),'uv_order_weight',true) ?: 10),
+            'rank'=>$rank,
         ];
     }
     wp_reset_postdata();
-    // sort priority: primary ➜ order weight ➜ name
+    // sort priority: primary ➜ rank ➜ name
     usort($items, function($a,$b){
         if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
-        if($a['order'] !== $b['order']) return $a['order'] < $b['order'] ? -1 : 1;
+        if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
         $an = get_the_author_meta('display_name', $a['user_id']);
         $bn = get_the_author_meta('display_name', $b['user_id']);
         return strcasecmp($an, $bn);
