@@ -34,6 +34,8 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Add `.po/.mo` files in a `languages/` folder or use a translation plugin like Polylang.
 
 ## Changelog
+### 0.5.4
+- Version bump for release.
 ### 0.5.3
 - Version bump for release.
 ### 0.5.2
