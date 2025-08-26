@@ -17,7 +17,11 @@ jobs:
           for dir in plugins/* themes/*; do
             if [ -d "$dir" ]; then
               name="$(basename "$dir")"
-              zip -r "dist/${name}.zip" "$dir"
+              parent="$(dirname "$dir")"
+              (
+                cd "$parent"
+                zip -r "../dist/${name}.zip" "$name"
+              )
             fi
           done
       - name: Upload release assets
