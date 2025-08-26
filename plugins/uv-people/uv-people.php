@@ -124,7 +124,7 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         <p><label><?php esc_html_e('Order weight (lower = earlier)','uv-people'); ?></label>
         <input type="number" name="uv_order_weight" value="<?php echo esc_attr($order?:'10'); ?>" style="width:100%"></p>
         <?php
-    }, 'normal');
+    }, 'uv_team_assignment', 'normal');
 });
 
 function uv_save_team_assignment($post_id){
