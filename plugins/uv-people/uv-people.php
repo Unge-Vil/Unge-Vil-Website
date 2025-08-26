@@ -41,8 +41,9 @@ add_action('admin_enqueue_scripts', function($hook){
     $is_user_page = in_array($hook, ['profile.php', 'user-edit.php'], true);
     $is_control_panel = ('toplevel_page_uv-control-panel' === $hook);
     $is_assignment_cpt = $screen && 'uv_team_assignment' === $screen->post_type && in_array($hook, ['post.php', 'post-new.php'], true);
+    $is_location_term = $screen && 'uv_location' === $screen->taxonomy && 'term' === $screen->base;
 
-    if ($is_user_page || $is_control_panel || $is_assignment_cpt) {
+    if ($is_user_page || $is_control_panel || $is_assignment_cpt || $is_location_term) {
         if ($is_user_page) {
             wp_enqueue_media();
         }
@@ -407,6 +408,62 @@ add_action('wp_dashboard_setup', function(){
         echo '<p>'.esc_html__('Add your own how-to video links here (edit uv-people plugin).','uv-people').'</p>';
     });
 });
+
+// Primary team selection on uv_location term edit screen
+add_action('uv_location_edit_form_fields', function($term){
+    $term_id = $term->term_id;
+    $assignments = get_posts([
+        'post_type'      => 'uv_team_assignment',
+        'posts_per_page' => -1,
+        'post_status'    => 'any',
+        'meta_query'     => [
+            ['key' => 'uv_location_id', 'value' => strval($term_id), 'compare' => '='],
+        ],
+    ]);
+    $users = [];
+    $selected = [];
+    foreach ($assignments as $p) {
+        $uid = get_post_meta($p->ID, 'uv_user_id', true);
+        if ($uid) {
+            $uid = intval($uid);
+            $users[$uid] = get_the_author_meta('display_name', $uid);
+            if ('1' === get_post_meta($p->ID, 'uv_is_primary', true)) {
+                $selected[] = $uid;
+            }
+        }
+    }
+    wp_nonce_field('uv_location_primary_team', 'uv_location_primary_team_nonce');
+    echo '<tr class="form-field"><th scope="row"><label for="uv_primary_team">'.esc_html__('Primary contacts','uv-people').'</label></th><td>';
+    echo '<select multiple name="uv_primary_team[]" id="uv_primary_team" class="uv-user-select" style="width:100%;">';
+    foreach ($users as $uid => $name) {
+        $sel = in_array($uid, $selected, true) ? ' selected' : '';
+        echo '<option value="'.esc_attr($uid).'"'.$sel.'>'.esc_html($name).'</option>';
+    }
+    echo '</select></td></tr>';
+});
+
+function uv_people_save_location_primary_team($term_id){
+    if (!isset($_POST['uv_location_primary_team_nonce']) || !wp_verify_nonce($_POST['uv_location_primary_team_nonce'], 'uv_location_primary_team')) {
+        return;
+    }
+    $ids = isset($_POST['uv_primary_team']) ? array_filter(array_map('intval', (array)$_POST['uv_primary_team'])) : [];
+    update_term_meta($term_id, 'uv_primary_team', $ids);
+    $assignments = get_posts([
+        'post_type'      => 'uv_team_assignment',
+        'posts_per_page' => -1,
+        'post_status'    => 'any',
+        'meta_query'     => [
+            ['key' => 'uv_location_id', 'value' => strval($term_id), 'compare' => '='],
+        ],
+    ]);
+    foreach ($assignments as $p) {
+        $uid = intval(get_post_meta($p->ID, 'uv_user_id', true));
+        $is_primary = in_array($uid, $ids, true) ? '1' : '0';
+        update_post_meta($p->ID, 'uv_is_primary', $is_primary);
+    }
+}
+add_action('edited_uv_location', 'uv_people_save_location_primary_team');
+add_action('created_uv_location', 'uv_people_save_location_primary_team');
 
 // Tidy admin for non-admins (optional, minimal)
 add_action('admin_menu', function(){
