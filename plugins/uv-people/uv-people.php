@@ -352,7 +352,8 @@ function uv_people_team_grid($atts){
         // Link each card to custom team template
         $url = add_query_arg('team', '1', get_author_posts_url($uid));
         $label = sprintf(__('View profile for %s','uv-people'), $name);
-        echo '<a class="'.esc_attr($classes).'" href="'.esc_url($url).'" aria-label="'.esc_attr($label).'" role="listitem">';
+        echo '<article class="'.esc_attr($classes).'" role="listitem">';
+        echo '<a href="'.esc_url($url).'" aria-label="'.esc_attr($label).'">';
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
         echo '<h3>'.esc_html($name).'</h3>';
@@ -365,17 +366,20 @@ function uv_people_team_grid($atts){
         $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
         $quote_en = get_user_meta($uid,'uv_quote_en',true);
         $quote = ($lang==='en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
-        if($quote) echo '<blockquote class="uv-quote">'.esc_html($quote).'</blockquote>';
+        echo '</div>';
+        echo '</a>';
         // contact visibility
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
         if(($phone && $show_phone) || $email){
+            $email_label = ($lang==='en') ? __('Email:','uv-people') : __('E-post:','uv-people');
+            $phone_label = ($lang==='en') ? __('Mobile:','uv-people') : __('Mobil:','uv-people');
             echo '<div class="uv-contact">';
-            if($phone && $show_phone) echo '<div><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
-            if($email) echo '<div><a href="mailto:'.esc_attr($email).'">'.esc_html($email).'</a></div>';
+            if($email) echo '<div class="uv-email"><span class="label">'.esc_html($email_label).'</span><a href="mailto:'.esc_attr($email).'">'.esc_html($email).'</a></div>';
+            if($phone && $show_phone) echo '<div class="uv-mobile"><span class="label">'.esc_html($phone_label).'</span><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
             echo '</div>';
         }
-        echo '</div>';
-        echo '</a>';
+        if($quote) echo '<div class="uv-quote"><span class="uv-quote-icon">&ldquo;</span>'.esc_html($quote).'</div>';
+        echo '</article>';
     }
     echo '</div>';
     return ob_get_clean();
