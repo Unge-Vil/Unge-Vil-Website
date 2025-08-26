@@ -107,7 +107,7 @@ add_action('init', function(){
         'show_in_rest' => true,
         'has_archive' => true,
         'menu_icon' => 'dashicons-heart',
-        'supports' => ['title','editor','thumbnail','excerpt'],
+        'supports' => ['title','thumbnail','excerpt'],
         'taxonomies' => ['uv_location','uv_partner_type'],
     ]);
     register_post_type('uv_experience', [
