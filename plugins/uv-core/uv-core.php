@@ -446,6 +446,43 @@ add_action('save_post_uv_partner', function($post_id){
     }
 });
 
+function uv_core_sanitize_partner_display($val){
+    $allowed = ['logo_only','logo_title','circle_title','title_only'];
+    return in_array($val, $allowed, true) ? $val : 'circle_title';
+}
+
+add_action('init', function(){
+    register_post_meta('uv_partner', 'uv_partner_url', [
+        'single' => true,
+        'type' => 'string',
+        'show_in_rest' => true,
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+        'auth_callback' => function(){ return current_user_can('edit_posts'); },
+    ]);
+    register_post_meta('uv_partner', 'uv_partner_display', [
+        'single' => true,
+        'type' => 'string',
+        'show_in_rest' => true,
+        'default' => 'circle_title',
+        'sanitize_callback' => 'uv_core_sanitize_partner_display',
+        'auth_callback' => function(){ return current_user_can('edit_posts'); },
+    ]);
+});
+
+add_action('enqueue_block_editor_assets', function(){
+    $screen = get_current_screen();
+    if($screen && $screen->base === 'post' && $screen->post_type === 'uv_partner'){
+        wp_enqueue_script(
+            'uv-partner-meta',
+            plugins_url('assets/partner-meta.js', __FILE__),
+            ['wp-plugins','wp-edit-post','wp-element','wp-components','wp-data','wp-compose','wp-i18n'],
+            UV_CORE_VERSION,
+            true
+        );
+    }
+});
+
 // Related post meta box for experiences
 add_action('add_meta_boxes_uv_experience', function(){
     add_meta_box('uv_related_post', esc_html__('Related Post','uv-core'), function($post){
