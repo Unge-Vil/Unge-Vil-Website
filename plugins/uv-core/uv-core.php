@@ -364,7 +364,9 @@ function uv_core_partners($atts){
             if(!has_post_thumbnail()) $display = 'title_only';
             $classes = 'uv-card uv-partner uv-partner--'.esc_attr($display);
             echo '<li class="'.$classes.'">';
-            echo $link ? '<a href="'.esc_url($link).'" rel="noopener nofollow">' : '<a href="'.esc_url(get_permalink()).'">';
+            echo $link
+                ? '<a href="' . esc_url( $link ) . '" target="_blank" rel="noopener nofollow">'
+                : '<a href="' . esc_url( get_permalink() ) . '" target="_blank">';
             $fallback = '<span class="uv-partner-icon"></span>';
             $render_thumb = function($attrs = []) use ($fallback){
                 if(has_post_thumbnail()){
