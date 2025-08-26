@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: uv-kadence-child 0.5.3\n"
+"Project-Id-Version: uv-kadence-child 0.5.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-08-21 08:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
