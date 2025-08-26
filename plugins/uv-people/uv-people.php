@@ -184,6 +184,12 @@ function uv_people_profile_fields($user){
     $quote_en   = get_user_meta($user->ID, 'uv_quote_en', true);
     $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
     $avatar_id  = get_user_meta($user->ID, 'uv_avatar_id', true);
+    $rank_number = get_user_meta($user->ID, 'uv_rank_number', true);
+    if($rank_number === '') {
+        $rank_number = 999;
+    } else {
+        $rank_number = intval($rank_number);
+    }
     // Guard against missing uv_location taxonomy when uv-core is inactive or removed
     $locations  = [];
     if (taxonomy_exists('uv_location')) {
@@ -211,6 +217,8 @@ function uv_people_profile_fields($user){
             <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
             <br><label><input type="checkbox" name="uv_show_phone" value="1" <?php checked($show_phone); ?>> <?php esc_html_e('Show on profile','uv-people'); ?></label>
         </td></tr>
+      <tr><th><label for="uv_rank_number"><?php esc_html_e('Rank Number','uv-people'); ?></label></th>
+        <td><input type="number" name="uv_rank_number" id="uv_rank_number" value="<?php echo esc_attr($rank_number); ?>" class="small-text"></td></tr>
       <tr><th><label for="uv_position_nb"><?php esc_html_e('Position (Norwegian)','uv-people'); ?></label></th>
         <td><input type="text" name="uv_position_nb" id="uv_position_nb" value="<?php echo esc_attr($position_nb); ?>" class="regular-text"></td></tr>
       <tr><th><label for="uv_position_en"><?php esc_html_e('Position (English)','uv-people'); ?></label></th>
@@ -243,6 +251,8 @@ function uv_people_profile_save($user_id){
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
     if(isset($_POST['uv_quote_en'])) update_user_meta($user_id, 'uv_quote_en', sanitize_textarea_field($_POST['uv_quote_en']));
     if(isset($_POST['uv_avatar_id'])) update_user_meta($user_id, 'uv_avatar_id', absint($_POST['uv_avatar_id']));
+    $rank = isset($_POST['uv_rank_number']) && $_POST['uv_rank_number'] !== '' ? intval($_POST['uv_rank_number']) : 999;
+    update_user_meta($user_id, 'uv_rank_number', $rank);
     update_user_meta($user_id, 'uv_show_phone', isset($_POST['uv_show_phone']) ? '1' : '0');
     if(isset($_POST['uv_locations'])){
         $loc_ids = array_filter(array_map('intval', (array)$_POST['uv_locations']));
