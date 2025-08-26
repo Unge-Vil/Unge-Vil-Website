@@ -338,6 +338,27 @@ function uv_core_activities($atts){
 }
 add_shortcode('uv_activities','uv_core_activities');
 
+function uv_core_experiences($atts){
+    $a = shortcode_atts(['count'=>3], $atts);
+    $args = ['post_type'=>'uv_experience','posts_per_page'=>intval($a['count'])];
+    $q = new WP_Query($args);
+    ob_start();
+    if($q->have_posts()){
+        echo '<ul class="uv-card-list" style="grid-template-columns:repeat(3,1fr)">';
+        while($q->have_posts()){ $q->the_post();
+            echo '<li class="uv-card"><a href="'.esc_url(get_permalink()).'">';
+            if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
+            echo '<div class="uv-card-body"><h3>'.esc_html(get_the_title()).'</h3>';
+            if(has_excerpt()) echo '<div>'.esc_html(get_the_excerpt()).'</div>';
+            echo '</div></a></li>';
+        }
+        echo '</ul>';
+    }
+    wp_reset_postdata();
+    return ob_get_clean();
+}
+add_shortcode('uv_experiences','uv_core_experiences');
+
 function uv_core_partners($atts){
     $a = shortcode_atts(['location'=>'','type'=>'','columns'=>4], $atts);
     $args = ['post_type'=>'uv_partner','posts_per_page'=>-1];
@@ -582,6 +603,9 @@ add_action('init', function(){
     ]);
     register_block_type(__DIR__ . '/blocks/news', [
         'render_callback' => 'uv_core_posts_news'
+    ]);
+    register_block_type(__DIR__ . '/blocks/experiences', [
+        'render_callback' => 'uv_core_experiences'
     ]);
     register_block_type(__DIR__ . '/blocks/activities', [
         'render_callback' => 'uv_core_activities'
