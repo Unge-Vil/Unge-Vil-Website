@@ -400,10 +400,71 @@ function uv_people_team_grid($atts){
 }
 add_shortcode('uv_team','uv_people_team_grid');
 
+function uv_people_all_team_grid($atts){
+    wp_enqueue_style('uv-all-team-grid-style', plugin_dir_url(__FILE__) . 'blocks/all-team-grid/style.css', [], UV_PEOPLE_VERSION);
+    $a = shortcode_atts(['columns'=>4], $atts);
+    $users = get_users(['meta_key' => 'uv_rank_number', 'meta_compare' => 'EXISTS', 'number' => -1]);
+    if(!$users) return '';
+    $items = [];
+    foreach($users as $u){
+        $rank = get_user_meta($u->ID, 'uv_rank_number', true);
+        $rank = ($rank === '' ? 999 : intval($rank));
+        $items[] = ['user' => $u, 'rank' => $rank];
+    }
+    usort($items, function($a,$b){
+        if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
+        return strcasecmp($a['user']->display_name, $b['user']->display_name);
+    });
+    $cols = max(1, min(6, intval($a['columns'])));
+    $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
+    ob_start();
+    echo '<div class="uv-team-grid columns-'.$cols.'" role="list">';
+    foreach($items as $it){
+        $user = $it['user'];
+        $uid = $user->ID;
+        $name = $user->display_name;
+        $phone = get_user_meta($uid,'uv_phone',true);
+        $email = $user->user_email;
+        $classes = 'uv-person';
+        $url = add_query_arg('team','1',get_author_posts_url($uid));
+        $label = sprintf(__('View profile for %s','uv-people'), $name);
+        echo '<article class="'.esc_attr($classes).'" role="listitem">';
+        echo '<a href="'.esc_url($url).'" aria-label="'.esc_attr($label).'">';
+        echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
+        echo '<div class="uv-info">';
+        echo '<h3>'.esc_html($name).'</h3>';
+        $role_nb = get_user_meta($uid,'uv_position_nb',true);
+        $role_en = get_user_meta($uid,'uv_position_en',true);
+        $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
+        if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
+        echo '</div>';
+        echo '</a>';
+        $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
+        if(($phone && $show_phone) || $email){
+            $email_label = ($lang==='en') ? __('Email:','uv-people') : __('E-post:','uv-people');
+            $phone_label = ($lang==='en') ? __('Mobile:','uv-people') : __('Mobil:','uv-people');
+            echo '<div class="uv-contact">';
+            if($email) echo '<div class="uv-email"><span class="label">'.esc_html($email_label).'</span><a href="mailto:'.esc_attr($email).'">'.esc_html($email).'</a></div>';
+            if($phone && $show_phone) echo '<div class="uv-mobile"><span class="label">'.esc_html($phone_label).'</span><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
+            echo '</div>';
+        }
+        $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
+        $quote_en = get_user_meta($uid,'uv_quote_en',true);
+        $quote = ($lang==='en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
+        if($quote) echo '<div class="uv-quote"><span class="uv-quote-icon">&ldquo;</span>'.esc_html($quote).'</div>';
+        echo '</article>';
+    }
+    echo '</div>';
+    return ob_get_clean();
+}
+
 // Block registration
 add_action('init', function(){
     register_block_type(__DIR__ . '/blocks/team-grid', [
         'render_callback' => 'uv_people_team_grid'
+    ]);
+    register_block_type(__DIR__ . '/blocks/all-team-grid', [
+        'render_callback' => 'uv_people_all_team_grid'
     ]);
 });
 
