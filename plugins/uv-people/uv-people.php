@@ -37,8 +37,15 @@ add_action('plugins_loaded', function(){
 
 // Admin assets and localizations
 add_action('admin_enqueue_scripts', function($hook){
-    if('profile.php' === $hook || 'user-edit.php' === $hook){
-        wp_enqueue_media();
+    $screen = get_current_screen();
+    $is_user_page = in_array($hook, ['profile.php', 'user-edit.php'], true);
+    $is_control_panel = ('toplevel_page_uv-control-panel' === $hook);
+    $is_assignment_cpt = $screen && 'uv_team_assignment' === $screen->post_type && in_array($hook, ['post.php', 'post-new.php'], true);
+
+    if ($is_user_page || $is_control_panel || $is_assignment_cpt) {
+        if ($is_user_page) {
+            wp_enqueue_media();
+        }
         wp_enqueue_style('select2');
         wp_enqueue_script('select2');
         wp_enqueue_script(
@@ -102,7 +109,7 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
         ?>
         </p>
         <p><label><?php esc_html_e('Location','uv-people'); ?></label>
-        <select name="uv_location_id" style="width:100%">
+        <select name="uv_location_id" class="uv-location-select" style="width:100%">
             <option value=""><?php esc_html_e('Select','uv-people'); ?></option>
             <?php foreach($locations as $t): ?>
             <option value="<?php echo esc_attr($t->term_id); ?>" <?php selected($loc_id, $t->term_id); ?>><?php echo esc_html($t->name); ?></option>

@@ -10,5 +10,6 @@ jQuery(function($){
         });
         frame.open();
     });
-    $('#uv_locations').select2({width:'100%'});
+    $('.uv-location-select').select2({width:'100%'});
+    $('.uv-user-select').select2({width:'100%'});
 });
