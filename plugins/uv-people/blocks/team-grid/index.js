@@ -48,6 +48,13 @@ import fetchTerms from '../../../uv-core/blocks/utils/fetchTerms';
                                 { className: 'uv-block-placeholder' },
                                 __( 'Loading preview…', 'uv-people' )
                             );
+                        },
+                        EmptyResponsePlaceholder: function() {
+                            return createElement(
+                                'div',
+                                { className: 'uv-block-placeholder' },
+                                __( 'No team members found.', 'uv-people' )
+                            );
                         }
                     } )
                 )
