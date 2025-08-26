@@ -387,8 +387,11 @@ function uv_core_partners($atts){
                     break;
                 default:
                     $render_thumb();
-                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong>';
-                    if(has_excerpt()) echo '<div>'.esc_html(get_the_excerpt()).'</div>';
+                    echo '<div class="uv-card-body"><strong>' . esc_html( get_the_title() ) . '</strong>';
+                    $excerpt = get_the_excerpt();
+                    if ( $excerpt ) {
+                        echo '<div>' . esc_html( $excerpt ) . '</div>';
+                    }
                     echo '</div>';
                     break;
             }
