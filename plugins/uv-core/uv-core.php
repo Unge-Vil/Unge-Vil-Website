@@ -522,7 +522,7 @@ add_action('add_meta_boxes_uv_experience', function(){
             'show_option_none' => esc_html__('— None —', 'uv-core'),
             'option_none_value' => 0,
         ]);
-    }, null, 'side');
+    }, 'uv_experience', 'side');
 });
 
 add_action('save_post_uv_experience', function($post_id){
@@ -554,7 +554,7 @@ add_action('add_meta_boxes_uv_experience', function(){
             'echo'             => false,
         ]);
         echo str_replace('<select', '<select style="width:100%;height:8em;"', $dropdown);
-    }, null, 'side');
+    }, 'uv_experience', 'side');
 });
 
 add_action('save_post_uv_experience', function($post_id){
