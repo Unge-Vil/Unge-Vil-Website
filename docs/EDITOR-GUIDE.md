@@ -13,9 +13,10 @@ Simple steps for managing common content types in the WordPress dashboard.
 1. Go to **Partners → Add New**.
 2. Add a title and description.
 3. Use **Set featured image** for the partner logo if available.
-4. In the sidebar, assign a **Location** and, if needed, a **Partner Type**.
-5. In the **External URL** field, paste the partner's website.
-6. Publish the Partner.
+4. From the **Display** dropdown, choose the card layout (circle image & title, logo only, logo with title, or title only).
+5. In the sidebar, assign a **Location** and, if needed, a **Partner Type**.
+6. In the **External URL** field, paste the partner's website.
+7. Publish the Partner.
 
 ## Team Members
 1. Go to **Users → Add New** (or edit an existing user).
