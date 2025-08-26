@@ -72,7 +72,7 @@ add_action('plugins_loaded', function(){
 
 add_action('init', function(){
     // Taxonomies
-    register_taxonomy('uv_location', ['post','uv_activity','uv_partner','uv_experience'], [
+    register_taxonomy('uv_location', ['post','uv_activity','uv_partner'], [
         'label' => esc_html__('Locations', 'uv-core'),
         'public' => true,
         'hierarchical' => true,
@@ -117,7 +117,6 @@ add_action('init', function(){
         'has_archive' => true,
         'menu_icon' => 'dashicons-awards',
         'supports' => ['title','editor','thumbnail','excerpt','custom-fields'],
-        'taxonomies' => ['uv_location'],
     ]);
 });
 
