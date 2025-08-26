@@ -27,6 +27,9 @@ Primary contacts are shown first in the grid, followed by other members sorted b
 All strings use the `uv-people` text domain. Place translation files in `languages/` or manage translations through Polylang or another translation plugin.
 
 ## Changelog
+### 0.5.6
+- Specify post type and context for the assignment meta box.
+- Add editor placeholders for empty block data.
 ### 0.5.5
 - Version bump for release.
 ### 0.5.4

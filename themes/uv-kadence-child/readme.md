@@ -1,6 +1,8 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.5.6
+- Version bump for release; no functional changes.
 ### 0.5.5
 - Version bump for release.
 ### 0.5.4

@@ -23,6 +23,8 @@ UV Events Bridge connects Locations to The Events Calendar.
 All strings use the `uv-events-bridge` text domain. Translation files can be placed in `languages/` or handled by translation plugins.
 
 ## Changelog
+### 0.5.6
+- Version bump for release; no functional changes.
 ### 0.5.5
 - Version bump for release.
 ### 0.5.4
