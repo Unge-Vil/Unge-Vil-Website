@@ -311,7 +311,7 @@ function uv_people_team_grid($atts){
         ]
     ]);
     if(!$q->have_posts()) return '';
-    $cols = intval($a['columns']);
+    $cols = max(1, min(6, intval($a['columns'])));
     $items = [];
     while($q->have_posts()){ $q->the_post();
         $items[] = [
@@ -334,7 +334,7 @@ function uv_people_team_grid($atts){
     });
     $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
     ob_start();
-    echo '<div class="uv-team-grid" role="list" style="grid-template-columns:repeat('.$cols.',1fr)">';
+    echo '<div class="uv-team-grid columns-'.$cols.'" role="list">';
     foreach($items as $it){
         $uid = intval($it['user_id']);
         $name = get_the_author_meta('display_name', $uid);
