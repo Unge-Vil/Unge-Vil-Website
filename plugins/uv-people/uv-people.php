@@ -313,14 +313,19 @@ function uv_people_get_avatar($user_id){
 function uv_people_team_grid($atts){
     wp_enqueue_style('uv-team-grid-style', plugin_dir_url(__FILE__) . 'blocks/team-grid/style.css', [], UV_PEOPLE_VERSION);
     $a = shortcode_atts(['location'=>'','columns'=>4,'highlight_primary'=>1], $atts);
-    if(!$a['location']) return '';
+    $placeholder = function($msg){
+        return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
+            ? '<div class="uv-block-placeholder">'.esc_html($msg).'</div>'
+            : '';
+    };
+    if(!$a['location']) return $placeholder(__('Select a location.', 'uv-people'));
     // Guard against missing uv_location taxonomy when uv-core is inactive or removed
     if (!taxonomy_exists('uv_location')) {
-        return '';
+        return $placeholder(__('No locations available.', 'uv-people'));
     }
     $loc = sanitize_title($a['location']);
     $term = get_term_by('slug', $loc, 'uv_location');
-    if(!$term) return '';
+    if(!$term) return $placeholder(__('Location not found.', 'uv-people'));
     $q = new WP_Query([
         'post_type'=>'uv_team_assignment',
         'posts_per_page'=>-1,
@@ -328,7 +333,10 @@ function uv_people_team_grid($atts){
             ['key'=>'uv_location_id','value'=>strval($term->term_id),'compare'=>'=']
         ]
     ]);
-    if(!$q->have_posts()) return '';
+    if(!$q->have_posts()){
+        wp_reset_postdata();
+        return $placeholder(__('No team members found.', 'uv-people'));
+    }
     $cols = max(1, min(6, intval($a['columns'])));
     $items = [];
     while($q->have_posts()){ $q->the_post();
@@ -404,7 +412,11 @@ function uv_people_all_team_grid($atts){
     wp_enqueue_style('uv-all-team-grid-style', plugin_dir_url(__FILE__) . 'blocks/all-team-grid/style.css', [], UV_PEOPLE_VERSION);
     $a = shortcode_atts(['columns'=>4], $atts);
     $users = get_users(['meta_key' => 'uv_rank_number', 'meta_compare' => 'EXISTS', 'number' => -1]);
-    if(!$users) return '';
+    if(!$users){
+        return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
+            ? '<div class="uv-block-placeholder">'.esc_html__('No team members found.', 'uv-people').'</div>'
+            : '';
+    }
     $items = [];
     foreach($users as $u){
         $rank = get_user_meta($u->ID, 'uv_rank_number', true);

@@ -61,6 +61,13 @@ import fetchTerms from '../utils/fetchTerms';
                                 { className: 'uv-block-placeholder' },
                                 __( 'Loading preview…', 'uv-core' )
                             );
+                        },
+                        EmptyResponsePlaceholder: function() {
+                            return createElement(
+                                'div',
+                                { className: 'uv-block-placeholder' },
+                                __( 'No partners found.', 'uv-core' )
+                            );
                         }
                     } )
                 )

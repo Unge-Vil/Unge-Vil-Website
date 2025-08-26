@@ -247,7 +247,12 @@ add_action('edited_uv_location', function($term_id){
 function uv_core_locations_grid($atts){
     $a = shortcode_atts(['columns'=>3,'show_links'=>1], $atts);
     $terms = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
-    if(is_wp_error($terms) || empty($terms)) return '';
+    if(is_wp_error($terms) || empty($terms)){
+        if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
+            return '<div class="uv-block-placeholder">'.esc_html__('No locations found.', 'uv-core').'</div>';
+        }
+        return '';
+    }
     $cols = intval($a['columns']);
     $out = '<ul class="uv-card-list" style="grid-template-columns:repeat('.$cols.',1fr)">';
     foreach($terms as $t){
@@ -304,6 +309,10 @@ function uv_core_posts_news($atts){
             echo '<div class="uv-card-body"><h3>'.esc_html(get_the_title()).'</h3></div></a></li>';
         }
         echo '</ul>';
+    } else {
+        if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
+            echo '<div class="uv-block-placeholder">'.esc_html__('No posts found.', 'uv-core').'</div>';
+        }
     }
     wp_reset_postdata();
     return ob_get_clean();
@@ -332,6 +341,10 @@ function uv_core_activities($atts){
             echo '</div></a></li>';
         }
         echo '</ul>';
+    } else {
+        if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
+            echo '<div class="uv-block-placeholder">'.esc_html__('No activities found.', 'uv-core').'</div>';
+        }
     }
     wp_reset_postdata();
     return ob_get_clean();
@@ -353,6 +366,10 @@ function uv_core_experiences($atts){
             echo '</div></a></li>';
         }
         echo '</ul>';
+    } else {
+        if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
+            echo '<div class="uv-block-placeholder">'.esc_html__('No experiences found.', 'uv-core').'</div>';
+        }
     }
     wp_reset_postdata();
     return ob_get_clean();
@@ -420,6 +437,10 @@ function uv_core_partners($atts){
             echo '</a></li>';
         }
         echo '</ul>';
+    } else {
+        if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
+            echo '<div class="uv-block-placeholder">'.esc_html__('No partners found.', 'uv-core').'</div>';
+        }
     }
     wp_reset_postdata();
     return ob_get_clean();
