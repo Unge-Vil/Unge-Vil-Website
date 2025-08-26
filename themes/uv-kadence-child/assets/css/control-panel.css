@@ -1,6 +1,5 @@
 /*
  * Admin Control Panel styles.
- * Ensures Kadence blocks display correctly in the admin control panel.
  */
 
 :root {
@@ -34,10 +33,50 @@ body.toplevel_page_uv-control-panel h3 {
   line-height: 1.25;
 }
 
-body.toplevel_page_uv-control-panel .wp-block-columns {
-  gap: 1.5rem;
+.uv-admin-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-body.toplevel_page_uv-control-panel .wp-block-button__link {
+.uv-admin-logo {
+  max-width: 120px;
+  height: auto;
+}
+
+.uv-links {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.uv-link-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background: #fff;
   border-radius: var(--uv-radius);
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.uv-link-card:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.uv-link-card img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.uv-link-card span {
+  font-weight: 600;
+  color: #222;
 }

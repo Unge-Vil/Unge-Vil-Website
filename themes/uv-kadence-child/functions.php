@@ -99,11 +99,7 @@ add_filter('login_redirect', function($redirect_to, $request, $user) {
     if (is_wp_error($user)) {
         return $redirect_to;
     }
-    $page_id = absint(get_option('uv_control_panel_page_id'));
-    if ($page_id) {
-        return admin_url('admin.php?page=uv-control-panel');
-    }
-    return $redirect_to;
+    return admin_url('admin.php?page=uv-control-panel');
 }, 10, 3);
 
 // Enqueue styles for the Control Panel admin page
@@ -156,26 +152,73 @@ add_action('admin_enqueue_scripts', function($hook) {
  * Render the Control Panel admin page.
  */
 function uv_render_control_panel() {
-    echo '<div class="wrap">';
-    $page_id = absint(get_option('uv_control_panel_page_id'));
-    if ($page_id) {
-        $post = get_post($page_id);
-        if ($post) {
-            echo apply_filters('the_content', $post->post_content);
-        } else {
-            esc_html_e('Control Panel page not found.', 'uv-kadence-child');
-        }
-    } else {
-        esc_html_e('No Control Panel page has been set.', 'uv-kadence-child');
+    $user = wp_get_current_user();
+    $display_name = $user ? $user->display_name : '';
+    $img_base = get_stylesheet_directory_uri() . '/assets/img';
+    $knowledge_url = esc_url(get_option('uv_knowledge_url'));
+
+    $links = [
+        [
+            'url'    => admin_url('profile.php'),
+            'img'    => 'profile.png',
+            'label'  => __('Profile', 'uv-kadence-child'),
+            'target' => '_self',
+        ],
+        [
+            'url'    => admin_url('edit.php?post_type=uv_activity'),
+            'img'    => 'activities.png',
+            'label'  => __('Activities', 'uv-kadence-child'),
+            'target' => '_self',
+        ],
+        [
+            'url'    => admin_url('edit-tags.php?taxonomy=uv_location'),
+            'img'    => 'locations.png',
+            'label'  => __('Locations', 'uv-kadence-child'),
+            'target' => '_self',
+        ],
+        [
+            'url'    => admin_url('edit.php'),
+            'img'    => 'news.png',
+            'label'  => __('News', 'uv-kadence-child'),
+            'target' => '_self',
+        ],
+        [
+            'url'    => admin_url('edit.php?post_type=uv_partner'),
+            'img'    => 'partners.png',
+            'label'  => __('Partners', 'uv-kadence-child'),
+            'target' => '_self',
+        ],
+        [
+            'url'    => $knowledge_url ?: '#',
+            'img'    => 'knowledge.png',
+            'label'  => __('Knowledge', 'uv-kadence-child'),
+            'target' => '_blank',
+        ],
+    ];
+
+    echo '<div class="wrap uv-control-panel">';
+    echo '<div class="uv-admin-header">';
+    echo '<img class="uv-admin-logo" src="' . esc_url($img_base . '/UngeVil_admin_logo.png') . '" alt="Unge Vil" />';
+    echo '<h1>' . sprintf(esc_html__('Welcome, %s!', 'uv-kadence-child'), esc_html($display_name)) . '</h1>';
+    echo '</div>';
+
+    echo '<div class="uv-links">';
+    foreach ($links as $link) {
+        $target = $link['target'] === '_blank' ? ' target="_blank" rel="noopener"' : '';
+        echo '<a class="uv-link-card" href="' . esc_url($link['url']) . '"' . $target . '>';
+        echo '<img src="' . esc_url($img_base . '/' . $link['img']) . '" alt="" />';
+        echo '<span>' . esc_html($link['label']) . '</span>';
+        echo '</a>';
     }
+    echo '</div>';
     echo '</div>';
 }
 
-// Register option for Control Panel page ID
+// Register option for Knowledge URL
 add_action('admin_init', function() {
-    register_setting('uv_settings', 'uv_control_panel_page_id', [
-        'type'              => 'integer',
-        'sanitize_callback' => 'absint',
+    register_setting('uv_settings', 'uv_knowledge_url', [
+        'type'              => 'string',
+        'sanitize_callback' => 'esc_url_raw',
     ]);
 });
 
@@ -202,10 +245,10 @@ function uv_render_settings_page() {
             <table class="form-table" role="presentation">
                 <tr>
                     <th scope="row">
-                        <label for="uv_control_panel_page_id"><?php esc_html_e('Control Panel Page ID', 'uv-kadence-child'); ?></label>
+                        <label for="uv_knowledge_url"><?php esc_html_e('Knowledge URL', 'uv-kadence-child'); ?></label>
                     </th>
                     <td>
-                        <input type="number" id="uv_control_panel_page_id" name="uv_control_panel_page_id" value="<?php echo esc_attr(get_option('uv_control_panel_page_id')); ?>" class="regular-text" />
+                        <input type="url" id="uv_knowledge_url" name="uv_knowledge_url" value="<?php echo esc_attr(get_option('uv_knowledge_url')); ?>" class="regular-text" />
                     </td>
                 </tr>
             </table>
