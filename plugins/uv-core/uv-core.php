@@ -428,28 +428,30 @@ add_shortcode('uv_partners','uv_core_partners');
 
 // Partner meta boxes
 add_action('add_meta_boxes_uv_partner', function(){
-    add_meta_box('uv_partner_url', esc_html__('External URL','uv-core'), function($post){
+    add_meta_box('uv_partner_url', esc_html__('External URL', 'uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_url', true);
         wp_nonce_field('uv_partner_url_action', 'uv_partner_url_nonce');
-        echo '<p><label>'.esc_html__('Website','uv-core').'</label><input type="url" style="width:100%" name="uv_partner_url" value="'.esc_attr($val).'"></p>';
-    }, 'side');
-    add_meta_box('uv_partner_display', esc_html__('Display','uv-core'), function($post){
+        echo '<p><label>' . esc_html__('Website', 'uv-core') . '</label><input type="url" style="width:100%" name="uv_partner_url" value="' . esc_attr($val) . '"></p>';
+    }, 'uv_partner', 'side');
+    add_meta_box('uv_partner_display', esc_html__('Display', 'uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_display', true);
-        if(!$val) $val = has_post_thumbnail($post->ID) ? 'circle_title' : 'title_only';
+        if(!$val) {
+            $val = has_post_thumbnail($post->ID) ? 'circle_title' : 'title_only';
+        }
         wp_nonce_field('uv_partner_display_action', 'uv_partner_display_nonce');
-        echo '<p><label class="screen-reader-text" for="uv_partner_display">'.esc_html__('Display','uv-core').'</label>';
+        echo '<p><label class="screen-reader-text" for="uv_partner_display">' . esc_html__('Display', 'uv-core') . '</label>';
         echo '<select id="uv_partner_display" name="uv_partner_display">';
         $opts = [
-            'logo_only'   => esc_html__('Logo only','uv-core'),
-            'logo_title'  => esc_html__('Logo and title','uv-core'),
-            'circle_title'=> esc_html__('Circle & title','uv-core'),
-            'title_only'  => esc_html__('Title only','uv-core'),
+            'logo_only'   => esc_html__('Logo only', 'uv-core'),
+            'logo_title'  => esc_html__('Logo and title', 'uv-core'),
+            'circle_title'=> esc_html__('Circle & title', 'uv-core'),
+            'title_only'  => esc_html__('Title only', 'uv-core'),
         ];
-        foreach($opts as $k=>$label){
-            echo '<option value="'.esc_attr($k).'"'.selected($val,$k,false).'>'.$label.'</option>';
+        foreach($opts as $k => $label){
+            echo '<option value="' . esc_attr($k) . '"' . selected($val, $k, false) . '>' . $label . '</option>';
         }
         echo '</select></p>';
-    }, 'side');
+    }, 'uv_partner', 'side');
 });
 add_action('save_post_uv_partner', function($post_id){
     if(!current_user_can('edit_post', $post_id)) return;
