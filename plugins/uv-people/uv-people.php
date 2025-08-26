@@ -332,7 +332,7 @@ function uv_people_team_grid($atts){
         ];
     }
     wp_reset_postdata();
-    // sort: primary desc, order asc, name asc
+    // sort priority: primary ➜ order weight ➜ name
     usort($items, function($a,$b){
         if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
         if($a['order'] !== $b['order']) return $a['order'] < $b['order'] ? -1 : 1;
