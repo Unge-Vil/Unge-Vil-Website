@@ -18,7 +18,7 @@ UV Core registers CPTs, taxonomies, and shortcodes.
   - `location` (optional) Location slug.
   - `type` (optional) Partner Type slug.
   - `columns` (default: 4) number of columns.
-  - Each Partner post has a **Display** option: `logo_only`, `logo_title`, `circle_title`, or `icon_title`.
+  - Each Partner post has a **Display** option: `circle_title` (default), `logo_only`, `logo_title`, or `title_only`.
 
 ## Usage
 

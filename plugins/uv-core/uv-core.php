@@ -360,7 +360,8 @@ function uv_core_partners($atts){
         while($q->have_posts()){ $q->the_post();
             $link = get_post_meta(get_the_ID(), 'uv_partner_url', true);
             $display = get_post_meta(get_the_ID(), 'uv_partner_display', true);
-            if(!$display) $display = 'logo_title';
+            if(!$display) $display = has_post_thumbnail() ? 'circle_title' : 'title_only';
+            if(!has_post_thumbnail()) $display = 'title_only';
             $classes = 'uv-card uv-partner uv-partner--'.esc_attr($display);
             echo '<li class="'.$classes.'">';
             echo $link ? '<a href="'.esc_url($link).'" rel="noopener nofollow">' : '<a href="'.esc_url(get_permalink()).'">';
@@ -379,10 +380,6 @@ function uv_core_partners($atts){
                     break;
                 case 'circle_title':
                     $render_thumb(['class'=>'is-circle']);
-                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div>';
-                    break;
-                case 'icon_title':
-                    $render_thumb(['class'=>'is-icon']);
                     echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div>';
                     break;
                 case 'title_only':
@@ -413,7 +410,7 @@ add_action('add_meta_boxes_uv_partner', function(){
     }, 'side');
     add_meta_box('uv_partner_display', esc_html__('Display','uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_display', true);
-        if(!$val) $val = 'logo_title';
+        if(!$val) $val = has_post_thumbnail($post->ID) ? 'circle_title' : 'title_only';
         wp_nonce_field('uv_partner_display_action', 'uv_partner_display_nonce');
         echo '<p><label class="screen-reader-text" for="uv_partner_display">'.esc_html__('Display','uv-core').'</label>';
         echo '<select id="uv_partner_display" name="uv_partner_display">';
@@ -421,7 +418,6 @@ add_action('add_meta_boxes_uv_partner', function(){
             'logo_only'   => esc_html__('Logo only','uv-core'),
             'logo_title'  => esc_html__('Logo and title','uv-core'),
             'circle_title'=> esc_html__('Circle & title','uv-core'),
-            'icon_title'  => esc_html__('Icon & title','uv-core'),
             'title_only'  => esc_html__('Title only','uv-core'),
         ];
         foreach($opts as $k=>$label){
@@ -443,8 +439,8 @@ add_action('save_post_uv_partner', function($post_id){
     if(isset($_POST['uv_partner_display_nonce'])){
         check_admin_referer('uv_partner_display_action', 'uv_partner_display_nonce');
         if(isset($_POST['uv_partner_display'])){
-            $allowed = ['logo_only','logo_title','circle_title','icon_title','title_only'];
-            $val = in_array($_POST['uv_partner_display'],$allowed) ? $_POST['uv_partner_display'] : 'logo_title';
+            $allowed = ['logo_only','logo_title','circle_title','title_only'];
+            $val = in_array($_POST['uv_partner_display'],$allowed) ? $_POST['uv_partner_display'] : 'circle_title';
             update_post_meta($post_id, 'uv_partner_display', $val);
         }
     }
