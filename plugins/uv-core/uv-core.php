@@ -536,13 +536,23 @@ add_action('add_meta_boxes_uv_experience', function(){
     add_meta_box('uv_related_post', esc_html__('Related Post','uv-core'), function($post){
         wp_nonce_field('uv_related_post_action', 'uv_related_post_nonce');
         $selected = get_post_meta($post->ID, 'uv_related_post', true);
-        wp_dropdown_pages([
-            'post_type' => 'post',
-            'name' => 'uv_related_post',
-            'selected' => $selected,
-            'show_option_none' => esc_html__('— None —', 'uv-core'),
-            'option_none_value' => 0,
+        $posts    = get_posts([
+            'post_type'      => 'post',
+            'posts_per_page' => -1,
         ]);
+
+        $dropdown  = '<select name="uv_related_post">';
+        $dropdown .= '<option value="0">' . esc_html__('— None —', 'uv-core') . '</option>';
+        foreach ($posts as $p) {
+            $dropdown .= sprintf(
+                '<option value="%1$s"%2$s>%3$s</option>',
+                esc_attr($p->ID),
+                selected($selected, $p->ID, false),
+                esc_html(get_the_title($p))
+            );
+        }
+        $dropdown .= '</select>';
+        echo $dropdown;
     }, 'uv_experience', 'side', 'high');
 });
 
