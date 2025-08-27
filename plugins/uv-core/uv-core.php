@@ -121,14 +121,19 @@ add_action('init', function(){
 });
 
 add_action('admin_enqueue_scripts', function($hook){
-    if(!in_array($hook, ['edit-tags.php','term.php'])) return;
     $screen = get_current_screen();
-    if($screen && $screen->taxonomy === 'uv_location'){
+    if($screen && $screen->taxonomy === 'uv_location' && in_array($hook, ['edit-tags.php','term.php'])){
         wp_enqueue_media();
         wp_enqueue_script('uv-term-image', plugins_url('assets/term-image.js', __FILE__), ['jquery'], UV_CORE_VERSION, true);
         wp_localize_script('uv-term-image', 'uvTermImage', [
             'selectImage' => esc_html__('Select Image', 'uv-core'),
         ]);
+    }
+
+    if($screen && $screen->post_type === 'uv_experience' && in_array($hook, ['post.php','post-new.php'])){
+        wp_enqueue_script('select2');
+        wp_enqueue_style('select2');
+        wp_enqueue_script('uv-admin', plugins_url('assets/admin.js', __FILE__), ['jquery','select2'], UV_CORE_VERSION, true);
     }
 });
 
@@ -584,7 +589,7 @@ add_action('add_meta_boxes_uv_experience', function(){
             'class'            => 'uv-user-select',
             'echo'             => false,
         ]);
-        echo str_replace('<select', '<select style="width:100%;height:8em;"', $dropdown);
+        echo str_replace('<select', '<select style="width:100%;"', $dropdown);
     }, 'uv_experience', 'side', 'high');
 });
 
