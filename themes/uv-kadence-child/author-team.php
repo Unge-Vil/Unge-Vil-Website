@@ -13,36 +13,46 @@ if ($user instanceof WP_User) :
     ?>
     <article class="uv-team-member">
         <header class="uv-member-header">
-            <h1><?php echo esc_html($user->display_name); ?></h1>
-            <?php if (function_exists('uv_people_get_avatar')) : ?>
-                <div class="uv-avatar"><?php echo uv_people_get_avatar($uid); ?></div>
-            <?php endif; ?>
+            <div class="uv-header-block">
+                <?php if (function_exists('uv_people_get_avatar')) : ?>
+                    <div class="uv-avatar"><?php echo uv_people_get_avatar($uid); ?></div>
+                <?php endif; ?>
+                <h1><?php echo esc_html($user->display_name); ?></h1>
+            </div>
+            <?php
+            $position_nb = get_user_meta($uid, 'uv_position_nb', true);
+            $position_en = get_user_meta($uid, 'uv_position_en', true);
+            $position    = ($lang === 'en') ? ($position_en ?: $position_nb) : ($position_nb ?: $position_en);
+            if ($position) {
+                echo '<div class="uv-position">' . esc_html($position) . '</div>';
+            }
+
+            $phone      = get_user_meta($uid, 'uv_phone', true);
+            $show_phone = get_user_meta($uid, 'uv_show_phone', true) === '1';
+            $email      = get_the_author_meta('user_email', $uid);
+            if (($phone && $show_phone) || $email) {
+                echo '<div class="uv-contact">';
+                if ($phone && $show_phone) {
+                    echo '<div><a href="tel:' . esc_attr($phone) . '">' . esc_html($phone) . '</a></div>';
+                }
+                if ($email) {
+                    echo '<div><a href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a></div>';
+                }
+                echo '</div>';
+            }
+
+            $quote_nb = get_user_meta($uid, 'uv_quote_nb', true);
+            $quote_en = get_user_meta($uid, 'uv_quote_en', true);
+            $quote    = ($lang === 'en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
+            if ($quote) {
+                echo '<blockquote class="uv-quote">“' . esc_html($quote) . '”</blockquote>';
+            }
+            ?>
         </header>
         <?php
         $bio = get_the_author_meta( 'description', $uid );
         if ( $bio ) {
             echo '<div class="uv-bio">' . wp_kses_post( wpautop( $bio ) ) . '</div>';
-        }
-
-        $quote_nb = get_user_meta($uid, 'uv_quote_nb', true);
-        $quote_en = get_user_meta($uid, 'uv_quote_en', true);
-        $quote    = ($lang === 'en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
-        if ($quote) {
-            echo '<blockquote class="uv-quote">“' . esc_html($quote) . '”</blockquote>';
-        }
-
-        $phone      = get_user_meta($uid, 'uv_phone', true);
-        $show_phone = get_user_meta($uid, 'uv_show_phone', true) === '1';
-        $email      = get_the_author_meta('user_email', $uid);
-        if (($phone && $show_phone) || $email) {
-            echo '<div class="uv-contact">';
-            if ($phone && $show_phone) {
-                echo '<div><a href="tel:' . esc_attr($phone) . '">' . esc_html($phone) . '</a></div>';
-            }
-            if ($email) {
-                echo '<div><a href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a></div>';
-            }
-            echo '</div>';
         }
 
         if (function_exists('uv_core_get_experiences_for_user')) {
