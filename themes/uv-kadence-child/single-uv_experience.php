@@ -17,7 +17,7 @@ if ( have_posts() ) :
             <div>
                 <?php the_content(); ?>
                 <?php
-                $users = get_post_meta( get_the_ID(), 'uv_experience_users', true );
+                $users = get_post_meta( get_the_ID(), 'uv_experience_users', false );
                 if ( $users && is_array( $users ) ) :
                     ?>
                     <div class="uv-experience-users">
