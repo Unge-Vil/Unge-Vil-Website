@@ -546,7 +546,7 @@ add_action('add_meta_boxes_uv_experience', function(){
             'posts_per_page' => -1,
         ]);
 
-        $dropdown  = '<select name="uv_related_post">';
+        $dropdown  = '<select name="uv_related_post" class="uv-post-select">';
         $dropdown .= '<option value="0">' . esc_html__('— None —', 'uv-core') . '</option>';
         foreach ($posts as $p) {
             $dropdown .= sprintf(

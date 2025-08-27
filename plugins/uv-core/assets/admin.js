@@ -1,5 +1,5 @@
 jQuery(function($){
-    $('.uv-user-select').select2({
+    $('.uv-user-select, .uv-post-select').select2({
         width: '100%'
     });
 });
