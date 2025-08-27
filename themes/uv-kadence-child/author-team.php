@@ -66,6 +66,25 @@ if ($user instanceof WP_User) :
                 echo '</ul>';
             }
         }
+
+        $articles_query = new WP_Query(
+            array(
+                'author'        => $uid,
+                'post_type'     => 'post',
+                'posts_per_page' => -1,
+                'post_status'   => 'publish',
+            )
+        );
+        if ($articles_query->have_posts()) {
+            echo '<h2>' . esc_html__('Articles', 'uv-kadence-child') . '</h2>';
+            echo '<ul class="uv-articles">';
+            while ($articles_query->have_posts()) {
+                $articles_query->the_post();
+                echo '<li><a href="' . esc_url(get_permalink()) . '">' . esc_html(get_the_title()) . '</a></li>';
+            }
+            echo '</ul>';
+        }
+        wp_reset_postdata();
         ?>
     </article>
 <?php endif; ?>
