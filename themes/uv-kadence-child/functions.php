@@ -82,6 +82,17 @@ add_filter('author_template', function($template) {
     return $template;
 });
 
+// Prevent 404s on team author pages with no posts
+add_action('template_redirect', function() {
+    if (is_author() && isset($_GET['team'])) {
+        global $wp_query;
+        if (0 === $wp_query->post_count) {
+            status_header(200);
+            $wp_query->is_404 = false;
+        }
+    }
+});
+
 // Register Control Panel admin page and redirect users there after login
 add_action('admin_menu', function() {
     add_menu_page(
