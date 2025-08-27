@@ -7,3 +7,24 @@
  Version: 0.5.7
  Update URI: https://github.com/Unge-Vil/Unge-Vil-Website/themes/uv-kadence-child
 */
+
+.uv-related-post {
+    margin-top: 2rem;
+}
+
+.uv-related-post .uv-related-button {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: var(--uv-purple, #7a00cc);
+    color: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: var(--uv-radius, 8px);
+    text-decoration: none;
+}
+
+.uv-related-post .uv-related-button:hover,
+.uv-related-post .uv-related-button:focus {
+    background-color: #5a0099;
+    color: #fff;
+}
