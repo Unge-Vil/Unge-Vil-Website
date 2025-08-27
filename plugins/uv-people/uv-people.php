@@ -323,9 +323,10 @@ function uv_people_team_grid($atts){
     if (!taxonomy_exists('uv_location')) {
         return $placeholder(__('No locations available.', 'uv-people'));
     }
-    $loc = sanitize_title($a['location']);
-    $term = get_term_by('slug', $loc, 'uv_location');
+    $loc = sanitize_title($a['location']); // Shortcode expects a location slug
+    $term = get_term_by('slug', $loc, 'uv_location'); // Look up the term to obtain its ID
     if(!$term) return $placeholder(__('Location not found.', 'uv-people'));
+    // Fetch only assignments tied to this location
     $q = new WP_Query([
         'post_type'=>'uv_team_assignment',
         'posts_per_page'=>-1,
@@ -411,12 +412,29 @@ add_shortcode('uv_team','uv_people_team_grid');
 function uv_people_all_team_grid($atts){
     wp_enqueue_style('uv-all-team-grid-style', plugin_dir_url(__FILE__) . 'blocks/all-team-grid/style.css', [], UV_PEOPLE_VERSION);
     $a = shortcode_atts(['columns'=>4], $atts);
-    $users = get_users(['meta_key' => 'uv_rank_number', 'meta_compare' => 'EXISTS', 'number' => -1]);
-    if(!$users){
+
+    // Fetch all team assignments and collect unique user IDs
+    $assignments = get_posts([
+        'post_type'      => 'uv_team_assignment',
+        'numberposts'    => -1,
+        'fields'         => 'ids',
+    ]);
+    $user_ids = [];
+    foreach($assignments as $aid){
+        $uid = get_post_meta($aid, 'uv_user_id', true);
+        if($uid) $user_ids[] = intval($uid);
+    }
+    $user_ids = array_values(array_unique($user_ids));
+
+    if(!$user_ids){
         return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
             ? '<div class="uv-block-placeholder">'.esc_html__('No team members found.', 'uv-people').'</div>'
             : '';
     }
+
+    // Retrieve only the users that have assignments
+    $users = get_users(['include' => $user_ids, 'number' => -1]);
+
     $items = [];
     foreach($users as $u){
         $rank = get_user_meta($u->ID, 'uv_rank_number', true);
@@ -427,6 +445,7 @@ function uv_people_all_team_grid($atts){
         if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
         return strcasecmp($a['user']->display_name, $b['user']->display_name);
     });
+
     $cols = max(1, min(6, intval($a['columns'])));
     $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
     ob_start();
