@@ -373,7 +373,13 @@ function uv_people_team_grid($atts){
         $classes = 'uv-person';
         if($a['highlight_primary'] && $it['primary']) $classes .= ' uv-primary-contact';
         // Link each card to custom team template
-        $url = add_query_arg('team', '1', get_author_posts_url($uid));
+        $url = add_query_arg(
+            [
+                'team'   => 1,
+                'author' => get_the_author_meta('user_nicename', $uid),
+            ],
+            home_url('/')
+        );
         $label = sprintf(__('View profile for %s','uv-people'), $name);
         echo '<article class="'.esc_attr($classes).'" role="listitem">';
         echo '<a href="'.esc_url($url).'" aria-label="'.esc_attr($label).'">';
@@ -464,7 +470,13 @@ function uv_people_all_team_grid($atts){
         $phone = get_user_meta($uid,'uv_phone',true);
         $email = $user->user_email;
         $classes = 'uv-person';
-        $url = add_query_arg('team','1',get_author_posts_url($uid));
+        $url = add_query_arg(
+            [
+                'team'   => 1,
+                'author' => get_the_author_meta('user_nicename', $uid),
+            ],
+            home_url('/')
+        );
         $label = sprintf(__('View profile for %s','uv-people'), $name);
         echo '<article class="'.esc_attr($classes).'" role="listitem">';
         echo '<a href="'.esc_url($url).'" aria-label="'.esc_attr($label).'">';
@@ -505,6 +517,14 @@ add_action('init', function(){
         'render_callback' => 'uv_people_all_team_grid'
     ]);
 });
+
+// Preserve team query parameter when redirecting to pretty author URLs
+add_filter('redirect_canonical', function($redirect_url, $requested_url) {
+    if (isset($_GET['team']) && $redirect_url) {
+        $redirect_url = add_query_arg('team', absint($_GET['team']), $redirect_url);
+    }
+    return $redirect_url;
+}, 10, 2);
 
 // Dashboard widget for team guide links
 add_action('wp_dashboard_setup', function(){
