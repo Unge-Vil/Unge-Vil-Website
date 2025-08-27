@@ -8,6 +8,6 @@
     "location": {"type": "string", "default": ""},
     "columns": {"type": "number", "default": 3}
   },
-  "editorScript": "file:./index.js",
+  "editorScript": "file:./build/index.js",
   "style": "file:./style.css"
 }

@@ -8,6 +8,6 @@
     "columns": {"type": "number", "default": 3},
     "show_links": {"type": "boolean", "default": true}
   },
-  "editorScript": "file:./index.js",
+  "editorScript": "file:./build/index.js",
   "style": "file:./style.css"
 }

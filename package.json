@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "echo \"No JS tests configured\" && exit 0"
+    "test": "echo \"No JS tests configured\" && exit 0",
+    "build": "wp-scripts build plugins/uv-core/blocks/activities/index.js --output-path=plugins/uv-core/blocks/activities/build && wp-scripts build plugins/uv-core/blocks/experiences/index.js --output-path=plugins/uv-core/blocks/experiences/build && wp-scripts build plugins/uv-core/blocks/locations-grid/index.js --output-path=plugins/uv-core/blocks/locations-grid/build && wp-scripts build plugins/uv-core/blocks/news/index.js --output-path=plugins/uv-core/blocks/news/build && wp-scripts build plugins/uv-core/blocks/partners/index.js --output-path=plugins/uv-core/blocks/partners/build"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^26.1.0"
   }
 }
