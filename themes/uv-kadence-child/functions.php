@@ -71,6 +71,11 @@ add_action('init', function() {
     }
 });
 
+// Ensure author links point to the team view
+add_filter('author_link', function($link, $author_id, $author_nicename) {
+    return add_query_arg('team', 1, $link);
+}, 10, 3);
+
 // Use custom team author template when ?team is present on author URLs
 add_filter('author_template', function($template) {
     if (isset($_GET['team'])) {
