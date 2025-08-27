@@ -408,7 +408,7 @@ function uv_core_partners($atts){
             echo '<li class="'.$classes.'">';
             echo $link
                 ? '<a href="' . esc_url( $link ) . '" target="_blank" rel="noopener nofollow">'
-                : '<a href="' . esc_url( get_permalink() ) . '" target="_blank">';
+                : '<a href="' . esc_url( get_permalink() ) . '" rel="noopener">';
             $fallback = '<span class="uv-partner-icon"></span>';
             $render_thumb = function($attrs = []) use ($fallback){
                 if(has_post_thumbnail()){
