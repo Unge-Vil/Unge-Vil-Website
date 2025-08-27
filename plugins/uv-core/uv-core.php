@@ -589,7 +589,7 @@ add_action('add_meta_boxes_uv_experience', function(){
             'class'            => 'uv-user-select',
             'echo'             => false,
         ]);
-        echo str_replace('<select', '<select style="width:100%;"', $dropdown);
+        echo str_replace('<select', '<select multiple="multiple" style="width:100%;"', $dropdown);
     }, 'uv_experience', 'side', 'high');
 });
 
