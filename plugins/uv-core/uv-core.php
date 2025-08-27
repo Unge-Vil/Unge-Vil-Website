@@ -453,7 +453,7 @@ add_action('add_meta_boxes_uv_partner', function(){
         $val = get_post_meta($post->ID, 'uv_partner_url', true);
         wp_nonce_field('uv_partner_url_action', 'uv_partner_url_nonce');
         echo '<p><label>' . esc_html__('Website', 'uv-core') . '</label><input type="url" style="width:100%" name="uv_partner_url" value="' . esc_attr($val) . '"></p>';
-    }, 'uv_partner', 'side');
+    }, 'uv_partner', 'side', 'high');
     add_meta_box('uv_partner_display', esc_html__('Display', 'uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_display', true);
         if(!$val) {
@@ -472,7 +472,7 @@ add_action('add_meta_boxes_uv_partner', function(){
             echo '<option value="' . esc_attr($k) . '"' . selected($val, $k, false) . '>' . $label . '</option>';
         }
         echo '</select></p>';
-    }, 'uv_partner', 'side');
+    }, 'uv_partner', 'side', 'high');
 });
 add_action('save_post_uv_partner', function($post_id){
     if(!current_user_can('edit_post', $post_id)) return;
