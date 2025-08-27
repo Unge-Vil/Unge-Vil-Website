@@ -413,11 +413,18 @@ function uv_people_all_team_grid($atts){
     wp_enqueue_style('uv-all-team-grid-style', plugin_dir_url(__FILE__) . 'blocks/all-team-grid/style.css', [], UV_PEOPLE_VERSION);
     $a = shortcode_atts(['columns'=>4], $atts);
 
-    // Fetch all team assignments and collect unique user IDs
+    // Fetch all team assignments that have a location and collect unique user IDs
+    // The meta_query filters out assignments lacking a uv_location_id.
     $assignments = get_posts([
         'post_type'      => 'uv_team_assignment',
         'numberposts'    => -1,
         'fields'         => 'ids',
+        'meta_query'     => [
+            [
+                'key'     => 'uv_location_id',
+                'compare' => 'EXISTS',
+            ],
+        ],
     ]);
     $user_ids = [];
     foreach($assignments as $aid){
