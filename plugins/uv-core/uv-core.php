@@ -665,6 +665,9 @@ add_action('init', function(){
     register_block_type(__DIR__ . '/blocks/experiences', [
         'render_callback' => 'uv_core_experiences'
     ]);
+    if (function_exists('wp_set_script_translations')) {
+        wp_set_script_translations('uv-experiences-editor-script', 'uv-core', plugin_dir_path(__FILE__) . 'languages');
+    }
     register_block_type(__DIR__ . '/blocks/activities', [
         'render_callback' => 'uv_core_activities'
     ]);

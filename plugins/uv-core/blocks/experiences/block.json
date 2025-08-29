@@ -1,9 +1,12 @@
 {
   "apiVersion": 2,
   "name": "uv/experiences",
-  "title": "Experiences",
   "category": "unge-vil",
   "icon": "admin-site",
+  "textdomain": "uv-core",
+  "__i18n__": {
+    "title": "Experiences"
+  },
   "attributes": {
     "count": {"type": "number", "default": 3}
   },
