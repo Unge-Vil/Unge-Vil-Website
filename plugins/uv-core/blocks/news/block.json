@@ -4,6 +4,7 @@
   "title": "News",
   "category": "unge-vil",
   "icon": "megaphone",
+  "textdomain": "uv-core",
   "attributes": {
     "location": {"type": "string", "default": ""},
     "count": {"type": "number", "default": 3}

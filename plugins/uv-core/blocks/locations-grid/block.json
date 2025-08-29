@@ -4,6 +4,7 @@
   "title": "Locations Grid",
   "category": "unge-vil",
   "icon": "location-alt",
+  "textdomain": "uv-core",
   "attributes": {
     "columns": {"type": "number", "default": 3},
     "show_links": {"type": "boolean", "default": true}

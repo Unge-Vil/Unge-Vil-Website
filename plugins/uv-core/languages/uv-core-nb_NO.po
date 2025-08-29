@@ -4,6 +4,22 @@ msgstr ""
 "Language: nb_NO\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: blocks/activities/block.json
+msgid "Activities"
+msgstr "Aktiviteter"
+
+#: blocks/partners/block.json
+msgid "Partners"
+msgstr "Partnere"
+
+#: blocks/news/block.json
+msgid "News"
+msgstr "Nyheter"
+
+#: blocks/locations-grid/block.json
+msgid "Locations Grid"
+msgstr "Stedsrutenett"
+
 #: blocks/experiences/block.json
 msgid "Experiences"
 msgstr "Erfaringer"
