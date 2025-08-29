@@ -28,11 +28,11 @@ if ( $term && ! is_wp_error( $term ) ) {
             </div>
 
             <h2><?php esc_html_e( 'Team', 'uv-kadence-child' ); ?></h2>
-            <?php echo do_shortcode( '[uv_team location="' . esc_attr( $slug ) . '"]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            <?php echo wp_kses_post( do_shortcode( '[uv_team location="' . esc_attr( $slug ) . '"]' ) ); ?>
             <h2><?php esc_html_e( 'News', 'uv-kadence-child' ); ?></h2>
-            <?php echo do_shortcode( '[uv_news location="' . esc_attr( $slug ) . '"]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            <?php echo wp_kses_post( do_shortcode( '[uv_news location="' . esc_attr( $slug ) . '"]' ) ); ?>
             <h2><?php esc_html_e( 'Activities', 'uv-kadence-child' ); ?></h2>
-            <?php echo do_shortcode( '[uv_activities location="' . esc_attr( $slug ) . '"]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            <?php echo wp_kses_post( do_shortcode( '[uv_activities location="' . esc_attr( $slug ) . '"]' ) ); ?>
         </article>
     </main>
     <?php
