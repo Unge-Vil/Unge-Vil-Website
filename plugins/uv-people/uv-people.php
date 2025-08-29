@@ -397,6 +397,8 @@ function uv_people_team_grid($atts){
         $quote = ($lang==='en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
         echo '</div>';
         echo '</a>';
+        $bio = get_the_author_meta('description', $uid);
+        if($bio) echo '<div class="uv-bio">'.wp_kses_post(wpautop($bio)).'</div>';
         // contact visibility
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
         if(($phone && $show_phone) || $email){
@@ -510,6 +512,8 @@ function uv_people_all_team_grid($atts){
         if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
         echo '</div>';
         echo '</a>';
+        $bio = get_the_author_meta('description', $uid);
+        if($bio) echo '<div class="uv-bio">'.wp_kses_post(wpautop($bio)).'</div>';
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
         if(($phone && $show_phone) || $email){
             $email_label = ($lang==='en') ? __('Email:','uv-people') : __('E-post:','uv-people');

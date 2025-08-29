@@ -34,6 +34,10 @@
     display: none;
 }
 
+.uv-team-grid .uv-bio {
+    margin-top: .75rem;
+}
+
 .uv-team-grid .uv-person h3 {
     margin: .3rem 0 0;
     color: var(--uv-purple, #7a00cc);
