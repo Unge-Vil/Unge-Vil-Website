@@ -303,10 +303,10 @@ function uv_people_get_avatar($user_id){
     $name = get_the_author_meta('display_name', $user_id);
     $alt  = $name ? esc_attr($name) : '';
     if($id){
-        $img = wp_get_attachment_image($id, 'uv_avatar', false, ['alt'=>$alt]);
+        $img = wp_get_attachment_image($id, 'uv_avatar', false, ['alt' => $alt, 'loading' => 'lazy']);
         return $img;
     }
-    return get_avatar($user_id, 96, '', $alt); // fallback
+    return get_avatar($user_id, 96, '', $alt, ['loading' => 'lazy']); // fallback
 }
 
 // Shortcode: Team grid by location
