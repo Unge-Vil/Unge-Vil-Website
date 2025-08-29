@@ -35,7 +35,15 @@
                 ?>
                 <article class="uv-person" role="listitem">
                     <a href="<?php echo esc_url( $url ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'View profile for %s', 'uv-kadence-child' ), $user->display_name ) ); ?>">
-                        <div class="uv-avatar"><?php echo get_avatar( $user_id, 96 ); ?></div>
+                        <div class="uv-avatar">
+                            <?php
+                            if ( function_exists( 'uv_people_get_avatar' ) ) {
+                                echo uv_people_get_avatar( $user_id );
+                            } else {
+                                echo get_avatar( $user_id, 96 );
+                            }
+                            ?>
+                        </div>
                         <div class="uv-info">
                             <h3><?php echo esc_html( $user->display_name ); ?></h3>
                             <?php if ( $role ) : ?>
