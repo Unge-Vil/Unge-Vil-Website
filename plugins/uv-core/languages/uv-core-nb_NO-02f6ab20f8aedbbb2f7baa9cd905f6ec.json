@@ -1,0 +1,24 @@
+{
+  "translation-revision-date": "2025-08-29 19:58+0000",
+  "generator": "manual",
+  "domain": "uv-core",
+  "locale_data": {
+    "uv-core": {
+      "": {
+        "domain": "uv-core",
+        "plural-forms": "nplurals=2; plural=(n != 1);",
+        "lang": "nb_NO"
+      },
+      "Partner Details": ["Partnerdetaljer"],
+      "External URL": ["Ekstern URL"],
+      "Display": ["Visning"],
+      "Logo only": ["Kun logo"],
+      "Logo and title": ["Logo og tittel"],
+      "Circle & title": ["Sirkel og tittel"],
+      "Title only": ["Kun tittel"]
+    }
+  },
+  "comment": {
+    "reference": "plugins/uv-core/assets/partner-meta.js"
+  }
+}

@@ -555,6 +555,7 @@ add_action('enqueue_block_editor_assets', function(){
             UV_CORE_VERSION,
             true
         );
+        wp_set_script_translations('uv-partner-meta', 'uv-core', plugin_dir_path(__FILE__) . 'languages');
     }
 });
 
