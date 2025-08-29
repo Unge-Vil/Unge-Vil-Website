@@ -6,11 +6,13 @@
 .uv-card-list{list-style:none;display:grid;gap:1rem;padding:0}
 .uv-card{display:flex;flex-direction:column;min-height:200px;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
 .uv-card a{display:block;text-decoration:none}
+.uv-card a:hover,.uv-card a:focus{text-decoration:underline}
 .uv-card .uv-card-body{padding:12px}
 .uv-card:focus-visible,.uv-card a:focus-visible,a:focus-visible,.uv-person:focus-visible{outline:3px solid var(--uv-purple);outline-offset:4px;transition:outline-offset .2s ease-in-out}
 .uv-primary-contact{border:2px solid var(--uv-purple);border-radius:var(--uv-radius)}
 .uv-person{background:#fff;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);padding:1rem;display:flex;flex-direction:column;height:100%;border:1px solid var(--uv-border,#ddd)}
 .uv-person>a{display:flex;align-items:flex-start;gap:clamp(.5rem,2vw,1rem);text-decoration:none;color:inherit}
+.uv-person>a:hover,.uv-person>a:focus{text-decoration:underline}
 .uv-avatar img{width:96px;height:96px;border-radius:50%;object-fit:cover}
 .uv-info{flex:1 1 auto;min-width:0}
 .uv-person h3{margin:.3rem 0 0;font-size:1.25rem;color:var(--uv-purple)}
@@ -18,6 +20,7 @@
 .uv-person .uv-contact{margin-top:.75rem}
 .uv-person .uv-contact .label{font-weight:600;margin-right:.25rem}
 .uv-person .uv-contact a{color:var(--uv-purple);text-decoration:none}
+.uv-person .uv-contact a:hover,.uv-person .uv-contact a:focus{text-decoration:underline}
 .uv-person .uv-quote{margin-top:1rem;background:var(--uv-yellow);padding:.75rem 1rem;position:relative}
 .uv-person .uv-quote .uv-quote-icon{font-size:2rem;line-height:1;margin-right:.25rem}
 .uv-person .uv-quote:after{content:"\201D";position:absolute;right:.5rem;bottom:.25rem;font-size:2rem;line-height:1}
@@ -43,4 +46,4 @@ body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-se
 
 /* Visually hide skip link until focused */
 .skip-link{position:absolute;top:-40px;left:0;background:#000;color:#fff;padding:.5rem;z-index:100;text-decoration:none}
-.skip-link:focus{top:0}
+.skip-link:focus{top:0;text-decoration:underline}
