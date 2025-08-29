@@ -31,7 +31,13 @@
                     $role_nb = get_user_meta( $user_id, 'uv_position_nb', true );
                     $role_en = get_user_meta( $user_id, 'uv_position_en', true );
                     $role    = ( 'en' === $lang ) ? ( $role_en ?: $role_nb ) : ( $role_nb ?: $role_en );
-                    $url     = add_query_arg( 'team', '1', get_author_posts_url( $user_id ) );
+                    $url     = add_query_arg(
+                        [
+                            'team'   => 1,
+                            'author' => get_the_author_meta( 'user_nicename', $user_id ),
+                        ],
+                        home_url( '/' )
+                    );
                 ?>
                 <article class="uv-person" role="listitem">
                     <a href="<?php echo esc_url( $url ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'View profile for %s', 'uv-kadence-child' ), $user->display_name ) ); ?>">
