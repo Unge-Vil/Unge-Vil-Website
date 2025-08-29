@@ -1,5 +1,5 @@
 .uv-card-grid {
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(var(--uv-columns, 4), minmax(0, 1fr));
 }

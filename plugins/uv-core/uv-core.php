@@ -335,7 +335,8 @@ function uv_core_enqueue_card_grid_style() {
 
 function uv_core_activities($atts){
     uv_core_enqueue_card_grid_style();
-    $a = shortcode_atts(['location'=>''], $atts);
+    $a = shortcode_atts(['location'=>'','columns'=>4], $atts);
+    $cols = max(1, intval($a['columns']));
     $args = ['post_type'=>'uv_activity','posts_per_page'=>-1];
     if($a['location']){
         $loc = sanitize_title($a['location']);
@@ -346,7 +347,7 @@ function uv_core_activities($atts){
     $q = new WP_Query($args);
     ob_start();
     if($q->have_posts()){
-        echo '<ul class="uv-card-list uv-card-grid">';
+        echo '<ul class="uv-card-list uv-card-grid" style="--uv-columns:'.esc_attr($cols).'">';
         while($q->have_posts()){ $q->the_post();
             echo '<li class="uv-card"><a href="'.esc_url(get_permalink()).'">';
             if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
@@ -392,7 +393,8 @@ add_shortcode('uv_experiences','uv_core_experiences');
 
 function uv_core_partners($atts){
     uv_core_enqueue_card_grid_style();
-    $a = shortcode_atts(['location'=>'','type'=>''], $atts);
+    $a = shortcode_atts(['location'=>'','type'=>'','columns'=>4], $atts);
+    $cols = max(1, intval($a['columns']));
     $args = ['post_type'=>'uv_partner','posts_per_page'=>-1];
     $taxq = [];
     $loc = $a['location'] ? sanitize_title($a['location']) : '';
@@ -407,7 +409,7 @@ function uv_core_partners($atts){
     $q = new WP_Query($args);
     ob_start();
     if($q->have_posts()){
-        echo '<ul class="uv-card-list uv-card-grid">';
+        echo '<ul class="uv-card-list uv-card-grid" style="--uv-columns:'.esc_attr($cols).'">';
         while($q->have_posts()){ $q->the_post();
             $link = get_post_meta(get_the_ID(), 'uv_partner_url', true);
             $display = get_post_meta(get_the_ID(), 'uv_partner_display', true);
