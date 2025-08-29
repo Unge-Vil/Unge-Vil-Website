@@ -449,6 +449,7 @@ function uv_people_all_team_grid($atts){
         ],
     ];
 
+    $location_ids = [];
     if( ! empty( $a['locations'] ) && empty( $a['allLocations'] ) ){
         $terms = get_terms([
             'taxonomy'   => 'uv_location',
@@ -457,15 +458,11 @@ function uv_people_all_team_grid($atts){
             'hide_empty' => false,
         ]);
         if( ! is_wp_error( $terms ) && $terms ){
-            $meta_query[] = [
-                'key'     => 'uv_location_id',
-                'value'   => array_map( 'intval', $terms ),
-                'compare' => 'IN',
-            ];
+            $location_ids = array_map( 'intval', $terms );
         }
     }
 
-    // Fetch all team assignments that match locations and collect unique user IDs
+    // Fetch all team assignments and group them by user
     $assignments = get_posts([
         'post_type'      => 'uv_team_assignment',
         'numberposts'    => -1,
@@ -473,19 +470,28 @@ function uv_people_all_team_grid($atts){
         'no_found_rows'  => true,
         'meta_query'     => $meta_query,
     ]);
-    $user_ids    = [];
-    $primaries   = [];
-    foreach($assignments as $aid){
-        $uid = get_post_meta($aid, 'uv_user_id', true);
-        if($uid){
-            $uid = intval($uid);
-            $user_ids[] = $uid;
-            if (get_post_meta($aid, 'uv_is_primary', true) === '1') {
-                $primaries[$uid] = true;
+    $grouped = [];
+    foreach ( $assignments as $aid ) {
+        $uid = intval( get_post_meta( $aid, 'uv_user_id', true ) );
+        if ( ! $uid ) {
+            continue;
+        }
+        if ( ! isset( $grouped[ $uid ] ) ) {
+            $grouped[ $uid ] = [
+                'matched' => false,
+                'primary' => false,
+            ];
+        }
+        $loc_id  = intval( get_post_meta( $aid, 'uv_location_id', true ) );
+        $matches = empty( $location_ids ) || in_array( $loc_id, $location_ids, true );
+        if ( $matches ) {
+            $grouped[ $uid ]['matched'] = true;
+            if ( get_post_meta( $aid, 'uv_is_primary', true ) === '1' ) {
+                $grouped[ $uid ]['primary'] = true;
             }
         }
     }
-    $user_ids = array_values(array_unique($user_ids));
+    $user_ids = array_keys( array_filter( $grouped, function( $u ){ return $u['matched']; } ) );
 
     if(!$user_ids){
         return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
@@ -502,7 +508,12 @@ function uv_people_all_team_grid($atts){
         $rank = get_user_meta($uid, 'uv_rank_number', true);
         $rank = ($rank === '' ? 999 : intval($rank));
         $name = get_the_author_meta('display_name', $uid);
-        $sorted[] = ['ID' => $uid, 'rank' => $rank, 'name' => $name];
+        $sorted[] = [
+            'ID'      => $uid,
+            'rank'    => $rank,
+            'name'    => $name,
+            'primary' => !empty( $grouped[ $uid ]['primary'] ),
+        ];
     }
     usort($sorted, function($a,$b){
         if ($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
@@ -531,7 +542,7 @@ function uv_people_all_team_grid($atts){
             $items[] = [
                 'user'    => $user_map[$uid],
                 'rank'    => $it['rank'],
-                'primary' => !empty($primaries[$uid]),
+                'primary' => !empty( $it['primary'] ),
             ];
         }
     }
