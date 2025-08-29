@@ -2,6 +2,7 @@
   --uv-purple:#7a00cc;
   --uv-radius:16px;
   --uv-yellow:#fff7b2;
+  --uv-avatar-size:140px;
 }
 .uv-card-list{list-style:none;display:grid;gap:1rem;padding:0}
 .uv-card{display:flex;flex-direction:column;min-height:200px;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
@@ -14,7 +15,7 @@
 .uv-person{background:#fff;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);padding:1rem;display:flex;flex-direction:column;height:100%;border:1px solid var(--uv-border,#ddd)}
 .uv-person>a{display:flex;align-items:flex-start;gap:clamp(.5rem,2vw,1rem);text-decoration:none;color:inherit}
 .uv-person>a:hover,.uv-person>a:focus{text-decoration:underline}
-.uv-avatar img{width:96px;height:96px;border-radius:50%;object-fit:cover}
+.uv-avatar img{width:var(--uv-avatar-size,140px);height:var(--uv-avatar-size,140px);border-radius:50%;object-fit:cover}
 .uv-info{flex:1 1 auto;min-width:0}
 .uv-person h3{margin:.3rem 0 0;font-size:1.25rem;color:var(--uv-purple)}
 .uv-person .uv-role{font-size:.95rem;color:#555;margin-top:.2rem}
