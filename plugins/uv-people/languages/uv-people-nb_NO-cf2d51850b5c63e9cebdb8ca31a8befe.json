@@ -1,0 +1,18 @@
+{
+  "translation-revision-date": "2025-08-29 20:05+0000",
+  "generator": "manual",
+  "domain": "uv-people",
+  "locale_data": {
+    "uv-people": {
+      "": {
+        "domain": "uv-people",
+        "plural-forms": "nplurals=2; plural=(n != 1);",
+        "lang": "nb_NO"
+      },
+      "All Team Grid": ["Alt teamrutenett"]
+    }
+  },
+  "comment": {
+    "reference": "plugins/uv-people/blocks/all-team-grid/block.json"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "translation-revision-date": "2025-08-29 20:05+0000",
+  "generator": "manual",
+  "domain": "uv-people",
+  "locale_data": {
+    "uv-people": {
+      "": {
+        "domain": "uv-people",
+        "plural-forms": "nplurals=2; plural=(n != 1);",
+        "lang": "nb_NO"
+      },
+      "Settings": ["Innstillinger"],
+      "Failed to load locations.": ["Kunne ikke laste lokasjoner."],
+      "Locations": ["Lokasjoner"],
+      "All locations": ["Alle lokasjoner"],
+      "Columns": ["Kolonner"],
+      "Loading preview…": ["Laster forhåndsvisning…"],
+      "No team members found.": ["Ingen teammedlemmer funnet."]
+    }
+  },
+  "comment": {
+    "reference": "plugins/uv-people/blocks/all-team-grid/index.js"
+  }
+}

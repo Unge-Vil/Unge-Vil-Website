@@ -592,6 +592,8 @@ add_action('init', function(){
     register_block_type(__DIR__ . '/blocks/team-grid', [
         'render_callback' => 'uv_people_team_grid'
     ]);
+    wp_set_script_translations( 'uv-team-grid-editor-script', 'uv-people', plugin_dir_path(__FILE__) . 'languages' );
+    wp_set_script_translations( 'uv-all-team-grid-editor-script', 'uv-people', plugin_dir_path(__FILE__) . 'languages' );
     register_block_type(__DIR__ . '/blocks/all-team-grid', [
         'render_callback' => 'uv_people_all_team_grid',
         'attributes'      => [
@@ -622,6 +624,8 @@ add_action('init', function(){
             ],
         ],
     ]);
+    wp_set_script_translations( 'uv-team-grid-editor-script', 'uv-people', plugin_dir_path(__FILE__) . 'languages' );
+    wp_set_script_translations( 'uv-all-team-grid-editor-script', 'uv-people', plugin_dir_path(__FILE__) . 'languages' );
 });
 
 // Preserve team query parameter when redirecting to pretty author URLs
