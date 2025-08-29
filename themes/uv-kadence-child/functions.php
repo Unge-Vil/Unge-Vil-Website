@@ -223,15 +223,15 @@ function uv_render_control_panel() {
     echo '<h1>' . sprintf(esc_html__('Welcome, %s!', 'uv-kadence-child'), esc_html($display_name)) . '</h1>';
     echo '</div>';
 
-    echo '<div class="uv-links">';
+    echo '<nav><ul class="uv-links">';
     foreach ($links as $link) {
         $target = $link['target'] === '_blank' ? ' target="_blank" rel="noopener"' : '';
-        echo '<a class="uv-link-card" href="' . esc_url($link['url']) . '"' . $target . '>';
+        echo '<li><a class="uv-link-card" href="' . esc_url($link['url']) . '"' . $target . '>';
         echo '<img src="' . esc_url($img_base . '/' . $link['img']) . '" alt="" />';
         echo '<span>' . esc_html($link['label']) . '</span>';
-        echo '</a>';
+        echo '</a></li>';
     }
-    echo '</div>';
+    echo '</ul></nav>';
     echo '</div>';
 }
 

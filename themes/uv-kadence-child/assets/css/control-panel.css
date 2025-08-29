@@ -49,6 +49,9 @@ body.toplevel_page_uv-control-panel h3 {
   display: grid;
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .uv-link-card {
