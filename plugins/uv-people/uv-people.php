@@ -262,14 +262,16 @@ function uv_people_profile_save($user_id){
             'post_type'      => 'uv_team_assignment',
             'posts_per_page' => -1,
             'post_status'    => 'any',
+            'no_found_rows'  => true,
+            'fields'         => 'ids',
             'meta_query'     => [
                 ['key' => 'uv_user_id', 'value' => $user_id, 'compare' => '='],
             ],
         ]);
         $existing_map = [];
-        foreach($existing as $p){
-            $lid = get_post_meta($p->ID, 'uv_location_id', true);
-            $existing_map[$lid] = $p->ID;
+        foreach($existing as $pid){
+            $lid = get_post_meta($pid, 'uv_location_id', true);
+            $existing_map[$lid] = $pid;
         }
         foreach($loc_ids as $lid){
             if(isset($existing_map[$lid])){
@@ -328,10 +330,12 @@ function uv_people_team_grid($atts){
     if(!$term) return $placeholder(__('Location not found.', 'uv-people'));
     // Fetch only assignments tied to this location
     $q = new WP_Query([
-        'post_type'=>'uv_team_assignment',
-        'posts_per_page'=>-1,
-        'meta_query'=>[
-            ['key'=>'uv_location_id','value'=>strval($term->term_id),'compare'=>'=']
+        'post_type'     => 'uv_team_assignment',
+        'posts_per_page'=> -1,
+        'no_found_rows' => true,
+        'fields'        => 'ids',
+        'meta_query'    => [
+            ['key' => 'uv_location_id', 'value' => strval($term->term_id), 'compare' => '=']
         ]
     ]);
     if(!$q->have_posts()){
@@ -340,17 +344,17 @@ function uv_people_team_grid($atts){
     }
     $cols = max(1, min(6, intval($a['columns'])));
     $items = [];
-    while($q->have_posts()){ $q->the_post();
-        $uid = get_post_meta(get_the_ID(),'uv_user_id',true);
+    foreach($q->posts as $pid){
+        $uid = get_post_meta($pid,'uv_user_id',true);
         $rank = get_user_meta($uid, 'uv_rank_number', true);
         $rank = ($rank === '' ? 999 : intval($rank));
         $items[] = [
-            'id'=>get_the_ID(),
-            'user_id'=>$uid,
-            'role_nb'=>get_post_meta(get_the_ID(),'uv_role_nb',true),
-            'role_en'=>get_post_meta(get_the_ID(),'uv_role_en',true),
-            'primary'=>get_post_meta(get_the_ID(),'uv_is_primary',true) === '1',
-            'rank'=>$rank,
+            'id'      => $pid,
+            'user_id' => $uid,
+            'role_nb' => get_post_meta($pid,'uv_role_nb',true),
+            'role_en' => get_post_meta($pid,'uv_role_en',true),
+            'primary' => get_post_meta($pid,'uv_is_primary',true) === '1',
+            'rank'    => $rank,
         ];
     }
     wp_reset_postdata();
@@ -453,6 +457,7 @@ function uv_people_all_team_grid($atts){
         'post_type'      => 'uv_team_assignment',
         'numberposts'    => -1,
         'fields'         => 'ids',
+        'no_found_rows'  => true,
         'meta_query'     => $meta_query,
     ]);
     $user_ids = [];
@@ -469,7 +474,11 @@ function uv_people_all_team_grid($atts){
     }
 
     // Retrieve only the users that have assignments
-    $users = get_users(['include' => $user_ids, 'number' => -1]);
+    $users = get_users([
+        'include' => $user_ids,
+        'number'  => -1,
+        'fields'  => ['ID', 'display_name', 'user_email'],
+    ]);
 
     $items = [];
     foreach($users as $u){
@@ -588,18 +597,20 @@ add_action('uv_location_edit_form_fields', function($term){
         'post_type'      => 'uv_team_assignment',
         'posts_per_page' => -1,
         'post_status'    => 'any',
+        'no_found_rows'  => true,
+        'fields'         => 'ids',
         'meta_query'     => [
             ['key' => 'uv_location_id', 'value' => strval($term_id), 'compare' => '='],
         ],
     ]);
     $users = [];
     $selected = [];
-    foreach ($assignments as $p) {
-        $uid = get_post_meta($p->ID, 'uv_user_id', true);
+    foreach ($assignments as $pid) {
+        $uid = get_post_meta($pid, 'uv_user_id', true);
         if ($uid) {
             $uid = intval($uid);
             $users[$uid] = get_the_author_meta('display_name', $uid);
-            if ('1' === get_post_meta($p->ID, 'uv_is_primary', true)) {
+            if ('1' === get_post_meta($pid, 'uv_is_primary', true)) {
                 $selected[] = $uid;
             }
         }
@@ -624,14 +635,16 @@ function uv_people_save_location_primary_team($term_id){
         'post_type'      => 'uv_team_assignment',
         'posts_per_page' => -1,
         'post_status'    => 'any',
+        'no_found_rows'  => true,
+        'fields'         => 'ids',
         'meta_query'     => [
             ['key' => 'uv_location_id', 'value' => strval($term_id), 'compare' => '='],
         ],
     ]);
-    foreach ($assignments as $p) {
-        $uid = intval(get_post_meta($p->ID, 'uv_user_id', true));
+    foreach ($assignments as $pid) {
+        $uid = intval(get_post_meta($pid, 'uv_user_id', true));
         $is_primary = in_array($uid, $ids, true) ? '1' : '0';
-        update_post_meta($p->ID, 'uv_is_primary', $is_primary);
+        update_post_meta($pid, 'uv_is_primary', $is_primary);
     }
 }
 add_action('edited_uv_location', 'uv_people_save_location_primary_team');
@@ -652,17 +665,21 @@ if (defined('WP_CLI') && WP_CLI) {
         $migrated = 0;
 
         // Migrate user quotes
-        $users = get_users(['meta_key' => 'uv_quote']);
-        foreach ($users as $user) {
-            $legacy = get_user_meta($user->ID, 'uv_quote', true);
+        $users = get_users([
+            'meta_key' => 'uv_quote',
+            'number'   => -1,
+            'fields'   => 'ID',
+        ]);
+        foreach ($users as $uid) {
+            $legacy = get_user_meta($uid, 'uv_quote', true);
             if ($legacy) {
-                if (!get_user_meta($user->ID, 'uv_quote_nb', true)) {
-                    update_user_meta($user->ID, 'uv_quote_nb', $legacy);
+                if (!get_user_meta($uid, 'uv_quote_nb', true)) {
+                    update_user_meta($uid, 'uv_quote_nb', $legacy);
                 }
-                if (!get_user_meta($user->ID, 'uv_quote_en', true)) {
-                    update_user_meta($user->ID, 'uv_quote_en', $legacy);
+                if (!get_user_meta($uid, 'uv_quote_en', true)) {
+                    update_user_meta($uid, 'uv_quote_en', $legacy);
                 }
-                delete_user_meta($user->ID, 'uv_quote');
+                delete_user_meta($uid, 'uv_quote');
                 $migrated++;
             }
         }
@@ -672,18 +689,20 @@ if (defined('WP_CLI') && WP_CLI) {
             'post_type'      => 'uv_team_assignment',
             'posts_per_page' => -1,
             'post_status'    => 'any',
+            'no_found_rows'  => true,
+            'fields'         => 'ids',
             'meta_key'       => 'uv_role_title',
         ]);
-        foreach ($assignments as $post) {
-            $legacy = get_post_meta($post->ID, 'uv_role_title', true);
+        foreach ($assignments as $post_id) {
+            $legacy = get_post_meta($post_id, 'uv_role_title', true);
             if ($legacy) {
-                if (!get_post_meta($post->ID, 'uv_role_nb', true)) {
-                    update_post_meta($post->ID, 'uv_role_nb', $legacy);
+                if (!get_post_meta($post_id, 'uv_role_nb', true)) {
+                    update_post_meta($post_id, 'uv_role_nb', $legacy);
                 }
-                if (!get_post_meta($post->ID, 'uv_role_en', true)) {
-                    update_post_meta($post->ID, 'uv_role_en', $legacy);
+                if (!get_post_meta($post_id, 'uv_role_en', true)) {
+                    update_post_meta($post_id, 'uv_role_en', $legacy);
                 }
-                delete_post_meta($post->ID, 'uv_role_title');
+                delete_post_meta($post_id, 'uv_role_title');
                 $migrated++;
             }
         }
