@@ -1,67 +1,62 @@
-diff --git a//dev/null b/plugins/uv-core/languages/uv-core-nb_NO.po
-index 0000000000000000000000000000000000000000..b7e18d9f5bc7a1e426ef5cfa856089a01b4f377a 100644
---- a//dev/null
-+++ b/plugins/uv-core/languages/uv-core-nb_NO.po
-@@ -0,0 +1,62 @@
-+# Norwegian Bokmal translations for uv-core package.
-+# Copyright (C) 2025 THE uv-core'S COPYRIGHT HOLDER
-+# This file is distributed under the same license as the uv-core package.
-+# Automatically generated, 2025.
-+#
-+msgid ""
-+msgstr ""
-+"Project-Id-Version: uv-core 0.6.0\n"
-+"Report-Msgid-Bugs-To: \n"
-+"POT-Creation-Date: 2025-08-25 12:31+0000\n"
-+"PO-Revision-Date: 2025-08-25 12:31+0000\n"
-+"Last-Translator: Automatically generated\n"
-+"Language-Team: none\n"
-+"Language: nb\n"
-+"MIME-Version: 1.0\n"
-+"Content-Type: text/plain; charset=UTF-8\n"
-+"Content-Transfer-Encoding: 8bit\n"
-+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-+
-+#: plugins/uv-core/uv-core.php:14
-+msgid "Locations"
-+msgstr "Steder"
-+
-+#: plugins/uv-core/uv-core.php:20
-+msgid "Activity Types"
-+msgstr "Aktivitetstyper"
-+
-+#: plugins/uv-core/uv-core.php:26
-+msgid "Partner Types"
-+msgstr "Partnertyper"
-+
-+#: plugins/uv-core/uv-core.php:34
-+msgid "Activities"
-+msgstr "Aktiviteter"
-+
-+#: plugins/uv-core/uv-core.php:43
-+msgid "Partners"
-+msgstr "Partnere"
-+
-+#: plugins/uv-core/uv-core.php:52
-+msgid "Experiences"
-+msgstr "Erfaringer"
-+
-+#: plugins/uv-core/uv-core.php:67 plugins/uv-core/uv-core.php:94
-+msgid "Location Image"
-+msgstr "Stedsbilde"
-+
-+#: plugins/uv-core/uv-core.php:69 plugins/uv-core/uv-core.php:98
-+msgid "Select Image"
-+msgstr "Velg bilde"
-+
-+#: plugins/uv-core/uv-core.php:70
-+msgid "Used on location cards."
-+msgstr "Brukes på stedskort."
-+
-+#: plugins/uv-core/uv-core.php:246
-+msgid "External URL"
-+msgstr "Ekstern URL"
-+
-+#: plugins/uv-core/uv-core.php:249
-+msgid "Website"
-+msgstr "Nettsted"
+# Norwegian Bokmal translations for uv-core package.
+# Copyright (C) 2025 THE uv-core'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the uv-core package.
+# Automatically generated, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: uv-core 0.6.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-25 12:31+0000\n"
+"PO-Revision-Date: 2025-08-25 12:31+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: plugins/uv-core/uv-core.php:14
+msgid "Locations"
+msgstr "Steder"
+
+#: plugins/uv-core/uv-core.php:20
+msgid "Activity Types"
+msgstr "Aktivitetstyper"
+
+#: plugins/uv-core/uv-core.php:26
+msgid "Partner Types"
+msgstr "Partnertyper"
+
+#: plugins/uv-core/uv-core.php:34
+msgid "Activities"
+msgstr "Aktiviteter"
+
+#: plugins/uv-core/uv-core.php:43
+msgid "Partners"
+msgstr "Partnere"
+
+#: plugins/uv-core/uv-core.php:52
+msgid "Experiences"
+msgstr "Erfaringer"
+
+#: plugins/uv-core/uv-core.php:67 plugins/uv-core/uv-core.php:94
+msgid "Location Image"
+msgstr "Stedsbilde"
+
+#: plugins/uv-core/uv-core.php:69 plugins/uv-core/uv-core.php:98
+msgid "Select Image"
+msgstr "Velg bilde"
+
+#: plugins/uv-core/uv-core.php:70
+msgid "Used on location cards."
+msgstr "Brukes på stedskort."
+
+#: plugins/uv-core/uv-core.php:246
+msgid "External URL"
+msgstr "Ekstern URL"
+
+#: plugins/uv-core/uv-core.php:249
+msgid "Website"
+msgstr "Nettsted"
