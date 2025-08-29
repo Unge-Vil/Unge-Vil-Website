@@ -480,6 +480,7 @@ function uv_people_all_team_grid($atts){
             $grouped[ $uid ] = [
                 'matched' => false,
                 'primary' => false,
+                'rank'    => null,
             ];
         }
         $loc_id  = intval( get_post_meta( $aid, 'uv_location_id', true ) );
@@ -488,6 +489,13 @@ function uv_people_all_team_grid($atts){
             $grouped[ $uid ]['matched'] = true;
             if ( get_post_meta( $aid, 'uv_is_primary', true ) === '1' ) {
                 $grouped[ $uid ]['primary'] = true;
+            }
+            $arank = get_post_meta( $aid, 'uv_rank_number', true );
+            if ( $arank !== '' ) {
+                $arank = intval( $arank );
+                if ( ! isset( $grouped[ $uid ]['rank'] ) || $arank < $grouped[ $uid ]['rank'] ) {
+                    $grouped[ $uid ]['rank'] = $arank;
+                }
             }
         }
     }
@@ -504,15 +512,18 @@ function uv_people_all_team_grid($atts){
     $offset   = ($page - 1) * $per_page;
 
     $sorted = [];
-    foreach ($user_ids as $uid) {
-        $rank = get_user_meta($uid, 'uv_rank_number', true);
-        $rank = ($rank === '' ? 999 : intval($rank));
-        $name = get_the_author_meta('display_name', $uid);
+    foreach ( $user_ids as $uid ) {
+        $rank = isset( $grouped[ $uid ]['rank'] ) ? $grouped[ $uid ]['rank'] : '';
+        if ( $rank === '' || $rank === null ) {
+            $rank = get_user_meta( $uid, 'uv_rank_number', true );
+        }
+        $rank = ( $rank === '' ? 999 : intval( $rank ) );
+        $name = get_the_author_meta( 'display_name', $uid );
         $sorted[] = [
             'ID'      => $uid,
             'rank'    => $rank,
             'name'    => $name,
-            'primary' => !empty( $grouped[ $uid ]['primary'] ),
+            'primary' => ! empty( $grouped[ $uid ]['primary'] ),
         ];
     }
     usort($sorted, function($a,$b){
