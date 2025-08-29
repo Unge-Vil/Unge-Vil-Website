@@ -8,6 +8,17 @@
     "columns": {
       "type": "number",
       "default": 4
+    },
+    "locations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "allLocations": {
+      "type": "boolean",
+      "default": true
     }
   },
   "editorScript": "file:./index.js",

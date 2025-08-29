@@ -417,20 +417,41 @@ add_shortcode('uv_team','uv_people_team_grid');
 
 function uv_people_all_team_grid($atts){
     wp_enqueue_style('uv-all-team-grid-style', plugin_dir_url(__FILE__) . 'blocks/all-team-grid/style.css', [], UV_PEOPLE_VERSION);
-    $a = shortcode_atts(['columns'=>4], $atts);
+    $a = shortcode_atts([
+        'columns'      => 4,
+        'locations'    => [],
+        'allLocations' => true,
+    ], $atts);
 
-    // Fetch all team assignments that have a location and collect unique user IDs
-    // The meta_query filters out assignments lacking a uv_location_id.
+    $meta_query = [
+        [
+            'key'     => 'uv_location_id',
+            'compare' => 'EXISTS',
+        ],
+    ];
+
+    if( ! empty( $a['locations'] ) && empty( $a['allLocations'] ) ){
+        $terms = get_terms([
+            'taxonomy'   => 'uv_location',
+            'slug'       => (array) $a['locations'],
+            'fields'     => 'ids',
+            'hide_empty' => false,
+        ]);
+        if( ! is_wp_error( $terms ) && $terms ){
+            $meta_query[] = [
+                'key'     => 'uv_location_id',
+                'value'   => array_map( 'intval', $terms ),
+                'compare' => 'IN',
+            ];
+        }
+    }
+
+    // Fetch all team assignments that match locations and collect unique user IDs
     $assignments = get_posts([
         'post_type'      => 'uv_team_assignment',
         'numberposts'    => -1,
         'fields'         => 'ids',
-        'meta_query'     => [
-            [
-                'key'     => 'uv_location_id',
-                'compare' => 'EXISTS',
-            ],
-        ],
+        'meta_query'     => $meta_query,
     ]);
     $user_ids = [];
     foreach($assignments as $aid){
@@ -514,7 +535,22 @@ add_action('init', function(){
         'render_callback' => 'uv_people_team_grid'
     ]);
     register_block_type(__DIR__ . '/blocks/all-team-grid', [
-        'render_callback' => 'uv_people_all_team_grid'
+        'render_callback' => 'uv_people_all_team_grid',
+        'attributes'      => [
+            'columns' => [
+                'type'    => 'number',
+                'default' => 4,
+            ],
+            'locations' => [
+                'type'    => 'array',
+                'items'   => [ 'type' => 'string' ],
+                'default' => [],
+            ],
+            'allLocations' => [
+                'type'    => 'boolean',
+                'default' => true,
+            ],
+        ],
     ]);
 });
 
