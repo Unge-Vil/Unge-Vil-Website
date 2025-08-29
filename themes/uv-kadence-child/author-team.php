@@ -11,8 +11,9 @@ if ($user instanceof WP_User) :
     $uid  = $user->ID;
     $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(), 0, 2);
     ?>
-    <article class="uv-team-member">
-        <header class="uv-member-header">
+    <div class="container">
+        <article class="uv-team-member">
+            <header class="uv-member-header">
             <div class="uv-header-block">
                 <?php if (function_exists('uv_people_get_avatar')) : ?>
                     <div class="uv-avatar"><?php echo uv_people_get_avatar($uid); ?></div>
@@ -86,7 +87,8 @@ if ($user instanceof WP_User) :
         }
         wp_reset_postdata();
         ?>
-    </article>
+        </article>
+    </div>
 <?php endif; ?>
 
 <?php get_footer();
