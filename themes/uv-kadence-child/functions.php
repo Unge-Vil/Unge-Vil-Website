@@ -48,6 +48,11 @@ add_action('after_setup_theme', function() {
     load_child_theme_textdomain('uv-kadence-child', get_stylesheet_directory() . '/languages');
 });
 
+// Accessibility: add skip link at the start of the document
+add_action('wp_body_open', function() {
+    echo '<a class="skip-link" href="#main-content">' . esc_html__('Skip to content', 'uv-kadence-child') . '</a>';
+});
+
 // Register block patterns for shortcode blocks
 add_action('init', function() {
     if (!function_exists('register_block_pattern')) {
