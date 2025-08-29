@@ -51,6 +51,32 @@
                             <?php endif; ?>
                         </div>
                     </a>
+                    <?php
+                    $phone      = get_user_meta( $user_id, 'uv_phone', true );
+                    $email      = $user->user_email;
+                    $show_phone = get_user_meta( $user_id, 'uv_show_phone', true ) === '1';
+
+                    if ( ( $phone && $show_phone ) || $email ) :
+                        $email_label = ( 'en' === $lang ) ? __( 'Email:', 'uv-people' ) : __( 'E-post:', 'uv-people' );
+                        $phone_label = ( 'en' === $lang ) ? __( 'Mobile:', 'uv-people' ) : __( 'Mobil:', 'uv-people' );
+                    ?>
+                    <div class="uv-contact">
+                        <?php if ( $email ) : ?>
+                            <div class="uv-email"><span class="label"><?php echo esc_html( $email_label ); ?></span><a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a></div>
+                        <?php endif; ?>
+                        <?php if ( $phone && $show_phone ) : ?>
+                            <div class="uv-mobile"><span class="label"><?php echo esc_html( $phone_label ); ?></span><a href="tel:<?php echo esc_attr( $phone ); ?>"><?php echo esc_html( $phone ); ?></a></div>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+                    <?php
+                    $quote_nb = get_user_meta( $user_id, 'uv_quote_nb', true );
+                    $quote_en = get_user_meta( $user_id, 'uv_quote_en', true );
+                    $quote    = ( 'en' === $lang ) ? ( $quote_en ?: $quote_nb ) : ( $quote_nb ?: $quote_en );
+                    if ( $quote ) :
+                    ?>
+                    <div class="uv-quote"><span class="uv-quote-icon">&ldquo;</span><?php echo esc_html( $quote ); ?></div>
+                    <?php endif; ?>
                 </article>
                 <?php endforeach; ?>
             </div>
