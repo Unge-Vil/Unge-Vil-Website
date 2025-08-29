@@ -375,8 +375,8 @@ function uv_people_team_grid($atts){
         // Link each card to custom team template
         $url = add_query_arg(
             [
-                'team'   => 1,
-                'author' => get_the_author_meta('user_nicename', $uid),
+                'team'        => 1,
+                'author_name' => get_the_author_meta('user_nicename', $uid),
             ],
             home_url('/')
         );
@@ -493,8 +493,8 @@ function uv_people_all_team_grid($atts){
         $classes = 'uv-person';
         $url = add_query_arg(
             [
-                'team'   => 1,
-                'author' => get_the_author_meta('user_nicename', $uid),
+                'team'        => 1,
+                'author_name' => get_the_author_meta('user_nicename', $uid),
             ],
             home_url('/')
         );

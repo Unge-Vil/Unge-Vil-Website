@@ -33,8 +33,8 @@
                     $role    = ( 'en' === $lang ) ? ( $role_en ?: $role_nb ) : ( $role_nb ?: $role_en );
                     $url     = add_query_arg(
                         [
-                            'team'   => 1,
-                            'author' => get_the_author_meta( 'user_nicename', $user_id ),
+                            'team'        => 1,
+                            'author_name' => get_the_author_meta( 'user_nicename', $user_id ),
                         ],
                         home_url( '/' )
                     );
