@@ -417,6 +417,16 @@ function uv_people_team_grid($atts){
         echo '</article>';
     }
     echo '</div>';
+    if($a['show_nav'] && $total_pages > 1){
+        $base_url = remove_query_arg('uv_page');
+        $base     = esc_url(add_query_arg('uv_page', '%#%', $base_url));
+        echo '<nav class="uv-pagination">'.paginate_links([
+            'base'    => $base,
+            'format'  => '',
+            'current' => $page,
+            'total'   => $total_pages,
+        ]).'</nav>';
+    }
     return ob_get_clean();
 }
 add_shortcode('uv_team','uv_people_team_grid');
@@ -427,6 +437,9 @@ function uv_people_all_team_grid($atts){
         'columns'      => 4,
         'locations'    => [],
         'allLocations' => true,
+        'per_page'     => 100,
+        'page'         => 1,
+        'show_nav'     => false,
     ], $atts);
 
     $meta_query = [
@@ -473,23 +486,45 @@ function uv_people_all_team_grid($atts){
             : '';
     }
 
-    // Retrieve only the users that have assignments
+    $per_page = max(1, intval($a['per_page']));
+    $page     = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : max(1, intval($a['page']));
+    $offset   = ($page - 1) * $per_page;
+
+    $sorted = [];
+    foreach ($user_ids as $uid) {
+        $rank = get_user_meta($uid, 'uv_rank_number', true);
+        $rank = ($rank === '' ? 999 : intval($rank));
+        $name = get_the_author_meta('display_name', $uid);
+        $sorted[] = ['ID' => $uid, 'rank' => $rank, 'name' => $name];
+    }
+    usort($sorted, function($a,$b){
+        if ($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
+        return strcasecmp($a['name'], $b['name']);
+    });
+
+    $total_users = count($sorted);
+    $paged_items = array_slice($sorted, $offset, $per_page);
+    $paged_ids   = wp_list_pluck($paged_items, 'ID');
+
+    // Retrieve only the users needed for this page
     $users = get_users([
-        'include' => $user_ids,
-        'number'  => -1,
+        'include' => $paged_ids,
+        'number'  => $per_page,
         'fields'  => ['ID', 'display_name', 'user_email'],
     ]);
+    $user_map = [];
+    foreach ($users as $u) {
+        $user_map[$u->ID] = $u;
+    }
 
     $items = [];
-    foreach($users as $u){
-        $rank = get_user_meta($u->ID, 'uv_rank_number', true);
-        $rank = ($rank === '' ? 999 : intval($rank));
-        $items[] = ['user' => $u, 'rank' => $rank];
+    foreach ($paged_items as $it) {
+        $uid = $it['ID'];
+        if (isset($user_map[$uid])) {
+            $items[] = [ 'user' => $user_map[$uid], 'rank' => $it['rank'] ];
+        }
     }
-    usort($items, function($a,$b){
-        if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
-        return strcasecmp($a['user']->display_name, $b['user']->display_name);
-    });
+    $total_pages = ceil($total_users / $per_page);
 
     $cols = max(1, min(6, intval($a['columns'])));
     $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
@@ -539,6 +574,16 @@ function uv_people_all_team_grid($atts){
         echo '</article>';
     }
     echo '</div>';
+    if($a['show_nav'] && $total_pages > 1){
+        $base_url = remove_query_arg('uv_page');
+        $base     = esc_url(add_query_arg('uv_page', '%#%', $base_url));
+        echo '<nav class="uv-pagination">'.paginate_links([
+            'base'    => $base,
+            'format'  => '',
+            'current' => $page,
+            'total'   => $total_pages,
+        ]).'</nav>';
+    }
     return ob_get_clean();
 }
 
@@ -562,6 +607,18 @@ add_action('init', function(){
             'allLocations' => [
                 'type'    => 'boolean',
                 'default' => true,
+            ],
+            'per_page' => [
+                'type'    => 'number',
+                'default' => 100,
+            ],
+            'page' => [
+                'type'    => 'number',
+                'default' => 1,
+            ],
+            'show_nav' => [
+                'type'    => 'boolean',
+                'default' => false,
             ],
         ],
     ]);
