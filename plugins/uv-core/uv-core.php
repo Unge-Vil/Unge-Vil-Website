@@ -324,8 +324,18 @@ function uv_core_posts_news($atts){
 }
 add_shortcode('uv_news','uv_core_posts_news');
 
+function uv_core_enqueue_card_grid_style() {
+    wp_enqueue_style(
+        'uv-card-grid',
+        plugins_url('assets/uv-card-grid.css', __FILE__),
+        [],
+        UV_CORE_VERSION
+    );
+}
+
 function uv_core_activities($atts){
-    $a = shortcode_atts(['location'=>'','columns'=>3], $atts);
+    uv_core_enqueue_card_grid_style();
+    $a = shortcode_atts(['location'=>''], $atts);
     $args = ['post_type'=>'uv_activity','posts_per_page'=>-1];
     if($a['location']){
         $loc = sanitize_title($a['location']);
@@ -336,8 +346,7 @@ function uv_core_activities($atts){
     $q = new WP_Query($args);
     ob_start();
     if($q->have_posts()){
-        $cols = intval($a['columns']);
-        echo '<ul class="uv-card-list" style="grid-template-columns:repeat('.$cols.',1fr)">';
+        echo '<ul class="uv-card-list uv-card-grid">';
         while($q->have_posts()){ $q->the_post();
             echo '<li class="uv-card"><a href="'.esc_url(get_permalink()).'">';
             if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
@@ -382,7 +391,8 @@ function uv_core_experiences($atts){
 add_shortcode('uv_experiences','uv_core_experiences');
 
 function uv_core_partners($atts){
-    $a = shortcode_atts(['location'=>'','type'=>'','columns'=>4], $atts);
+    uv_core_enqueue_card_grid_style();
+    $a = shortcode_atts(['location'=>'','type'=>''], $atts);
     $args = ['post_type'=>'uv_partner','posts_per_page'=>-1];
     $taxq = [];
     $loc = $a['location'] ? sanitize_title($a['location']) : '';
@@ -397,8 +407,7 @@ function uv_core_partners($atts){
     $q = new WP_Query($args);
     ob_start();
     if($q->have_posts()){
-        $cols = intval($a['columns']);
-        echo '<ul class="uv-card-list" style="grid-template-columns:repeat('.$cols.',1fr)">';
+        echo '<ul class="uv-card-list uv-card-grid">';
         while($q->have_posts()){ $q->the_post();
             $link = get_post_meta(get_the_ID(), 'uv_partner_url', true);
             $display = get_post_meta(get_the_ID(), 'uv_partner_display', true);
