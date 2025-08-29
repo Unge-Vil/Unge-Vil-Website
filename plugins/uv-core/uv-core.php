@@ -433,11 +433,22 @@ function uv_core_partners($atts){
                     break;
                 case 'circle_title':
                     $render_thumb(['class'=>'is-circle']);
-                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div>';
+                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong>';
+                    $excerpt = get_the_excerpt();
+                    if ( $excerpt ) {
+                        echo '<div>' . esc_html( $excerpt ) . '</div>';
+                    }
+                    echo '</div>';
                     break;
                 case 'title_only':
-                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong></div>';
+                    echo '<div class="uv-card-body"><strong>'.esc_html(get_the_title()).'</strong>';
+                    $excerpt = get_the_excerpt();
+                    if ( $excerpt ) {
+                        echo '<div>' . esc_html( $excerpt ) . '</div>';
+                    }
+                    echo '</div>';
                     break;
+                case 'logo_title':
                 default:
                     $render_thumb();
                     echo '<div class="uv-card-body"><strong>' . esc_html( get_the_title() ) . '</strong>';
