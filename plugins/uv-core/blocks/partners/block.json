@@ -4,6 +4,7 @@
   "title": "Partners",
   "category": "unge-vil",
   "icon": "heart",
+  "textdomain": "uv-core",
   "attributes": {
     "location": {"type": "string", "default": ""},
     "type": {"type": "string", "default": ""},

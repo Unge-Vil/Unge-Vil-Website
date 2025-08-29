@@ -4,6 +4,7 @@
   "title": "Activities",
   "category": "unge-vil",
   "icon": "admin-site",
+  "textdomain": "uv-core",
   "attributes": {
     "location": {"type": "string", "default": ""},
     "columns": {"type": "number", "default": 3}

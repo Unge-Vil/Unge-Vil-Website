@@ -9,10 +9,10 @@
         "plural-forms": "nplurals=2; plural=(n != 1);",
         "lang": "nb_NO"
       },
-      "Experiences": ["Erfaringer"]
+      "Activities": ["Aktiviteter"]
     }
   },
   "comment": {
-    "reference": "plugins/uv-core/blocks/experiences/block.json"
+    "reference": "plugins/uv-core/blocks/activities/block.json"
   }
 }
