@@ -23,3 +23,31 @@ msgstr "Stedsrutenett"
 #: blocks/experiences/block.json
 msgid "Experiences"
 msgstr "Erfaringer"
+
+#: assets/partner-meta.js
+msgid "Partner Details"
+msgstr "Partnerdetaljer"
+
+#: assets/partner-meta.js
+msgid "External URL"
+msgstr "Ekstern URL"
+
+#: assets/partner-meta.js
+msgid "Display"
+msgstr "Visning"
+
+#: assets/partner-meta.js
+msgid "Logo only"
+msgstr "Kun logo"
+
+#: assets/partner-meta.js
+msgid "Logo and title"
+msgstr "Logo og tittel"
+
+#: assets/partner-meta.js
+msgid "Circle & title"
+msgstr "Sirkel og tittel"
+
+#: assets/partner-meta.js
+msgid "Title only"
+msgstr "Kun tittel"
