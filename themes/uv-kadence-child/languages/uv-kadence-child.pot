@@ -1,38 +1,16 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the uv-kadence-child package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: uv-kadence-child 0.6.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-21 08:37+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: nb_NO\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: themes/uv-kadence-child/functions.php:55
-msgid "Locations Grid"
-msgstr ""
+msgid "Experiences"
+msgstr "Erfaringer"
 
-#: themes/uv-kadence-child/functions.php:56
-msgid "News List"
-msgstr ""
+msgid "Articles"
+msgstr "Artikler"
 
-#: themes/uv-kadence-child/functions.php:57
-msgid "Activities"
-msgstr ""
-
-#: themes/uv-kadence-child/functions.php:58
-msgid "Partners"
-msgstr ""
-
-#: themes/uv-kadence-child/functions.php:59
-msgid "Team Grid"
-msgstr ""
+msgid "Read blog post"
+msgstr "Les blogginnlegg"
