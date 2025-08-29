@@ -667,13 +667,18 @@ add_action('init', function(){
     register_block_type(__DIR__ . '/blocks/experiences', [
         'render_callback' => 'uv_core_experiences'
     ]);
-    if (function_exists('wp_set_script_translations')) {
-        wp_set_script_translations('uv-experiences-editor-script', 'uv-core', plugin_dir_path(__FILE__) . 'languages');
-    }
     register_block_type(__DIR__ . '/blocks/activities', [
         'render_callback' => 'uv_core_activities'
     ]);
     register_block_type(__DIR__ . '/blocks/partners', [
         'render_callback' => 'uv_core_partners'
     ]);
+    if (function_exists('wp_set_script_translations')) {
+        $lang_dir = plugin_dir_path(__FILE__) . 'languages';
+        wp_set_script_translations('uv-locations-grid-editor-script', 'uv-core', $lang_dir);
+        wp_set_script_translations('uv-news-editor-script', 'uv-core', $lang_dir);
+        wp_set_script_translations('uv-experiences-editor-script', 'uv-core', $lang_dir);
+        wp_set_script_translations('uv-activities-editor-script', 'uv-core', $lang_dir);
+        wp_set_script_translations('uv-partners-editor-script', 'uv-core', $lang_dir);
+    }
 });
