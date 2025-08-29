@@ -63,8 +63,8 @@
                     $show_phone = get_user_meta( $user_id, 'uv_show_phone', true ) === '1';
 
                     if ( ( $phone && $show_phone ) || $email ) :
-                        $email_label = ( 'en' === $lang ) ? __( 'Email:', 'uv-people' ) : __( 'E-post:', 'uv-people' );
-                        $phone_label = ( 'en' === $lang ) ? __( 'Mobile:', 'uv-people' ) : __( 'Mobil:', 'uv-people' );
+                        $email_label = __( 'Email:', 'uv-kadence-child' );
+                        $phone_label = __( 'Mobile:', 'uv-kadence-child' );
                     ?>
                     <div class="uv-contact">
                         <?php if ( $email ) : ?>

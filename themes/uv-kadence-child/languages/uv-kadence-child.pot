@@ -14,3 +14,9 @@ msgstr "Artikler"
 
 msgid "Read blog post"
 msgstr "Les blogginnlegg"
+
+msgid "Email:"
+msgstr "E-post:"
+
+msgid "Mobile:"
+msgstr "Mobil:"
