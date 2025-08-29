@@ -66,11 +66,16 @@ add_action('init', function() {
         'team-grid'      => __('Team Grid', 'uv-kadence-child'),
     ];
     foreach ($patterns as $slug => $title) {
+        $pattern_path = get_theme_file_path('shortcode-patterns/' . $slug . '.php');
+        if (!file_exists($pattern_path)) {
+            error_log('Block pattern file not found: ' . $pattern_path);
+            continue;
+        }
         register_block_pattern(
             'uv-kadence-child/' . $slug,
             [
                 'title'   => $title,
-                'content' => include get_theme_file_path('shortcode-patterns/' . $slug . '.php'),
+                'content' => include $pattern_path,
             ]
         );
     }
