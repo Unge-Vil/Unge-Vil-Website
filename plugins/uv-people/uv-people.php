@@ -473,10 +473,17 @@ function uv_people_all_team_grid($atts){
         'no_found_rows'  => true,
         'meta_query'     => $meta_query,
     ]);
-    $user_ids = [];
+    $user_ids    = [];
+    $primaries   = [];
     foreach($assignments as $aid){
         $uid = get_post_meta($aid, 'uv_user_id', true);
-        if($uid) $user_ids[] = intval($uid);
+        if($uid){
+            $uid = intval($uid);
+            $user_ids[] = $uid;
+            if (get_post_meta($aid, 'uv_is_primary', true) === '1') {
+                $primaries[$uid] = true;
+            }
+        }
     }
     $user_ids = array_values(array_unique($user_ids));
 
@@ -521,7 +528,11 @@ function uv_people_all_team_grid($atts){
     foreach ($paged_items as $it) {
         $uid = $it['ID'];
         if (isset($user_map[$uid])) {
-            $items[] = [ 'user' => $user_map[$uid], 'rank' => $it['rank'] ];
+            $items[] = [
+                'user'    => $user_map[$uid],
+                'rank'    => $it['rank'],
+                'primary' => !empty($primaries[$uid]),
+            ];
         }
     }
     $total_pages = ceil($total_users / $per_page);
@@ -537,6 +548,9 @@ function uv_people_all_team_grid($atts){
         $phone = get_user_meta($uid,'uv_phone',true);
         $email = $user->user_email;
         $classes = 'uv-person';
+        if (!empty($it['primary'])) {
+            $classes .= ' uv-primary-contact';
+        }
         $url = add_query_arg(
             [
                 'team'        => 1,
