@@ -12,6 +12,9 @@ UV People adds user profile fields, per-location assignments, and a team grid sh
 
 ## Blocks
 - **All Team Grid** – display team members across locations. In the block settings, choose one or more Locations or enable *All locations* to show everyone.
+  - `per_page` (default: 100) number of team members per page.
+  - `page` (default: 1) which page to display. Also respects the `uv_page` query parameter.
+  - `show_nav` (0 or 1) display pagination links.
 
 ### Sorting
 Primary contacts are shown first in the grid, followed by other members sorted by their custom order weight and then alphabetically by display name.
