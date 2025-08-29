@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: uv-people 0.6.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-25 12:31+0000\n"
+"POT-Creation-Date: 2025-08-29 19:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -123,4 +123,14 @@ msgstr ""
 
 #: plugins/uv-people/uv-people.php:224
 msgid "Add your own how-to video links here (edit uv-people plugin)."
+msgstr ""
+
+#: plugins/uv-people/blocks/all-team-grid/block.json
+msgctxt "block title"
+msgid "All Team Grid"
+msgstr ""
+
+#: plugins/uv-people/blocks/team-grid/block.json
+msgctxt "block title"
+msgid "Team Grid"
 msgstr ""

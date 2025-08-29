@@ -4,6 +4,7 @@
   "title": "Team Grid",
   "category": "unge-vil",
   "icon": "groups",
+  "textdomain": "uv-people",
   "attributes": {
     "location": {
       "type": "string",
