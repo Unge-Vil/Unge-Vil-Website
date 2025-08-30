@@ -49,10 +49,14 @@ add_action('admin_enqueue_scripts', function($hook){
         }
         wp_enqueue_style('select2');
         wp_enqueue_script('select2');
+        $deps = ['jquery', 'select2'];
+        if ($is_location_term) {
+            $deps[] = 'jquery-ui-sortable';
+        }
         wp_enqueue_script(
             'uv-people-admin',
             plugin_dir_url(__FILE__) . 'assets/admin.js',
-            ['jquery', 'select2'],
+            $deps,
             UV_PEOPLE_VERSION,
             true
         );
@@ -362,6 +366,8 @@ function uv_people_team_grid($atts){
     $loc = sanitize_title($a['location']); // Shortcode expects a location slug
     $term = get_term_by('slug', $loc, 'uv_location'); // Look up the term to obtain its ID
     if(!$term) return $placeholder(__('Location not found.', 'uv-people'));
+    $order_ids = get_term_meta($term->term_id, 'uv_member_order', true);
+    $order_map = is_array($order_ids) ? array_flip(array_map('intval', $order_ids)) : [];
     // Fetch only assignments tied to this location
     $q = new WP_Query([
         'post_type'     => 'uv_team_assignment',
@@ -390,17 +396,27 @@ function uv_people_team_grid($atts){
             'role_en'   => get_post_meta($pid,'uv_role_en',true), // fallback legacy
             'primary'   => get_post_meta($pid,'uv_is_primary',true) === '1',
             'rank'      => $rank,
+            'order'     => isset($order_map[$uid]) ? $order_map[$uid] : null,
         ];
     }
     wp_reset_postdata();
-    // sort priority: primary ➜ rank ➜ name
-    usort($items, function($a,$b){
-        if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
-        if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
-        $an = get_the_author_meta('display_name', $a['user_id']);
-        $bn = get_the_author_meta('display_name', $b['user_id']);
-        return strcasecmp($an, $bn);
-    });
+    if($order_map){
+        usort($items, function($a,$b){
+            $oa = $a['order'] !== null ? $a['order'] : 999;
+            $ob = $b['order'] !== null ? $b['order'] : 999;
+            if($oa !== $ob) return $oa < $ob ? -1 : 1;
+            return 0;
+        });
+    } else {
+        // sort priority: primary ➜ rank ➜ name
+        usort($items, function($a,$b){
+            if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
+            if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
+            $an = get_the_author_meta('display_name', $a['user_id']);
+            $bn = get_the_author_meta('display_name', $b['user_id']);
+            return strcasecmp($an, $bn);
+        });
+    }
     $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
     ob_start();
     echo '<div class="uv-team-grid columns-'.$cols.'" role="list">';
@@ -761,7 +777,7 @@ add_action('wp_dashboard_setup', function(){
     });
 });
 
-// Primary team selection on uv_location term edit screen
+// Team members list with primary toggle and ordering controls on uv_location term edit screen
 add_action('uv_location_edit_form_fields', function($term){
     $term_id = $term->term_id;
     $assignments = get_posts([
@@ -774,37 +790,60 @@ add_action('uv_location_edit_form_fields', function($term){
             ['key' => 'uv_location_id', 'value' => strval($term_id), 'compare' => '='],
         ],
     ]);
-    $users = [];
-    $selected = [];
+    $members = [];
     foreach ($assignments as $pid) {
-        $uid = get_post_meta($pid, 'uv_user_id', true);
-        if ($uid) {
+        $uid = intval(get_post_meta($pid, 'uv_user_id', true));
+        if (!$uid) continue;
+        $members[$uid] = [
+            'name'    => get_the_author_meta('display_name', $uid),
+            'primary' => (get_post_meta($pid, 'uv_is_primary', true) === '1'),
+        ];
+    }
+    $order = get_term_meta($term_id, 'uv_member_order', true);
+    $ordered = [];
+    if (is_array($order)) {
+        foreach ($order as $uid) {
             $uid = intval($uid);
-            $users[$uid] = get_the_author_meta('display_name', $uid);
-            if ('1' === get_post_meta($pid, 'uv_is_primary', true)) {
-                $selected[] = $uid;
+            if (isset($members[$uid])) {
+                $ordered[$uid] = $members[$uid];
+                unset($members[$uid]);
             }
         }
     }
-    wp_nonce_field('uv_location_primary_team', 'uv_location_primary_team_nonce');
-    echo '<tr class="form-field"><th scope="row"><label for="uv_primary_team">'.esc_html__('Primary contacts','uv-people').'</label></th><td>';
-    echo '<select multiple name="uv_primary_team[]" id="uv_primary_team" class="uv-user-select" style="width:100%;">';
-    foreach ($users as $uid => $name) {
-        $sel = in_array($uid, $selected, true) ? ' selected' : '';
-        echo '<option value="'.esc_attr($uid).'"'.$sel.'>'.esc_html($name).'</option>';
+    foreach ($members as $uid => $data) {
+        $ordered[$uid] = $data;
     }
-    echo '</select></td></tr>';
+    wp_nonce_field('uv_location_members', 'uv_location_members_nonce');
+    echo '<tr class="form-field"><th scope="row"><label>'.esc_html__('Team members','uv-people').'</label></th><td>';
+    if ($ordered) {
+        echo '<ul id="uv-member-sortable">';
+        foreach ($ordered as $uid => $data) {
+            $checked = $data['primary'] ? ' checked' : '';
+            echo '<li class="uv-member-item" data-uid="'.esc_attr($uid).'">';
+            echo '<span class="uv-handle dashicons dashicons-move" style="cursor:move;margin-right:8px;"></span>'.esc_html($data['name']);
+            echo ' <label style="margin-left:10px;"><input type="checkbox" name="uv_primary_team[]" value="'.esc_attr($uid).'"'.$checked.'> '.esc_html__('Primary','uv-people').'</label>';
+            echo '<input type="hidden" name="uv_member_order[]" value="'.esc_attr($uid).'">';
+            echo '</li>';
+        }
+        echo '</ul>';
+        echo '<p class="description">'.esc_html__('Drag to reorder team members.','uv-people').'</p>';
+    } else {
+        echo '<p>'.esc_html__('No team members assigned.','uv-people').'</p>';
+    }
+    echo '</td></tr>';
 });
 
-function uv_people_save_location_primary_team($term_id){
-    if (!isset($_POST['uv_location_primary_team_nonce']) || !wp_verify_nonce($_POST['uv_location_primary_team_nonce'], 'uv_location_primary_team')) {
+function uv_people_save_location_members($term_id){
+    if (!isset($_POST['uv_location_members_nonce']) || !wp_verify_nonce($_POST['uv_location_members_nonce'], 'uv_location_members')) {
         return;
     }
-    if ( ! current_user_can( 'manage_categories' ) ) {
+    if (!current_user_can('manage_categories')) {
         return;
     }
-    $ids = isset($_POST['uv_primary_team']) ? array_filter(array_map('intval', (array)$_POST['uv_primary_team'])) : [];
-    update_term_meta($term_id, 'uv_primary_team', $ids);
+    $order_ids = isset($_POST['uv_member_order']) ? array_values(array_map('intval', (array)$_POST['uv_member_order'])) : [];
+    update_term_meta($term_id, 'uv_member_order', $order_ids);
+    $primary_ids = isset($_POST['uv_primary_team']) ? array_filter(array_map('intval', (array)$_POST['uv_primary_team'])) : [];
+    update_term_meta($term_id, 'uv_primary_team', $primary_ids);
     $assignments = get_posts([
         'post_type'      => 'uv_team_assignment',
         'posts_per_page' => -1,
@@ -817,12 +856,15 @@ function uv_people_save_location_primary_team($term_id){
     ]);
     foreach ($assignments as $pid) {
         $uid = intval(get_post_meta($pid, 'uv_user_id', true));
-        $is_primary = in_array($uid, $ids, true) ? '1' : '0';
+        $pos = array_search($uid, $order_ids, true);
+        $weight = ($pos !== false) ? $pos + 1 : 999;
+        update_post_meta($pid, 'uv_order_weight', $weight);
+        $is_primary = in_array($uid, $primary_ids, true) ? '1' : '0';
         update_post_meta($pid, 'uv_is_primary', $is_primary);
     }
 }
-add_action('edited_uv_location', 'uv_people_save_location_primary_team');
-add_action('created_uv_location', 'uv_people_save_location_primary_team');
+add_action('edited_uv_location', 'uv_people_save_location_members');
+add_action('created_uv_location', 'uv_people_save_location_members');
 
 // Tidy admin for non-admins (optional, minimal)
 add_action('admin_menu', function(){
