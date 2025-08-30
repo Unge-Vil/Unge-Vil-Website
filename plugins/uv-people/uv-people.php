@@ -240,7 +240,7 @@ function uv_people_profile_fields($user){
       <tr><th><?php esc_html_e('Avatar (Media Library)','uv-people'); ?></th>
         <td>
           <input type="hidden" id="uv_avatar_id" name="uv_avatar_id" value="<?php echo esc_attr($avatar_id); ?>">
-          <button class="button" id="uv-avatar-upload"><?php esc_html_e('Select Image','uv-people'); ?></button>
+          <button type="button" class="button" id="uv-avatar-upload"><?php esc_html_e('Select Image','uv-people'); ?></button>
           <div id="uv-avatar-preview"><?php echo $avatar_id ? wp_get_attachment_image($avatar_id,'uv_avatar') : ''; ?></div>
           <p class="description"><?php esc_html_e('This replaces Gravatar and uses a local image.','uv-people'); ?></p>
         </td></tr>
