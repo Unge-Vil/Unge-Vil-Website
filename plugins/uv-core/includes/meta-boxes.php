@@ -11,6 +11,30 @@ add_action('admin_enqueue_scripts', function($hook){
     }
 
     if($screen && $screen->post_type === 'uv_experience' && in_array($hook, ['post.php','post-new.php'])){
+        if (function_exists('uv_register_select2_assets')) {
+            uv_register_select2_assets();
+        } else {
+            $uv_people_file = WP_PLUGIN_DIR . '/uv-people/uv-people.php';
+            if (file_exists($uv_people_file)) {
+                if (!wp_script_is('select2', 'registered')) {
+                    wp_register_script(
+                        'select2',
+                        plugins_url('assets/select2/select2.min.js', $uv_people_file),
+                        ['jquery'],
+                        '4.0.13',
+                        true
+                    );
+                }
+                if (!wp_style_is('select2', 'registered')) {
+                    wp_register_style(
+                        'select2',
+                        plugins_url('assets/select2/select2.min.css', $uv_people_file),
+                        [],
+                        '4.0.13'
+                    );
+                }
+            }
+        }
         wp_enqueue_script('select2');
         wp_enqueue_style('select2');
         wp_enqueue_script('uv-admin', plugins_url('assets/admin.js', dirname(__DIR__) . '/uv-core.php'), ['jquery','select2'], UV_CORE_VERSION, true);

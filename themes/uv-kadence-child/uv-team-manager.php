@@ -221,56 +221,42 @@ add_action('admin_enqueue_scripts', function ($hook) {
     if ('uv-control-panel_page_uv-team-manager' !== $hook) {
         return;
     }
+    if (function_exists('uv_register_select2_assets')) {
+        uv_register_select2_assets();
+    } else {
+        $uv_people_file = WP_PLUGIN_DIR . '/uv-people/uv-people.php';
+        if (file_exists($uv_people_file)) {
+            if (!wp_script_is('select2', 'registered')) {
+                wp_register_script(
+                    'select2',
+                    plugins_url('assets/select2/select2.min.js', $uv_people_file),
+                    ['jquery'],
+                    '4.0.13',
+                    true
+                );
+            }
+            if (!wp_style_is('select2', 'registered')) {
+                wp_register_style(
+                    'select2',
+                    plugins_url('assets/select2/select2.min.css', $uv_people_file),
+                    [],
+                    '4.0.13'
+                );
+            }
+        }
+    }
     wp_enqueue_style('select2');
     wp_enqueue_script('select2');
     wp_enqueue_media();
-
-    $inline = <<<'JS'
-jQuery(function($){
-    $(".uv-location-select, .uv-primary-location-select").select2();
-    $(".uv-location-select").on("change", function(){
-        var $loc = $(this);
-        var selected = $loc.val() || [];
-        var $primary = $loc.closest("tr").find(".uv-primary-location-select");
-        $primary.find("option").each(function(){
-            var val = $(this).val();
-            var allowed = selected.indexOf(val) !== -1;
-            $(this).prop("disabled", !allowed);
-            if(!allowed){
-                $(this).prop("selected", false);
-            }
-        });
-        $primary.trigger("change.select2");
-    }).trigger("change");
-
-    $(document).on("click", ".uv-avatar-button", function(e){
-        e.preventDefault();
-        var $wrap = $(this).closest(".uv-avatar-field");
-        var frame = wp.media({
-            title: "Select Avatar",
-            library: { type: "image" },
-            button: { text: "Use this image" },
-            multiple: false
-        });
-        frame.on("select", function(){
-            var attachment = frame.state().get("selection").first().toJSON();
-            var url = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url;
-            $wrap.find(".uv-avatar-preview").html("<img src=\"" + url + "\" />");
-            $wrap.find(".uv-avatar-id").val(attachment.id);
-            $wrap.find(".uv-avatar-remove").show();
-        });
-        frame.open();
-    });
-
-    $(document).on("click", ".uv-avatar-remove", function(e){
-        e.preventDefault();
-        var $wrap = $(this).closest(".uv-avatar-field");
-        var defaultHtml = $wrap.data("default");
-        $wrap.find(".uv-avatar-preview").html(defaultHtml);
-        $wrap.find(".uv-avatar-id").val("");
-        $(this).hide();
-    });
-});
-JS;
-    wp_add_inline_script('select2', $inline);
+    wp_enqueue_script(
+        'uv-team-manager',
+        get_stylesheet_directory_uri() . '/uv-team-manager.js',
+        ['jquery', 'select2'],
+        null,
+        true
+    );
+    wp_localize_script('uv-team-manager', 'UVTeamManager', [
+        'selectAvatar' => __('Select Avatar', 'uv-kadence-child'),
+        'useImage'     => __('Use this image', 'uv-kadence-child'),
+    ]);
 });

@@ -10,9 +10,15 @@ jQuery(function($){
         });
         frame.open();
     });
-    $('.uv-location-select').select2({width:'100%'});
-    $('.uv-user-select').select2({width:'100%'});
-    $('.uv-position-select').select2({width:'100%'});
+    if ($.fn.select2) {
+        $('.uv-location-select').select2({width:'100%'});
+    }
+    if ($.fn.select2) {
+        $('.uv-user-select').select2({width:'100%'});
+    }
+    if ($.fn.select2) {
+        $('.uv-position-select').select2({width:'100%'});
+    }
     var $loc = $('#uv_locations');
     var $primary = $('#uv_primary_locations');
     if($loc.length && $primary.length){

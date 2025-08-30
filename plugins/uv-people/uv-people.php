@@ -39,6 +39,26 @@ add_action('plugins_loaded', function(){
     load_plugin_textdomain('uv-people', false, dirname(plugin_basename(__FILE__)) . '/languages');
 });
 
+function uv_register_select2_assets(){
+    if (!wp_script_is('select2', 'registered')) {
+        wp_register_script(
+            'select2',
+            plugin_dir_url(__FILE__) . 'assets/select2/select2.min.js',
+            ['jquery'],
+            '4.0.13',
+            true
+        );
+    }
+    if (!wp_style_is('select2', 'registered')) {
+        wp_register_style(
+            'select2',
+            plugin_dir_url(__FILE__) . 'assets/select2/select2.min.css',
+            [],
+            '4.0.13'
+        );
+    }
+}
+
 // Admin assets and localizations
 add_action('admin_enqueue_scripts', function($hook){
     $screen = get_current_screen();
@@ -50,6 +70,7 @@ add_action('admin_enqueue_scripts', function($hook){
         if ($is_user_page) {
             wp_enqueue_media();
         }
+        uv_register_select2_assets();
         wp_enqueue_style('select2');
         wp_enqueue_script('select2');
         $deps = ['jquery', 'select2'];
