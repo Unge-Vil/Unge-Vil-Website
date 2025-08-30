@@ -30,6 +30,10 @@ if (file_exists($update_checker_path)) {
     }
 }
 
+function uv_people_cache_ttl(){
+    return (int) apply_filters('uv_people_cache_ttl', HOUR_IN_SECONDS);
+}
+
 // Load textdomain
 add_action('plugins_loaded', function(){
     load_plugin_textdomain('uv-people', false, dirname(plugin_basename(__FILE__)) . '/languages');
@@ -455,38 +459,45 @@ function uv_people_team_grid($atts){
     if(!$term) return $placeholder(__('Location not found.', 'uv-people'));
     $order_ids = get_term_meta($term->term_id, 'uv_member_order', true);
     $order_map = is_array($order_ids) ? array_flip(array_map('intval', $order_ids)) : [];
-    // Fetch only assignments tied to this location
-    $q = new WP_Query([
-        'post_type'     => 'uv_team_assignment',
-        'posts_per_page'=> -1,
-        'no_found_rows' => true,
-        'fields'        => 'ids',
-        'meta_query'    => [
-            ['key' => 'uv_location_id', 'value' => strval($term->term_id), 'compare' => '=']
-        ]
-    ]);
-    if(!$q->have_posts()){
+    $page = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : 1;
+    $cache_key = 'uv_people_team_grid_' . md5($term->term_id . '|' . $page);
+    $items = get_transient($cache_key);
+    if ($items === false) {
+        // Fetch only assignments tied to this location
+        $q = new WP_Query([
+            'post_type'     => 'uv_team_assignment',
+            'posts_per_page'=> -1,
+            'no_found_rows' => true,
+            'fields'        => 'ids',
+            'meta_query'    => [
+                ['key' => 'uv_location_id', 'value' => strval($term->term_id), 'compare' => '=']
+            ]
+        ]);
+        $items = [];
+        if ($q->have_posts()) {
+            foreach($q->posts as $pid){
+                $uid = get_post_meta($pid,'uv_user_id',true);
+                $rank = get_user_meta($uid, 'uv_rank_number', true);
+                $rank = ($rank === '' ? 999 : intval($rank));
+                $items[] = [
+                    'id'        => $pid,
+                    'user_id'   => $uid,
+                    'role_term' => get_post_meta($pid,'uv_role_term',true),
+                    'role_nb'   => get_post_meta($pid,'uv_role_nb',true), // fallback legacy
+                    'role_en'   => get_post_meta($pid,'uv_role_en',true), // fallback legacy
+                    'primary'   => get_post_meta($pid,'uv_is_primary',true) === '1',
+                    'rank'      => $rank,
+                    'order'     => isset($order_map[$uid]) ? $order_map[$uid] : null,
+                ];
+            }
+        }
         wp_reset_postdata();
+        set_transient($cache_key, $items, uv_people_cache_ttl());
+    }
+    if(!$items){
         return $placeholder(__('No team members found.', 'uv-people'));
     }
     $cols = max(1, min(6, intval($a['columns'])));
-    $items = [];
-    foreach($q->posts as $pid){
-        $uid = get_post_meta($pid,'uv_user_id',true);
-        $rank = get_user_meta($uid, 'uv_rank_number', true);
-        $rank = ($rank === '' ? 999 : intval($rank));
-        $items[] = [
-            'id'        => $pid,
-            'user_id'   => $uid,
-            'role_term' => get_post_meta($pid,'uv_role_term',true),
-            'role_nb'   => get_post_meta($pid,'uv_role_nb',true), // fallback legacy
-            'role_en'   => get_post_meta($pid,'uv_role_en',true), // fallback legacy
-            'primary'   => get_post_meta($pid,'uv_is_primary',true) === '1',
-            'rank'      => $rank,
-            'order'     => isset($order_map[$uid]) ? $order_map[$uid] : null,
-        ];
-    }
-    wp_reset_postdata();
     if($order_map){
         usort($items, function($a,$b){
             $oa = $a['order'] !== null ? $a['order'] : 999;
@@ -621,14 +632,23 @@ function uv_people_all_team_grid($atts){
         }
     }
 
-    // Fetch all team assignments and group them by user
-    $assignments = get_posts([
-        'post_type'      => 'uv_team_assignment',
-        'numberposts'    => -1,
-        'fields'         => 'ids',
-        'no_found_rows'  => true,
-        'meta_query'     => $meta_query,
-    ]);
+    $per_page = max(1, intval($a['per_page']));
+    $page     = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : max(1, intval($a['page']));
+
+    $cache_key_parts = [ implode(',', $location_ids), $page ];
+    $cache_key = 'uv_people_all_team_grid_' . md5( implode('|', $cache_key_parts) );
+    $assignments = get_transient($cache_key);
+    if ($assignments === false) {
+        // Fetch all team assignments and group them by user
+        $assignments = get_posts([
+            'post_type'      => 'uv_team_assignment',
+            'numberposts'    => -1,
+            'fields'         => 'ids',
+            'no_found_rows'  => true,
+            'meta_query'     => $meta_query,
+        ]);
+        set_transient($cache_key, $assignments, uv_people_cache_ttl());
+    }
     $grouped = [];
     foreach ( $assignments as $aid ) {
         $uid = intval( get_post_meta( $aid, 'uv_user_id', true ) );
@@ -666,8 +686,6 @@ function uv_people_all_team_grid($atts){
             : '';
     }
 
-    $per_page = max(1, intval($a['per_page']));
-    $page     = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : max(1, intval($a['page']));
     $offset   = ($page - 1) * $per_page;
 
     $sorted = [];
@@ -799,6 +817,18 @@ function uv_people_all_team_grid($atts){
     }
     return ob_get_clean();
 }
+
+function uv_people_invalidate_team_cache(){
+    global $wpdb;
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_uv_people_team_grid_%'");
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_uv_people_team_grid_%'");
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_uv_people_all_team_grid_%'");
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_uv_people_all_team_grid_%'");
+}
+add_action('save_post_uv_team_assignment', 'uv_people_invalidate_team_cache');
+add_action('added_user_meta', 'uv_people_invalidate_team_cache');
+add_action('updated_user_meta', 'uv_people_invalidate_team_cache');
+add_action('deleted_user_meta', 'uv_people_invalidate_team_cache');
 
 // Block registration
 add_action('init', function(){
