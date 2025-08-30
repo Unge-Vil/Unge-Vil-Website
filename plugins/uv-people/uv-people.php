@@ -738,6 +738,7 @@ function uv_people_all_team_grid($atts){
         'page'         => 1,
         'show_nav'     => false,
         'show_quote'   => true,
+        'show_bio'     => false,
     ], $atts);
 
     $location_ids = [];
@@ -933,10 +934,12 @@ function uv_people_all_team_grid($atts){
         if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
         echo '</div>';
         echo '</a>';
-        $bio_nb = get_user_meta($uid,'uv_bio_nb',true);
-        $bio_en = get_user_meta($uid,'uv_bio_en',true);
-        $bio = ($lang==='en') ? ($bio_en ?: $bio_nb) : ($bio_nb ?: $bio_en);
-        if($bio) echo '<div class="uv-bio">'.wp_kses_post(wpautop($bio)).'</div>';
+        if($a['show_bio']){
+            $bio_nb = get_user_meta($uid,'uv_bio_nb',true);
+            $bio_en = get_user_meta($uid,'uv_bio_en',true);
+            $bio = ($lang==='en') ? ($bio_en ?: $bio_nb) : ($bio_nb ?: $bio_en);
+            if($bio) echo '<div class="uv-bio">'.wp_kses_post(wpautop($bio)).'</div>';
+        }
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
         if(($phone && $show_phone) || $email){
             $email_label = ($lang==='en') ? __('Email:','uv-people') : __('E-post:','uv-people');
@@ -1027,6 +1030,10 @@ add_action('init', function(){
             'show_quote' => [
                 'type'    => 'boolean',
                 'default' => true,
+            ],
+            'show_bio' => [
+                'type'    => 'boolean',
+                'default' => false,
             ],
         ],
     ]);

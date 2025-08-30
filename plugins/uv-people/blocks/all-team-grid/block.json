@@ -24,6 +24,10 @@
     "showQuote": {
       "type": "boolean",
       "default": true
+    },
+    "showBio": {
+      "type": "boolean",
+      "default": false
     }
   },
   "editorScript": "file:./index.js",
