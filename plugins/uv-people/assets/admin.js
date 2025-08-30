@@ -12,4 +12,5 @@ jQuery(function($){
     });
     $('.uv-location-select').select2({width:'100%'});
     $('.uv-user-select').select2({width:'100%'});
+    $('.uv-position-select').select2({width:'100%'});
 });

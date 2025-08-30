@@ -21,9 +21,27 @@ if ($user instanceof WP_User) :
                 <h1><?php echo esc_html($user->display_name); ?></h1>
             </div>
             <?php
-            $position_nb = get_user_meta($uid, 'uv_position_nb', true);
-            $position_en = get_user_meta($uid, 'uv_position_en', true);
-            $position    = ($lang === 'en') ? ($position_en ?: $position_nb) : ($position_nb ?: $position_en);
+            $position = '';
+            $position_term = get_user_meta($uid, 'uv_position_term', true);
+            if ($position_term) {
+                $t = get_term($position_term, 'uv_position');
+                if (!is_wp_error($t) && $t) {
+                    if (function_exists('pll_get_term') && $lang) {
+                        $tid = pll_get_term($t->term_id, $lang);
+                        if ($tid) {
+                            $t = get_term($tid, 'uv_position');
+                        }
+                    }
+                    if ($t && !is_wp_error($t)) {
+                        $position = $t->name;
+                    }
+                }
+            }
+            if (!$position) {
+                $position_nb = get_user_meta($uid, 'uv_position_nb', true);
+                $position_en = get_user_meta($uid, 'uv_position_en', true);
+                $position    = ($lang === 'en') ? ($position_en ?: $position_nb) : ($position_nb ?: $position_en);
+            }
             if ($position) {
                 echo '<div class="uv-position">' . esc_html($position) . '</div>';
             }

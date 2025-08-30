@@ -73,6 +73,18 @@ add_action('init', function(){
     ]);
 });
 
+// Taxonomy: uv_position
+add_action('init', function(){
+    register_taxonomy('uv_position', ['uv_team_assignment'], [
+        'label'        => __('Positions', 'uv-people'),
+        'public'       => false,
+        'show_ui'      => true,
+        'hierarchical' => false,
+        'show_in_rest' => true,
+        'meta_box_cb'  => false,
+    ]);
+});
+
 // Meta boxes for uv_team_assignment
 add_action('add_meta_boxes_uv_team_assignment', function(){
     add_meta_box('uv_ta_fields', __('Assignment', 'uv-people'), function($post){
@@ -81,9 +93,8 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
             $user_id = $post->post_author;
         }
         $user_ids = $user_id ? [$user_id] : [];
-        $loc_id  = get_post_meta($post->ID, 'uv_location_id', true);
-        $role_nb = get_post_meta($post->ID, 'uv_role_nb', true);
-        $role_en = get_post_meta($post->ID, 'uv_role_en', true);
+        $loc_id   = get_post_meta($post->ID, 'uv_location_id', true);
+        $role_term = get_post_meta($post->ID, 'uv_role_term', true);
         $primary = get_post_meta($post->ID, 'uv_is_primary', true);
         $order   = get_post_meta($post->ID, 'uv_order_weight', true);
         // Guard against missing uv_location taxonomy when uv-core is inactive or removed
@@ -93,6 +104,10 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
             if (is_wp_error($locations)) {
                 $locations = [];
             }
+        }
+        $positions = get_terms(['taxonomy' => 'uv_position', 'hide_empty' => false]);
+        if (is_wp_error($positions)) {
+            $positions = [];
         }
         ?>
         <?php wp_nonce_field('uv_ta_save', 'uv_ta_nonce'); ?>
@@ -119,10 +134,13 @@ add_action('add_meta_boxes_uv_team_assignment', function(){
             <option value="<?php echo esc_attr($t->term_id); ?>" <?php selected($loc_id, $t->term_id); ?>><?php echo esc_html($t->name); ?></option>
             <?php endforeach; ?>
         </select></p>
-        <p><label><?php esc_html_e('Role title (Norwegian)','uv-people'); ?></label>
-        <input type="text" name="uv_role_nb" value="<?php echo esc_attr($role_nb); ?>" style="width:100%"></p>
-        <p><label><?php esc_html_e('Role title (English)','uv-people'); ?></label>
-        <input type="text" name="uv_role_en" value="<?php echo esc_attr($role_en); ?>" style="width:100%"></p>
+        <p><label><?php esc_html_e('Position','uv-people'); ?></label>
+        <select name="uv_role_term" class="uv-position-select" style="width:100%">
+            <option value=""><?php esc_html_e('Select','uv-people'); ?></option>
+            <?php foreach($positions as $p): ?>
+            <option value="<?php echo esc_attr($p->term_id); ?>" <?php selected($role_term, $p->term_id); ?>><?php echo esc_html($p->name); ?></option>
+            <?php endforeach; ?>
+        </select></p>
         <p><label><input type="checkbox" name="uv_is_primary" value="1" <?php checked($primary, '1'); ?>> <?php esc_html_e('Primary contact','uv-people'); ?></label></p>
         <p><label><?php esc_html_e('Order weight (lower = earlier)','uv-people'); ?></label>
         <input type="number" name="uv_order_weight" value="<?php echo esc_attr($order?:'10'); ?>" style="width:100%"></p>
@@ -137,16 +155,14 @@ function uv_save_team_assignment($post_id){
 
     remove_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
 
-    $user_ids = isset($_POST['uv_user_ids']) ? array_filter(array_map('absint', (array)$_POST['uv_user_ids'])) : [];
-    $loc_id   = isset($_POST['uv_location_id']) ? absint($_POST['uv_location_id']) : 0;
-    $role_nb  = isset($_POST['uv_role_nb']) ? sanitize_text_field($_POST['uv_role_nb']) : '';
-    $role_en  = isset($_POST['uv_role_en']) ? sanitize_text_field($_POST['uv_role_en']) : '';
-    $order    = isset($_POST['uv_order_weight']) ? absint($_POST['uv_order_weight']) : '';
-    $primary  = isset($_POST['uv_is_primary']) ? '1' : '0';
+    $user_ids  = isset($_POST['uv_user_ids']) ? array_filter(array_map('absint', (array)$_POST['uv_user_ids'])) : [];
+    $loc_id    = isset($_POST['uv_location_id']) ? absint($_POST['uv_location_id']) : 0;
+    $role_term = isset($_POST['uv_role_term']) ? absint($_POST['uv_role_term']) : 0;
+    $order     = isset($_POST['uv_order_weight']) ? absint($_POST['uv_order_weight']) : '';
+    $primary   = isset($_POST['uv_is_primary']) ? '1' : '0';
 
     if($loc_id) update_post_meta($post_id, 'uv_location_id', $loc_id);
-    if($role_nb !== '') update_post_meta($post_id, 'uv_role_nb', $role_nb);
-    if($role_en !== '') update_post_meta($post_id, 'uv_role_en', $role_en);
+    if($role_term) update_post_meta($post_id, 'uv_role_term', $role_term);
     if($order !== '') update_post_meta($post_id, 'uv_order_weight', (int) $order);
     update_post_meta($post_id, 'uv_is_primary', $primary);
 
@@ -173,8 +189,7 @@ function uv_save_team_assignment($post_id){
             if($new_id){
                 update_post_meta($new_id, 'uv_user_id', $uid);
                 if($loc_id) update_post_meta($new_id, 'uv_location_id', $loc_id);
-                if($role_nb !== '') update_post_meta($new_id, 'uv_role_nb', $role_nb);
-                if($role_en !== '') update_post_meta($new_id, 'uv_role_en', $role_en);
+                if($role_term) update_post_meta($new_id, 'uv_role_term', $role_term);
                 update_post_meta($new_id, 'uv_is_primary', $primary);
                 if($order !== '') update_post_meta($new_id, 'uv_order_weight', (int) $order);
             }
@@ -187,11 +202,10 @@ add_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
 
 // User profile fields (phone, public email, quote, socials, avatar attachment)
 function uv_people_profile_fields($user){
-    $phone      = get_user_meta($user->ID, 'uv_phone', true);
-    $position_nb = get_user_meta($user->ID, 'uv_position_nb', true);
-    $position_en = get_user_meta($user->ID, 'uv_position_en', true);
-    $quote_nb   = get_user_meta($user->ID, 'uv_quote_nb', true);
-    $quote_en   = get_user_meta($user->ID, 'uv_quote_en', true);
+    $phone       = get_user_meta($user->ID, 'uv_phone', true);
+    $position    = get_user_meta($user->ID, 'uv_position_term', true);
+    $quote_nb    = get_user_meta($user->ID, 'uv_quote_nb', true);
+    $quote_en    = get_user_meta($user->ID, 'uv_quote_en', true);
     $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
     $avatar_id  = get_user_meta($user->ID, 'uv_avatar_id', true);
     $rank_number = get_user_meta($user->ID, 'uv_rank_number', true);
@@ -207,6 +221,10 @@ function uv_people_profile_fields($user){
         if (is_wp_error($locations)) {
             $locations = [];
         }
+    }
+    $positions = get_terms(['taxonomy' => 'uv_position', 'hide_empty' => false]);
+    if (is_wp_error($positions)) {
+        $positions = [];
     }
     $assigned   = get_user_meta($user->ID, 'uv_location_terms', true);
     if(!is_array($assigned)) $assigned = [];
@@ -229,10 +247,15 @@ function uv_people_profile_fields($user){
         </td></tr>
       <tr><th><label for="uv_rank_number"><?php esc_html_e('Rank Number','uv-people'); ?></label></th>
         <td><input type="number" name="uv_rank_number" id="uv_rank_number" value="<?php echo esc_attr($rank_number); ?>" class="small-text"></td></tr>
-      <tr><th><label for="uv_position_nb"><?php esc_html_e('Position (Norwegian)','uv-people'); ?></label></th>
-        <td><input type="text" name="uv_position_nb" id="uv_position_nb" value="<?php echo esc_attr($position_nb); ?>" class="regular-text"></td></tr>
-      <tr><th><label for="uv_position_en"><?php esc_html_e('Position (English)','uv-people'); ?></label></th>
-        <td><input type="text" name="uv_position_en" id="uv_position_en" value="<?php echo esc_attr($position_en); ?>" class="regular-text"></td></tr>
+      <tr><th><label for="uv_position_term"><?php esc_html_e('Position','uv-people'); ?></label></th>
+        <td>
+            <select name="uv_position_term" id="uv_position_term" class="uv-position-select" style="width:100%">
+                <option value=""><?php esc_html_e('Select','uv-people'); ?></option>
+                <?php foreach($positions as $pos): ?>
+                <option value="<?php echo esc_attr($pos->term_id); ?>" <?php selected($position, $pos->term_id); ?>><?php echo esc_html($pos->name); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </td></tr>
       <tr><th><label for="uv_quote_nb"><?php esc_html_e('Volunteer Quote (Norwegian)','uv-people'); ?></label></th>
         <td><textarea name="uv_quote_nb" id="uv_quote_nb" rows="4" class="large-text"><?php echo esc_textarea($quote_nb); ?></textarea></td></tr>
       <tr><th><label for="uv_quote_en"><?php esc_html_e('Volunteer Quote (English)','uv-people'); ?></label></th>
@@ -256,8 +279,7 @@ function uv_people_profile_save($user_id){
     if(!current_user_can('edit_user', $user_id)) return;
     check_admin_referer('update-user_' . $user_id);
     if(isset($_POST['uv_phone'])) update_user_meta($user_id, 'uv_phone', sanitize_text_field($_POST['uv_phone']));
-    if(isset($_POST['uv_position_nb'])) update_user_meta($user_id, 'uv_position_nb', sanitize_text_field($_POST['uv_position_nb']));
-    if(isset($_POST['uv_position_en'])) update_user_meta($user_id, 'uv_position_en', sanitize_text_field($_POST['uv_position_en']));
+    if(isset($_POST['uv_position_term'])) update_user_meta($user_id, 'uv_position_term', absint($_POST['uv_position_term']));
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
     if(isset($_POST['uv_quote_en'])) update_user_meta($user_id, 'uv_quote_en', sanitize_textarea_field($_POST['uv_quote_en']));
     if(isset($_POST['uv_avatar_id'])) update_user_meta($user_id, 'uv_avatar_id', absint($_POST['uv_avatar_id']));
@@ -299,6 +321,8 @@ function uv_people_profile_save($user_id){
             if($post_id){
                 update_post_meta($post_id, 'uv_user_id', $user_id);
                 update_post_meta($post_id, 'uv_location_id', $lid);
+                $pos_term = absint(get_user_meta($user_id, 'uv_position_term', true));
+                if($pos_term) update_post_meta($post_id, 'uv_role_term', $pos_term);
                 update_post_meta($post_id, 'uv_is_primary', '0');
                 update_post_meta($post_id, 'uv_order_weight', '10');
             }
@@ -359,12 +383,13 @@ function uv_people_team_grid($atts){
         $rank = get_user_meta($uid, 'uv_rank_number', true);
         $rank = ($rank === '' ? 999 : intval($rank));
         $items[] = [
-            'id'      => $pid,
-            'user_id' => $uid,
-            'role_nb' => get_post_meta($pid,'uv_role_nb',true),
-            'role_en' => get_post_meta($pid,'uv_role_en',true),
-            'primary' => get_post_meta($pid,'uv_is_primary',true) === '1',
-            'rank'    => $rank,
+            'id'        => $pid,
+            'user_id'   => $uid,
+            'role_term' => get_post_meta($pid,'uv_role_term',true),
+            'role_nb'   => get_post_meta($pid,'uv_role_nb',true), // fallback legacy
+            'role_en'   => get_post_meta($pid,'uv_role_en',true), // fallback legacy
+            'primary'   => get_post_meta($pid,'uv_is_primary',true) === '1',
+            'rank'      => $rank,
         ];
     }
     wp_reset_postdata();
@@ -400,9 +425,30 @@ function uv_people_team_grid($atts){
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
         echo '<h3>'.esc_html($name).'</h3>';
-        $role_nb = $it['role_nb'] ?: get_user_meta($uid,'uv_position_nb',true);
-        $role_en = $it['role_en'] ?: get_user_meta($uid,'uv_position_en',true);
-        $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
+        $role = '';
+        $role_term = $it['role_term'];
+        if(!$role_term){
+            $role_term = get_user_meta($uid,'uv_position_term',true);
+        }
+        if($role_term){
+            $t = get_term($role_term, 'uv_position');
+            if(!is_wp_error($t) && $t){
+                if(function_exists('pll_get_term') && $lang){
+                    $tid = pll_get_term($t->term_id, $lang);
+                    if($tid){
+                        $t = get_term($tid, 'uv_position');
+                    }
+                }
+                if($t && !is_wp_error($t)){
+                    $role = $t->name;
+                }
+            }
+        }
+        if(!$role){
+            $role_nb = $it['role_nb'] ?: get_user_meta($uid,'uv_position_nb',true);
+            $role_en = $it['role_en'] ?: get_user_meta($uid,'uv_position_en',true);
+            $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
+        }
         if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
 
         // choose quote by language
@@ -596,9 +642,27 @@ function uv_people_all_team_grid($atts){
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
         echo '<h3>'.esc_html($name).'</h3>';
-        $role_nb = get_user_meta($uid,'uv_position_nb',true);
-        $role_en = get_user_meta($uid,'uv_position_en',true);
-        $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
+        $role = '';
+        $role_term = get_user_meta($uid,'uv_position_term',true);
+        if($role_term){
+            $t = get_term($role_term, 'uv_position');
+            if(!is_wp_error($t) && $t){
+                if(function_exists('pll_get_term') && $lang){
+                    $tid = pll_get_term($t->term_id, $lang);
+                    if($tid){
+                        $t = get_term($tid, 'uv_position');
+                    }
+                }
+                if($t && !is_wp_error($t)){
+                    $role = $t->name;
+                }
+            }
+        }
+        if(!$role){
+            $role_nb = get_user_meta($uid,'uv_position_nb',true);
+            $role_en = get_user_meta($uid,'uv_position_en',true);
+            $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
+        }
         if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
         echo '</div>';
         echo '</a>';
