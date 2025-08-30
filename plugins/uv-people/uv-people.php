@@ -736,6 +736,9 @@ function uv_people_save_location_primary_team($term_id){
     if (!isset($_POST['uv_location_primary_team_nonce']) || !wp_verify_nonce($_POST['uv_location_primary_team_nonce'], 'uv_location_primary_team')) {
         return;
     }
+    if ( ! current_user_can( 'manage_categories' ) ) {
+        return;
+    }
     $ids = isset($_POST['uv_primary_team']) ? array_filter(array_map('intval', (array)$_POST['uv_primary_team'])) : [];
     update_term_meta($term_id, 'uv_primary_team', $ids);
     $assignments = get_posts([
