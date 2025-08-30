@@ -1,0 +1,41 @@
+.uv-edit-profile-form {
+    max-width: 600px;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.uv-edit-profile-form label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: .25rem;
+}
+.uv-edit-profile-form input[type="text"],
+.uv-edit-profile-form select,
+.uv-edit-profile-form textarea {
+    width: 100%;
+    padding: .5rem;
+    border: 1px solid var(--uv-border, #ddd);
+    border-radius: 4px;
+}
+.uv-edit-profile-form button {
+    background: var(--uv-purple, #7a00cc);
+    color: #fff;
+    border: none;
+    padding: .6rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.uv-edit-profile-message {
+    margin-bottom: 1rem;
+    padding: .75rem;
+    border-radius: 4px;
+}
+.uv-edit-profile-message.uv-success {
+    background: #dff0d8;
+    border: 1px solid #c3e6cb;
+}
+.uv-edit-profile-message.uv-error {
+    background: #f8d7da;
+    border: 1px solid #f5c2c7;
+}

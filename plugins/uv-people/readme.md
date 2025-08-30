@@ -9,6 +9,7 @@ UV People adds user profile fields, per-location assignments, and a team grid sh
   - `location` (required) Location slug to filter team members.
   - `columns` (default: 4) number of columns in the grid.
   - `highlight_primary` (0 or 1) emphasize primary team members.
+- `[uv_edit_profile]` – display an editable profile form for the currently logged-in user.
 
 ## Blocks
 - **All Team Grid** – display team members across locations. In the block settings, choose one or more Locations or enable *All locations* to show everyone.
