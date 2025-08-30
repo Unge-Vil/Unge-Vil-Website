@@ -653,6 +653,7 @@ function uv_core_get_experiences_for_user($user_id){
             'key' => 'uv_experience_users',
             'value' => absint($user_id),
             'compare' => '=',
+            'type' => 'NUMERIC',
         ]]
     ]);
 }
