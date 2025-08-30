@@ -49,6 +49,7 @@ if ($user instanceof WP_User) :
             $phone      = get_user_meta($uid, 'uv_phone', true);
             $show_phone = get_user_meta($uid, 'uv_show_phone', true) === '1';
             $email      = get_the_author_meta('user_email', $uid);
+            $birthdate  = get_user_meta($uid, 'uv_birthdate', true);
             if (($phone && $show_phone) || $email) {
                 echo '<div class="uv-contact">';
                 if ($phone && $show_phone) {
@@ -58,6 +59,14 @@ if ($user instanceof WP_User) :
                     echo '<div><a href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a></div>';
                 }
                 echo '</div>';
+            }
+
+            if ($birthdate) {
+                $bd = DateTime::createFromFormat('Y-m-d', $birthdate);
+                if ($bd) {
+                    $age = (new DateTime())->diff($bd)->y;
+                    echo '<div class="uv-age">' . sprintf(esc_html__('Age: %d', 'uv-kadence-child'), $age) . '</div>';
+                }
             }
 
             $quote_nb = get_user_meta($uid, 'uv_quote_nb', true);

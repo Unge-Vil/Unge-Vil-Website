@@ -131,6 +131,7 @@ function uv_people_profile_fields($user){
     $quote_en    = get_user_meta($user->ID, 'uv_quote_en', true);
     $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
     $avatar_id  = get_user_meta($user->ID, 'uv_avatar_id', true);
+    $birthdate  = get_user_meta($user->ID, 'uv_birthdate', true);
     // Guard against missing uv_location taxonomy when uv-core is inactive or removed
     $locations  = [];
     if (taxonomy_exists('uv_location')) {
@@ -174,6 +175,10 @@ function uv_people_profile_fields($user){
             <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
             <br><label><input type="checkbox" name="uv_show_phone" value="1" <?php checked($show_phone); ?>> <?php esc_html_e('Show on profile','uv-people'); ?></label>
         </td></tr>
+      <tr><th><label for="uv_birthdate"><?php esc_html_e('Birthdate','uv-people'); ?></label></th>
+        <td>
+            <input type="date" name="uv_birthdate" id="uv_birthdate" value="<?php echo esc_attr($birthdate); ?>" class="regular-text">
+        </td></tr>
       <tr><th><label for="uv_position_term"><?php esc_html_e('Position','uv-people'); ?></label></th>
         <td>
             <select name="uv_position_term" id="uv_position_term" class="uv-position-select" style="width:100%">
@@ -210,6 +215,17 @@ function uv_people_profile_save($user_id){
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
     if(isset($_POST['uv_quote_en'])) update_user_meta($user_id, 'uv_quote_en', sanitize_textarea_field($_POST['uv_quote_en']));
     if(isset($_POST['uv_avatar_id'])) update_user_meta($user_id, 'uv_avatar_id', absint($_POST['uv_avatar_id']));
+    if(isset($_POST['uv_birthdate'])){
+        $bd = sanitize_text_field($_POST['uv_birthdate']);
+        if($bd){
+            $dt = date_create($bd);
+            if($dt){
+                update_user_meta($user_id, 'uv_birthdate', $dt->format('Y-m-d'));
+            }
+        } else {
+            delete_user_meta($user_id, 'uv_birthdate');
+        }
+    }
     update_user_meta($user_id, 'uv_show_phone', isset($_POST['uv_show_phone']) ? '1' : '0');
     if(isset($_POST['uv_locations'])){
         $loc_ids = array_filter(array_map('intval', (array)$_POST['uv_locations']));
@@ -275,6 +291,7 @@ function uv_people_edit_profile_shortcode(){
     $quote_en    = get_user_meta($user_id, 'uv_quote_en', true);
     $avatar_id   = get_user_meta($user_id, 'uv_avatar_id', true);
     $position    = get_user_meta($user_id, 'uv_position_term', true);
+    $birthdate   = get_user_meta($user_id, 'uv_birthdate', true);
     $positions   = get_terms(['taxonomy' => 'uv_position', 'hide_empty' => false]);
     if(is_wp_error($positions)){
         $positions = [];
@@ -304,6 +321,10 @@ function uv_people_edit_profile_shortcode(){
         <p class="uv-field">
             <label for="uv_phone"><?php esc_html_e('Phone', 'uv-people'); ?></label>
             <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>">
+        </p>
+        <p class="uv-field">
+            <label for="uv_birthdate"><?php esc_html_e('Birthdate', 'uv-people'); ?></label>
+            <input type="date" name="uv_birthdate" id="uv_birthdate" value="<?php echo esc_attr($birthdate); ?>">
         </p>
         <p class="uv-field">
             <label for="uv_position_term"><?php esc_html_e('Position', 'uv-people'); ?></label>
@@ -355,6 +376,24 @@ function uv_people_edit_profile_shortcode(){
     return ob_get_clean();
 }
 add_shortcode('uv_edit_profile', 'uv_people_edit_profile_shortcode');
+
+function uv_people_migrate_birthdates_to_iso(){
+    if(get_option('uv_people_birthdate_migrated')){
+        return;
+    }
+    $users = get_users(['fields' => 'ID', 'meta_key' => 'uv_birthdate']);
+    foreach($users as $uid){
+        $raw = get_user_meta($uid, 'uv_birthdate', true);
+        if($raw){
+            $ts = strtotime($raw);
+            if($ts){
+                update_user_meta($uid, 'uv_birthdate', gmdate('Y-m-d', $ts));
+            }
+        }
+    }
+    update_option('uv_people_birthdate_migrated', 1);
+}
+add_action('init', 'uv_people_migrate_birthdates_to_iso');
 
 // Shortcode: Team grid by location
 function uv_people_team_grid($atts){
