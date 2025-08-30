@@ -29,8 +29,8 @@ jQuery(function($){
             return;
         }
         var strings = typeof UVTeamManager !== "undefined" ? UVTeamManager : {
-            selectAvatar: "Select Avatar",
-            useImage: "Use this image"
+            selectAvatar: "Velg avatar",
+            useImage: "Bruk dette bildet"
         };
         var $wrap = $(this).closest(".uv-avatar-field");
         var frame = wp.media({

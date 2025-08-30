@@ -11,9 +11,9 @@
             const { attributes: { columns, show_links }, setAttributes } = props;
             return createElement( wp.element.Fragment, {},
                 createElement( InspectorControls, {},
-                    createElement( PanelBody, { title: __( 'Settings', 'uv-core' ), initialOpen: true },
+                    createElement( PanelBody, { title: __( 'Innstillinger', 'uv-core' ), initialOpen: true },
                         createElement( RangeControl, {
-                            label: __( 'Columns', 'uv-core' ),
+                            label: __( 'Kolonner', 'uv-core' ),
                             min: 1,
                             max: 6,
                             value: columns,
@@ -21,7 +21,7 @@
                             style: { height: '40px', marginBottom: 0 }
                         } ),
                         createElement( ToggleControl, {
-                            label: __( 'Show Links', 'uv-core' ),
+                            label: __( 'Vis lenker', 'uv-core' ),
                             checked: show_links,
                             onChange: function( value ) { setAttributes( { show_links: value } ); },
                             style: { height: '40px', marginBottom: 0 }
@@ -36,14 +36,14 @@
                             return createElement(
                                 'p',
                                 { className: 'uv-block-placeholder' },
-                                __( 'Loading preview…', 'uv-core' )
+                                __( 'Laster forhåndsvisning…', 'uv-core' )
                             );
                         },
                         EmptyResponsePlaceholder: function() {
                             return createElement(
                                 'div',
                                 { className: 'uv-block-placeholder' },
-                                __( 'No locations found.', 'uv-core' )
+                                __( 'Ingen steder funnet.', 'uv-core' )
                             );
                         }
                     } )

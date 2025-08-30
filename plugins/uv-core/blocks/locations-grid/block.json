@@ -1,7 +1,7 @@
 {
   "apiVersion": 2,
   "name": "uv/locations-grid",
-  "title": "Locations Grid",
+  "title": "Stedrutenett",
   "category": "unge-vil",
   "icon": "location-alt",
   "textdomain": "uv-core",

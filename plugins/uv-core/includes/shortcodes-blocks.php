@@ -3,7 +3,7 @@
 add_filter('block_categories_all', function($categories) {
     array_unshift($categories, [
         'slug'  => 'unge-vil',
-        'title' => __('Unge Vil blocks', 'uv-core'),
+        'title' => __('Unge Vil-blokker', 'uv-core'),
     ]);
     return $categories;
 }, 10, 2);
@@ -13,7 +13,7 @@ function uv_core_locations_grid($atts){
     $terms = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
     if(is_wp_error($terms) || empty($terms)){
         if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
-            return '<div class="uv-block-placeholder">'.esc_html__('No locations found.', 'uv-core').'</div>';
+            return '<div class="uv-block-placeholder">'.esc_html__('Ingen steder funnet.', 'uv-core').'</div>';
         }
         return '';
     }
@@ -59,7 +59,7 @@ function uv_core_posts_news($atts){
         echo '</ul>';
     } else {
         if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
-            echo '<div class="uv-block-placeholder">'.esc_html__('No posts found.', 'uv-core').'</div>';
+            echo '<div class="uv-block-placeholder">'.esc_html__('Ingen innlegg funnet.', 'uv-core').'</div>';
         }
     }
     wp_reset_postdata();
@@ -101,7 +101,7 @@ function uv_core_activities($atts){
         echo '</ul>';
     } else {
         if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
-            echo '<div class="uv-block-placeholder">'.esc_html__('No activities found.', 'uv-core').'</div>';
+            echo '<div class="uv-block-placeholder">'.esc_html__('Ingen aktiviteter funnet.', 'uv-core').'</div>';
         }
     }
     wp_reset_postdata();
@@ -126,7 +126,7 @@ function uv_core_experiences($atts){
         echo '</ul>';
     } else {
         if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
-            echo '<div class="uv-block-placeholder">'.esc_html__('No experiences found.', 'uv-core').'</div>';
+            echo '<div class="uv-block-placeholder">'.esc_html__('Ingen erfaringer funnet.', 'uv-core').'</div>';
         }
     }
     wp_reset_postdata();
@@ -209,7 +209,7 @@ function uv_core_partners($atts){
         echo '</ul>';
     } else {
         if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
-            echo '<div class="uv-block-placeholder">'.esc_html__('No partners found.', 'uv-core').'</div>';
+            echo '<div class="uv-block-placeholder">'.esc_html__('Ingen partnere funnet.', 'uv-core').'</div>';
         }
     }
     wp_reset_postdata();

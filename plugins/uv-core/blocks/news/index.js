@@ -18,18 +18,18 @@ import fetchTerms from '../utils/fetchTerms';
             } ) : [];
             return createElement( wp.element.Fragment, {},
                 createElement( InspectorControls, {},
-                    createElement( PanelBody, { title: __( 'Settings', 'uv-core' ), initialOpen: true },
+                    createElement( PanelBody, { title: __( 'Innstillinger', 'uv-core' ), initialOpen: true },
                         error ?
-                        createElement( 'p', { className: 'uv-block-placeholder' }, __( 'Failed to load locations.', 'uv-core' ) ) :
+                        createElement( 'p', { className: 'uv-block-placeholder' }, __( 'Kunne ikke laste steder.', 'uv-core' ) ) :
                         createElement( SelectControl, {
-                            label: __( 'Location', 'uv-core' ),
+                            label: __( 'Sted', 'uv-core' ),
                             value: location,
-                            options: [ { label: __( 'Select', 'uv-core' ), value: '' } ].concat( options ),
+                            options: [ { label: __( 'Velg', 'uv-core' ), value: '' } ].concat( options ),
                             onChange: function( value ) { setAttributes( { location: value } ); },
                             style: { height: '40px', marginBottom: 0 }
                         } ),
                         createElement( RangeControl, {
-                            label: __( 'Count', 'uv-core' ),
+                            label: __( 'Antall', 'uv-core' ),
                             min: 1,
                             max: 10,
                             value: count,
@@ -46,14 +46,14 @@ import fetchTerms from '../utils/fetchTerms';
                             return createElement(
                                 'p',
                                 { className: 'uv-block-placeholder' },
-                                __( 'Loading preview…', 'uv-core' )
+                                __( 'Laster forhåndsvisning…', 'uv-core' )
                             );
                         },
                         EmptyResponsePlaceholder: function() {
                             return createElement(
                                 'div',
                                 { className: 'uv-block-placeholder' },
-                                __( 'No posts found.', 'uv-core' )
+                                __( 'Ingen innlegg funnet.', 'uv-core' )
                             );
                         }
                     } )

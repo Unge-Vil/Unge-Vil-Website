@@ -50,7 +50,7 @@ add_action('after_setup_theme', function() {
 
 // Accessibility: add skip link at the start of the document
 add_action('wp_body_open', function() {
-    echo '<a class="skip-link" href="#main-content">' . esc_html__('Skip to content', 'uv-kadence-child') . '</a>';
+    echo '<a class="skip-link" href="#main-content">' . esc_html__('Hopp til innhold', 'uv-kadence-child') . '</a>';
 });
 
 // Register block patterns for shortcode blocks
@@ -59,11 +59,11 @@ add_action('init', function() {
         return;
     }
     $patterns = [
-        'locations-grid' => __('Locations Grid', 'uv-kadence-child'),
-        'news-list'      => __('News List', 'uv-kadence-child'),
-        'activities'     => __('Activities', 'uv-kadence-child'),
-        'partners'       => __('Partners', 'uv-kadence-child'),
-        'team-grid'      => __('Team Grid', 'uv-kadence-child'),
+        'locations-grid' => __('Stedrutenett', 'uv-kadence-child'),
+        'news-list'      => __('Nyhetsliste', 'uv-kadence-child'),
+        'activities'     => __('Aktiviteter', 'uv-kadence-child'),
+        'partners'       => __('Partnere', 'uv-kadence-child'),
+        'team-grid'      => __('Teamrutenett', 'uv-kadence-child'),
     ];
     foreach ($patterns as $slug => $title) {
         $pattern_path = get_theme_file_path('shortcode-patterns/' . $slug . '.php');
@@ -111,8 +111,8 @@ add_action('template_redirect', function() {
 // Register Control Panel admin page and redirect users there after login
 add_action('admin_menu', function() {
     add_menu_page(
-        __('Control Panel', 'uv-kadence-child'),
-        __('Control Panel', 'uv-kadence-child'),
+        __('Kontrollpanel', 'uv-kadence-child'),
+        __('Kontrollpanel', 'uv-kadence-child'),
         'read',
         'uv-control-panel',
         'uv_render_control_panel',
@@ -124,8 +124,8 @@ add_action('admin_menu', function() {
 add_action('admin_menu', function() {
     add_submenu_page(
         null,
-        __('Edit Profile', 'uv-kadence-child'),
-        __('Edit Profile', 'uv-kadence-child'),
+        __('Rediger profil', 'uv-kadence-child'),
+        __('Rediger profil', 'uv-kadence-child'),
         'read',
         'uv-edit-profile',
         'uv_render_edit_profile_page'
@@ -227,37 +227,37 @@ function uv_render_control_panel() {
         [
             'url'    => admin_url('admin.php?page=uv-edit-profile'),
             'img'    => 'profile.png',
-            'label'  => __('Profile', 'uv-kadence-child'),
+            'label'  => __('Profil', 'uv-kadence-child'),
             'target' => '_self',
         ],
         [
             'url'    => admin_url('edit.php?post_type=uv_activity'),
             'img'    => 'activities.png',
-            'label'  => __('Activities', 'uv-kadence-child'),
+            'label'  => __('Aktiviteter', 'uv-kadence-child'),
             'target' => '_self',
         ],
         [
             'url'    => admin_url('edit-tags.php?taxonomy=uv_location'),
             'img'    => 'locations.png',
-            'label'  => __('Locations', 'uv-kadence-child'),
+            'label'  => __('Steder', 'uv-kadence-child'),
             'target' => '_self',
         ],
         [
             'url'    => admin_url('edit.php'),
             'img'    => 'news.png',
-            'label'  => __('News', 'uv-kadence-child'),
+            'label'  => __('Nyheter', 'uv-kadence-child'),
             'target' => '_self',
         ],
         [
             'url'    => admin_url('edit.php?post_type=uv_partner'),
             'img'    => 'partners.png',
-            'label'  => __('Partners', 'uv-kadence-child'),
+            'label'  => __('Partnere', 'uv-kadence-child'),
             'target' => '_self',
         ],
         [
             'url'    => $knowledge_url ?: '#',
             'img'    => 'knowledge.png',
-            'label'  => __('Knowledge', 'uv-kadence-child'),
+            'label'  => __('Kunnskap', 'uv-kadence-child'),
             'target' => '_blank',
         ],
     ];
@@ -265,7 +265,7 @@ function uv_render_control_panel() {
     echo '<div class="wrap uv-control-panel">';
     echo '<div class="uv-admin-header">';
     echo '<img class="uv-admin-logo" src="' . esc_url($img_base . '/UngeVil_admin_logo.png') . '" alt="Unge Vil" />';
-    echo '<h1>' . sprintf(esc_html__('Welcome, %s!', 'uv-kadence-child'), esc_html($display_name)) . '</h1>';
+    echo '<h1>' . sprintf(esc_html__('Velkommen, %s!', 'uv-kadence-child'), esc_html($display_name)) . '</h1>';
     echo '</div>';
 
     if ($avatar || $age || (is_array($locations) && $locations)) {
@@ -276,7 +276,7 @@ function uv_render_control_panel() {
         if ($age || (is_array($locations) && $locations)) {
             echo '<div class="uv-user-meta">';
             if ($age) {
-                echo '<div class="uv-age">' . sprintf(esc_html__('Age: %d', 'uv-kadence-child'), (int) $age) . '</div>';
+                echo '<div class="uv-age">' . sprintf(esc_html__('Alder: %d', 'uv-kadence-child'), (int) $age) . '</div>';
             }
             if (is_array($locations) && $locations) {
                 echo '<div class="uv-locations">';
@@ -310,14 +310,14 @@ function uv_render_control_panel() {
  */
 function uv_render_edit_profile_page() {
     if (!is_user_logged_in()) {
-        wp_die(__('You do not have permission to access this page.', 'uv-kadence-child'));
+        wp_die(__('Du har ikke tilgang til denne siden.', 'uv-kadence-child'));
     }
 
     $current_user_id = get_current_user_id();
     $requested_id    = isset($_GET['user_id']) ? (int) $_GET['user_id'] : $current_user_id;
 
     if ($requested_id !== $current_user_id) {
-        wp_die(__('You can only access your own profile.', 'uv-kadence-child'));
+        wp_die(__('Du kan bare få tilgang til din egen profil.', 'uv-kadence-child'));
     }
 
     echo do_shortcode('[uv_edit_profile]');
@@ -334,8 +334,8 @@ add_action('admin_init', function() {
 // Add settings page for Control Panel configuration
 add_action('admin_menu', function() {
     add_options_page(
-        __('UV Settings', 'uv-kadence-child'),
-        __('UV Settings', 'uv-kadence-child'),
+        __('UV-innstillinger', 'uv-kadence-child'),
+        __('UV-innstillinger', 'uv-kadence-child'),
         'manage_options',
         'uv-settings',
         'uv_render_settings_page'

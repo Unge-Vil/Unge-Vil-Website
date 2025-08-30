@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Partners
+ * Title: Partnere
  * Slug: uv-kadence-child/partners
  * Categories: shortcode
  */

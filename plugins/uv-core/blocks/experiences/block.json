@@ -5,7 +5,7 @@
   "icon": "admin-site",
   "textdomain": "uv-core",
   "__i18n__": {
-    "title": "Experiences"
+    "title": "Erfaringer"
   },
   "attributes": {
     "count": {"type": "number", "default": 3}

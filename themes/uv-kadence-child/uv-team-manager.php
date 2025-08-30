@@ -11,12 +11,12 @@ class UV_Team_Manager_Table extends WP_List_Table {
     public function get_columns() {
         return [
             'cb'        => '<input type="checkbox" />',
-            'name'      => __('Name', 'uv-kadence-child'),
+            'name'      => __('Navn', 'uv-kadence-child'),
             'avatar'    => __('Avatar', 'uv-kadence-child'),
-            'phone'     => __('Phone', 'uv-kadence-child'),
-            'position'  => __('Position', 'uv-kadence-child'),
-            'locations' => __('Locations', 'uv-kadence-child'),
-            'primary'   => __('Primary Locations', 'uv-kadence-child'),
+            'phone'     => __('Telefon', 'uv-kadence-child'),
+            'position'  => __('Stilling', 'uv-kadence-child'),
+            'locations' => __('Steder', 'uv-kadence-child'),
+            'primary'   => __('Primære steder', 'uv-kadence-child'),
         ];
     }
 
@@ -83,8 +83,8 @@ class UV_Team_Manager_Table extends WP_List_Table {
         $html  = '<div class="uv-avatar-field" data-default="' . esc_attr($default) . '">';
         $html .= '<div class="uv-avatar-preview">' . $preview . '</div>';
         $html .= '<input type="hidden" class="uv-avatar-id" name="uv_team_manager[' . $user->ID . '][avatar_id]" value="' . esc_attr($avatar_id) . '" />';
-        $html .= '<button type="button" class="button uv-avatar-button">' . esc_html__('Select', 'uv-kadence-child') . '</button>';
-        $html .= '<button type="button" class="button uv-avatar-remove"' . ($avatar_id ? '' : ' style="display:none;"') . '>' . esc_html__('Remove', 'uv-kadence-child') . '</button>';
+        $html .= '<button type="button" class="button uv-avatar-button">' . esc_html__('Velg', 'uv-kadence-child') . '</button>';
+        $html .= '<button type="button" class="button uv-avatar-remove"' . ($avatar_id ? '' : ' style="display:none;"') . '>' . esc_html__('Fjern', 'uv-kadence-child') . '</button>';
         $html .= '</div>';
 
         return $html;
@@ -149,22 +149,22 @@ class UV_Team_Manager_Table extends WP_List_Table {
 
 function uv_render_team_manager_page() {
     if (!current_user_can('edit_users')) {
-        wp_die(__('Sorry, you are not allowed to access this page.', 'uv-kadence-child'));
+        wp_die(__('Beklager, du har ikke tilgang til denne siden.', 'uv-kadence-child'));
     }
     $table = new UV_Team_Manager_Table();
     $table->prepare_items();
     ?>
     <div class="wrap">
-        <h1><?php esc_html_e('Team Manager', 'uv-kadence-child'); ?></h1>
+        <h1><?php esc_html_e('Teamadministrasjon', 'uv-kadence-child'); ?></h1>
         <form method="get">
             <input type="hidden" name="page" value="uv-team-manager" />
-            <?php $table->search_box(__('Search Users', 'uv-kadence-child'), 'uv-team-search'); ?>
+            <?php $table->search_box(__('Søk brukere', 'uv-kadence-child'), 'uv-team-search'); ?>
         </form>
         <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
             <?php wp_nonce_field('uv_team_manager_save', 'uv_team_manager_nonce'); ?>
             <input type="hidden" name="action" value="uv_team_manager_save" />
             <?php $table->display(); ?>
-            <?php submit_button(__('Save Changes', 'uv-kadence-child')); ?>
+            <?php submit_button(__('Lagre endringer', 'uv-kadence-child')); ?>
         </form>
     </div>
     <?php
@@ -172,7 +172,7 @@ function uv_render_team_manager_page() {
 
 function uv_team_manager_save_handler() {
     if (!current_user_can('edit_users')) {
-        wp_die(__('You do not have permission to edit users.', 'uv-kadence-child'));
+        wp_die(__('Du har ikke tillatelse til å redigere brukere.', 'uv-kadence-child'));
     }
     check_admin_referer('uv_team_manager_save', 'uv_team_manager_nonce');
     $data = isset($_POST['uv_team_manager']) ? (array)$_POST['uv_team_manager'] : [];
@@ -219,8 +219,8 @@ add_action('admin_post_uv_team_manager_save', 'uv_team_manager_save_handler');
 add_action('admin_menu', function () {
     add_submenu_page(
         'uv-control-panel',
-        __('Team Manager', 'uv-kadence-child'),
-        __('Team Manager', 'uv-kadence-child'),
+        __('Teamadministrasjon', 'uv-kadence-child'),
+        __('Teamadministrasjon', 'uv-kadence-child'),
         'edit_users',
         'uv-team-manager',
         'uv_render_team_manager_page'
@@ -266,7 +266,7 @@ add_action('admin_enqueue_scripts', function ($hook) {
         true
     );
     wp_localize_script('uv-team-manager', 'UVTeamManager', [
-        'selectAvatar' => __('Select Avatar', 'uv-kadence-child'),
-        'useImage'     => __('Use this image', 'uv-kadence-child'),
+        'selectAvatar' => __('Velg avatar', 'uv-kadence-child'),
+        'useImage'     => __('Bruk dette bildet', 'uv-kadence-child'),
     ]);
 });

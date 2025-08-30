@@ -22,27 +22,27 @@ import fetchTerms from '../utils/fetchTerms';
             const typeOptions = types ? types.map( function( t ) { return { label: t.name, value: t.slug }; } ) : [];
             return createElement( wp.element.Fragment, {},
                 createElement( InspectorControls, {},
-                    createElement( PanelBody, { title: __( 'Settings', 'uv-core' ), initialOpen: true },
+                    createElement( PanelBody, { title: __( 'Innstillinger', 'uv-core' ), initialOpen: true },
                         locationError ?
-                        createElement( 'p', { className: 'uv-block-placeholder' }, __( 'Failed to load locations.', 'uv-core' ) ) :
+                        createElement( 'p', { className: 'uv-block-placeholder' }, __( 'Kunne ikke laste steder.', 'uv-core' ) ) :
                         createElement( SelectControl, {
-                            label: __( 'Location', 'uv-core' ),
+                            label: __( 'Sted', 'uv-core' ),
                             value: location,
-                            options: [ { label: __( 'Select', 'uv-core' ), value: '' } ].concat( locationOptions ),
+                            options: [ { label: __( 'Velg', 'uv-core' ), value: '' } ].concat( locationOptions ),
                             onChange: function( value ) { setAttributes( { location: value } ); },
                             style: { height: '40px', marginBottom: 0 }
                         } ),
                         typeError ?
-                        createElement( 'p', { className: 'uv-block-placeholder' }, __( 'Failed to load types.', 'uv-core' ) ) :
+                        createElement( 'p', { className: 'uv-block-placeholder' }, __( 'Kunne ikke laste typer.', 'uv-core' ) ) :
                         createElement( SelectControl, {
                             label: __( 'Type', 'uv-core' ),
                             value: type,
-                            options: [ { label: __( 'Select', 'uv-core' ), value: '' } ].concat( typeOptions ),
+                            options: [ { label: __( 'Velg', 'uv-core' ), value: '' } ].concat( typeOptions ),
                             onChange: function( value ) { setAttributes( { type: value } ); },
                             style: { height: '40px', marginBottom: 0 }
                         } ),
                         createElement( RangeControl, {
-                            label: __( 'Columns', 'uv-core' ),
+                            label: __( 'Kolonner', 'uv-core' ),
                             min: 1,
                             max: 6,
                             value: columns,
@@ -59,14 +59,14 @@ import fetchTerms from '../utils/fetchTerms';
                             return createElement(
                                 'p',
                                 { className: 'uv-block-placeholder' },
-                                __( 'Loading preview…', 'uv-core' )
+                                __( 'Laster forhåndsvisning…', 'uv-core' )
                             );
                         },
                         EmptyResponsePlaceholder: function() {
                             return createElement(
                                 'div',
                                 { className: 'uv-block-placeholder' },
-                                __( 'No partners found.', 'uv-core' )
+                                __( 'Ingen partnere funnet.', 'uv-core' )
                             );
                         }
                     } )

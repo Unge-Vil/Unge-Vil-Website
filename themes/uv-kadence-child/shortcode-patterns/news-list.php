@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: News List
+ * Title: Nyhetsliste
  * Slug: uv-kadence-child/news-list
  * Categories: shortcode
  */

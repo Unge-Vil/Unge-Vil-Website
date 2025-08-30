@@ -1,7 +1,7 @@
 {
   "apiVersion": 2,
   "name": "uv/news",
-  "title": "News",
+  "title": "Nyheter",
   "category": "unge-vil",
   "icon": "megaphone",
   "textdomain": "uv-core",
