@@ -5,6 +5,7 @@
 :root {
   --uv-purple: #7a00cc;
   --uv-radius: 16px;
+  --uv-avatar-size: 96px;
 }
 
 body.toplevel_page_uv-control-panel {
@@ -43,6 +44,30 @@ body.toplevel_page_uv-control-panel h3 {
 .uv-admin-logo {
   max-width: 120px;
   height: auto;
+}
+
+.uv-admin-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.uv-avatar img {
+  width: var(--uv-avatar-size);
+  height: var(--uv-avatar-size);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.uv-location-pill {
+  display: inline-block;
+  background: var(--uv-purple);
+  color: #fff;
+  border-radius: 999px;
+  padding: .25rem .5rem;
+  margin: .25rem .25rem 0 0;
+  font-size: .875rem;
 }
 
 .uv-links {
