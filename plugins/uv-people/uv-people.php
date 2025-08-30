@@ -246,6 +246,7 @@ function uv_people_profile_save($user_id){
         }
     }
     update_user_meta($user_id, 'uv_show_phone', isset($_POST['uv_show_phone']) ? '1' : '0');
+    $loc_ids = [];
     if(isset($_POST['uv_locations'])){
         $loc_ids = array_filter(array_map('intval', (array)$_POST['uv_locations']));
         update_user_meta($user_id, 'uv_location_terms', $loc_ids);
@@ -253,8 +254,13 @@ function uv_people_profile_save($user_id){
         delete_user_meta($user_id, 'uv_location_terms');
     }
     if(isset($_POST['uv_primary_locations'])){
-        $primary_ids = array_filter(array_map('intval', (array)$_POST['uv_primary_locations']));
-        update_user_meta($user_id, 'uv_primary_locations', $primary_ids);
+        $primary_raw = array_filter(array_map('intval', (array)$_POST['uv_primary_locations']));
+        $primary_ids = array_values(array_intersect($primary_raw, $loc_ids));
+        if(!empty($primary_ids)){
+            update_user_meta($user_id, 'uv_primary_locations', $primary_ids);
+        } else {
+            delete_user_meta($user_id, 'uv_primary_locations');
+        }
     } else {
         delete_user_meta($user_id, 'uv_primary_locations');
     }
@@ -339,6 +345,26 @@ function uv_people_edit_profile_shortcode(){
     ob_start();
     wp_enqueue_style('uv-people-edit-profile', plugin_dir_url(__FILE__) . 'assets/edit-profile.css', [], UV_PEOPLE_VERSION);
     wp_enqueue_editor();
+    wp_enqueue_script('jquery');
+    wp_add_inline_script('jquery', 'jQuery(function($){
+        var $loc = $("#uv_locations");
+        var $primary = $("#uv_primary_locations");
+        if($loc.length && $primary.length){
+            function sync(){
+                var selected = $loc.val() || [];
+                $primary.find("option").each(function(){
+                    var val = $(this).val();
+                    var allowed = selected.indexOf(val) !== -1;
+                    $(this).prop("disabled", !allowed);
+                    if(!allowed){
+                        $(this).prop("selected", false);
+                    }
+                });
+            }
+            $loc.on("change", sync);
+            sync();
+        }
+    });');
 
     if($message){
         echo $message;
