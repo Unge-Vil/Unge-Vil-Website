@@ -1036,16 +1036,20 @@ add_filter('redirect_canonical', function($redirect_url, $requested_url) {
 
 // Dashboard widget for team guide links
 add_action('wp_dashboard_setup', function(){
-    wp_add_dashboard_widget('uv_team_guide', esc_html__('Team Guide','uv-people'), function(){
-        echo '<p>'.esc_html__('Quick links for editors:', 'uv-people').'</p>';
-        echo '<ul>
-            <li><a href="edit-tags.php?taxonomy=uv_location">'.esc_html__('Manage Locations','uv-people').'</a></li>
-            <li><a href="edit.php?post_type=uv_activity">'.esc_html__('Activities','uv-people').'</a></li>
-            <li><a href="edit.php?post_type=uv_partner">'.esc_html__('Partners','uv-people').'</a></li>
-            <li><a href="edit.php">'.esc_html__('News Posts','uv-people').'</a></li>
-        </ul>';
-        echo '<p>'.esc_html__('Add your own how-to video links here (edit uv-people plugin).','uv-people').'</p>';
-    });
+    if (current_user_can('edit_posts')) {
+        wp_add_dashboard_widget('uv_team_guide', esc_html__('Team Guide','uv-people'), function(){
+            echo '<p>'.esc_html__('Quick links for editors:', 'uv-people').'</p>';
+            echo '<ul>
+                <li><a href="edit-tags.php?taxonomy=uv_location">'.esc_html__('Manage Locations','uv-people').'</a></li>
+                <li><a href="edit.php?post_type=uv_activity">'.esc_html__('Activities','uv-people').'</a></li>
+                <li><a href="edit.php?post_type=uv_partner">'.esc_html__('Partners','uv-people').'</a></li>
+                <li><a href="edit.php">'.esc_html__('News Posts','uv-people').'</a></li>
+            </ul>';
+            echo '<p>'.esc_html__('Add your own how-to video links here (edit uv-people plugin).','uv-people').'</p>';
+        });
+    } else {
+        remove_meta_box('uv_team_guide', 'dashboard', 'normal');
+    }
 });
 
 // Team members list with primary toggle and ordering controls on uv_location term edit screen
