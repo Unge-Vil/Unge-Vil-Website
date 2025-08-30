@@ -662,6 +662,7 @@ function uv_people_all_team_grid($atts){
         'per_page'     => 100,
         'page'         => 1,
         'show_nav'     => false,
+        'show_quote'   => true,
     ], $atts);
 
     $location_ids = [];
@@ -871,7 +872,7 @@ function uv_people_all_team_grid($atts){
         $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
         $quote_en = get_user_meta($uid,'uv_quote_en',true);
         $quote = ($lang==='en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
-        if($quote) echo '<div class="uv-quote"><span class="uv-quote-icon">&ldquo;</span>'.esc_html($quote).'</div>';
+        if ($a['show_quote'] && $quote) echo '<div class="uv-quote"><span class="uv-quote-icon">&ldquo;</span>'.esc_html($quote).'</div>';
         echo '</article>';
     }
     echo '</div>';
@@ -945,6 +946,10 @@ add_action('init', function(){
             'show_nav' => [
                 'type'    => 'boolean',
                 'default' => false,
+            ],
+            'show_quote' => [
+                'type'    => 'boolean',
+                'default' => true,
             ],
         ],
     ]);

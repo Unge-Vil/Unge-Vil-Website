@@ -20,6 +20,10 @@
     "allLocations": {
       "type": "boolean",
       "default": true
+    },
+    "showQuote": {
+      "type": "boolean",
+      "default": true
     }
   },
   "editorScript": "file:./index.js",
