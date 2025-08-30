@@ -93,6 +93,10 @@ msgstr ""
 msgid "Select Image"
 msgstr ""
 
+#: plugins/uv-people/uv-people.php:89
+msgid "Use Image"
+msgstr ""
+
 #: plugins/uv-people/uv-people.php:96
 msgid "This replaces Gravatar and uses a local image."
 msgstr ""

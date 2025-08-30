@@ -1,0 +1,19 @@
+{
+  "translation-revision-date": "2025-08-29 20:05+0000",
+  "generator": "manual",
+  "domain": "uv-people",
+  "locale_data": {
+    "uv-people": {
+      "": {
+        "domain": "uv-people",
+        "plural-forms": "nplurals=2; plural=(n != 1);",
+        "lang": "nb_NO"
+      },
+      "Select Avatar": ["Velg avatar"],
+      "Use Image": ["Bruk bilde"]
+    }
+  },
+  "comment": {
+    "reference": "plugins/uv-people/assets/admin.js"
+  }
+}
