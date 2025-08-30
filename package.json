@@ -1,6 +1,6 @@
 {
   "name": "uv-wordpress",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "scripts": {
     "test": "echo \"No JS tests configured\" && exit 0",
