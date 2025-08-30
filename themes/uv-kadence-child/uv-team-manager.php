@@ -196,12 +196,16 @@ function uv_team_manager_save_handler() {
             }
         }
         $loc_ids = array_map('intval', isset($fields['locations']) ? (array)$fields['locations'] : []);
-        update_user_meta($uid, 'uv_location_terms', $loc_ids);
+        if (!empty($loc_ids)) {
+            update_user_meta($uid, 'uv_location_terms', $loc_ids);
+        } else {
+            delete_user_meta($uid, 'uv_location_terms');
+        }
 
         $primary_raw = array_map('intval', isset($fields['primary_locations']) ? (array)$fields['primary_locations'] : []);
-        $primary = array_values(array_intersect($primary_raw, $loc_ids));
-        if (!empty($primary)) {
-            update_user_meta($uid, 'uv_primary_locations', $primary);
+        $primary_ids = array_values(array_intersect($primary_raw, $loc_ids));
+        if (!empty($primary_ids)) {
+            update_user_meta($uid, 'uv_primary_locations', $primary_ids);
         } else {
             delete_user_meta($uid, 'uv_primary_locations');
         }
