@@ -16,7 +16,7 @@ class UV_Team_Manager_Table extends WP_List_Table {
             'phone'     => __('Phone', 'uv-kadence-child'),
             'position'  => __('Position', 'uv-kadence-child'),
             'locations' => __('Locations', 'uv-kadence-child'),
-            'primary'   => __('Primary', 'uv-kadence-child'),
+            'primary'   => __('Primary Locations', 'uv-kadence-child'),
         ];
     }
 
@@ -74,26 +74,39 @@ class UV_Team_Manager_Table extends WP_List_Table {
     }
 
     protected function column_locations($user) {
-        $loc_ids = get_user_meta($user->ID, 'uv_location_terms', true);
-        if (!is_array($loc_ids)) {
-            $loc_ids = [];
+        $selected = get_user_meta($user->ID, 'uv_location_terms', true);
+        if (!is_array($selected)) {
+            $selected = [];
         }
-        $names = [];
-        foreach ($loc_ids as $lid) {
-            $t = get_term($lid, 'uv_location');
-            if ($t && !is_wp_error($t)) {
-                $names[] = $t->name;
+        $terms = get_terms([
+            'taxonomy'   => 'uv_location',
+            'hide_empty' => false,
+        ]);
+        $options = '';
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                $options .= '<option value="' . $term->term_id . '" ' . selected(in_array($term->term_id, $selected, true), true, false) . '>' . esc_html($term->name) . '</option>';
             }
         }
-        $ids_val = implode(',', $loc_ids);
-        $names_val = implode(', ', $names);
-        return '<input type="text" name="uv_team_manager[' . $user->ID . '][locations]" value="' . esc_attr($ids_val) . '" />' .
-            '<br/><small>' . esc_html($names_val) . '</small>';
+        return '<select multiple class="uv-location-select" name="uv_team_manager[' . $user->ID . '][locations][]">' . $options . '</select>';
     }
 
     protected function column_primary($user) {
-        $is_primary = !empty(get_user_meta($user->ID, 'uv_primary_locations', true));
-        return '<input type="checkbox" name="uv_team_manager[' . $user->ID . '][primary]" value="1" ' . checked($is_primary, true, false) . ' />';
+        $selected = get_user_meta($user->ID, 'uv_primary_locations', true);
+        if (!is_array($selected)) {
+            $selected = [];
+        }
+        $terms = get_terms([
+            'taxonomy'   => 'uv_location',
+            'hide_empty' => false,
+        ]);
+        $options = '';
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                $options .= '<option value="' . $term->term_id . '" ' . selected(in_array($term->term_id, $selected, true), true, false) . '>' . esc_html($term->name) . '</option>';
+            }
+        }
+        return '<select multiple class="uv-primary-location-select" name="uv_team_manager[' . $user->ID . '][primary_locations][]">' . $options . '</select>';
     }
 }
 
@@ -136,14 +149,14 @@ function uv_team_manager_save_handler() {
         if (isset($fields['avatar_id'])) {
             update_user_meta($uid, 'uv_avatar_id', absint($fields['avatar_id']));
         }
-        if (isset($fields['locations'])) {
-            $loc_ids = array_filter(array_map('intval', explode(',', $fields['locations'])));
-            update_user_meta($uid, 'uv_location_terms', $loc_ids);
-            if (!empty($fields['primary'])) {
-                update_user_meta($uid, 'uv_primary_locations', $loc_ids);
-            } else {
-                delete_user_meta($uid, 'uv_primary_locations');
-            }
+        $loc_ids = array_map('intval', isset($fields['locations']) ? (array)$fields['locations'] : []);
+        update_user_meta($uid, 'uv_location_terms', $loc_ids);
+
+        $primary = array_map('intval', isset($fields['primary_locations']) ? (array)$fields['primary_locations'] : []);
+        if (!empty($primary)) {
+            update_user_meta($uid, 'uv_primary_locations', $primary);
+        } else {
+            delete_user_meta($uid, 'uv_primary_locations');
         }
     }
     wp_redirect(add_query_arg('updated', 1, admin_url('admin.php?page=uv-team-manager')));
@@ -160,4 +173,13 @@ add_action('admin_menu', function () {
         'uv-team-manager',
         'uv_render_team_manager_page'
     );
+});
+
+add_action('admin_enqueue_scripts', function ($hook) {
+    if ('uv-control-panel_page_uv-team-manager' !== $hook) {
+        return;
+    }
+    wp_enqueue_style('select2');
+    wp_enqueue_script('select2');
+    wp_add_inline_script('select2', 'jQuery(function($){ $(".uv-location-select, .uv-primary-location-select").select2(); });');
 });
