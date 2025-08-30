@@ -6,7 +6,7 @@ add_action('admin_enqueue_scripts', function($hook){
         wp_enqueue_media();
         wp_enqueue_script('uv-term-image', plugins_url('assets/term-image.js', dirname(__DIR__) . '/uv-core.php'), ['jquery'], UV_CORE_VERSION, true);
         wp_localize_script('uv-term-image', 'uvTermImage', [
-            'selectImage' => esc_html__('Select Image', 'uv-core'),
+            'selectImage' => esc_html__('Velg bilde', 'uv-core'),
         ]);
     }
 
@@ -46,10 +46,10 @@ add_action('uv_location_add_form_fields', function(){
     ?>
     <div class="form-field">
       <?php wp_nonce_field('uv_location_image_action', 'uv_location_image_nonce'); ?>
-      <label for="uv_location_image"><?php esc_html_e('Location Image', 'uv-core'); ?></label>
+      <label for="uv_location_image"><?php esc_html_e('Stedsbilde', 'uv-core'); ?></label>
       <input type="hidden" id="uv_location_image" name="uv_location_image" value="">
-      <button class="button uv-upload"><?php esc_html_e('Select Image', 'uv-core'); ?></button>
-      <p class="description"><?php esc_html_e('Used on location cards.', 'uv-core'); ?></p>
+      <button class="button uv-upload"><?php esc_html_e('Velg bilde', 'uv-core'); ?></button>
+      <p class="description"><?php esc_html_e('Brukes på stedskort.', 'uv-core'); ?></p>
     </div>
     <?php
 });
@@ -59,11 +59,11 @@ add_action('uv_location_edit_form_fields', function($term){
     $img = $val ? wp_get_attachment_image($val, 'thumbnail') : '';
     ?>
     <tr class="form-field">
-      <th scope="row"><label for="uv_location_image"><?php esc_html_e('Location Image', 'uv-core'); ?></label></th>
+      <th scope="row"><label for="uv_location_image"><?php esc_html_e('Stedsbilde', 'uv-core'); ?></label></th>
       <td>
         <?php wp_nonce_field('uv_location_image_action', 'uv_location_image_nonce'); ?>
         <input type="hidden" id="uv_location_image" name="uv_location_image" value="<?php echo esc_attr($val); ?>">
-        <button class="button uv-upload"><?php esc_html_e('Select Image', 'uv-core'); ?></button>
+        <button class="button uv-upload"><?php esc_html_e('Velg bilde', 'uv-core'); ?></button>
         <div><?php echo $img; ?></div>
       </td>
     </tr>
@@ -75,15 +75,15 @@ add_action('uv_location_add_form_fields', function(){
     ?>
     <div class="form-field">
       <?php wp_nonce_field('uv_location_page_action', 'uv_location_page_nonce'); ?>
-      <label for="uv_location_page"><?php esc_html_e('Location Page', 'uv-core'); ?></label>
+      <label for="uv_location_page"><?php esc_html_e('Stedside', 'uv-core'); ?></label>
       <?php wp_dropdown_pages([
           'post_type' => 'page',
           'name' => 'uv_location_page',
           'id' => 'uv_location_page',
-          'show_option_none' => esc_html__('— None —', 'uv-core'),
+          'show_option_none' => esc_html__('— Ingen —', 'uv-core'),
           'option_none_value' => 0,
       ]); ?>
-      <p class="description"><?php esc_html_e('Links will use this page if set.', 'uv-core'); ?></p>
+      <p class="description"><?php esc_html_e('Lenker vil bruke denne siden hvis angitt.', 'uv-core'); ?></p>
     </div>
     <?php
 });
@@ -92,7 +92,7 @@ add_action('uv_location_edit_form_fields', function($term){
     $val = get_term_meta($term->term_id, 'uv_location_page', true);
     ?>
     <tr class="form-field">
-      <th scope="row"><label for="uv_location_page"><?php esc_html_e('Location Page', 'uv-core'); ?></label></th>
+      <th scope="row"><label for="uv_location_page"><?php esc_html_e('Stedside', 'uv-core'); ?></label></th>
       <td>
         <?php wp_nonce_field('uv_location_page_action', 'uv_location_page_nonce'); ?>
         <?php wp_dropdown_pages([
@@ -100,7 +100,7 @@ add_action('uv_location_edit_form_fields', function($term){
             'name' => 'uv_location_page',
             'id' => 'uv_location_page',
             'selected' => $val,
-            'show_option_none' => esc_html__('— None —', 'uv-core'),
+            'show_option_none' => esc_html__('— Ingen —', 'uv-core'),
             'option_none_value' => 0,
         ]); ?>
       </td>
@@ -154,24 +154,24 @@ add_action('edited_uv_location', function($term_id){
 
 // Partner meta boxes
 add_action('add_meta_boxes_uv_partner', function(){
-    add_meta_box('uv_partner_url', esc_html__('External URL', 'uv-core'), function($post){
+    add_meta_box('uv_partner_url', esc_html__('Ekstern URL', 'uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_url', true);
         wp_nonce_field('uv_partner_url_action', 'uv_partner_url_nonce');
-        echo '<p><label>' . esc_html__('Website', 'uv-core') . '</label><input type="url" style="width:100%" name="uv_partner_url" value="' . esc_attr($val) . '"></p>';
+        echo '<p><label>' . esc_html__('Nettside', 'uv-core') . '</label><input type="url" style="width:100%" name="uv_partner_url" value="' . esc_attr($val) . '"></p>';
     }, 'uv_partner', 'side', 'high');
-    add_meta_box('uv_partner_display', esc_html__('Display', 'uv-core'), function($post){
+    add_meta_box('uv_partner_display', esc_html__('Visning', 'uv-core'), function($post){
         $val = get_post_meta($post->ID, 'uv_partner_display', true);
         if(!$val) {
             $val = has_post_thumbnail($post->ID) ? 'circle_title' : 'title_only';
         }
         wp_nonce_field('uv_partner_display_action', 'uv_partner_display_nonce');
-        echo '<p><label class="screen-reader-text" for="uv_partner_display">' . esc_html__('Display', 'uv-core') . '</label>';
+        echo '<p><label class="screen-reader-text" for="uv_partner_display">' . esc_html__('Visning', 'uv-core') . '</label>';
         echo '<select id="uv_partner_display" name="uv_partner_display">';
         $opts = [
-            'logo_only'   => esc_html__('Logo only', 'uv-core'),
-            'logo_title'  => esc_html__('Logo and title', 'uv-core'),
-            'circle_title'=> esc_html__('Circle & title', 'uv-core'),
-            'title_only'  => esc_html__('Title only', 'uv-core'),
+            'logo_only'   => esc_html__('Kun logo', 'uv-core'),
+            'logo_title'  => esc_html__('Logo og tittel', 'uv-core'),
+            'circle_title'=> esc_html__('Sirkel og tittel', 'uv-core'),
+            'title_only'  => esc_html__('Kun tittel', 'uv-core'),
         ];
         foreach($opts as $k => $label){
             echo '<option value="' . esc_attr($k) . '"' . selected($val, $k, false) . '>' . $label . '</option>';
@@ -201,7 +201,7 @@ add_action('save_post_uv_partner', function($post_id){
 
 // Related post meta box
 add_action('add_meta_boxes_uv_experience', function(){
-    add_meta_box('uv_related_post', esc_html__('Related Post','uv-core'), function($post){
+    add_meta_box('uv_related_post', esc_html__('Relatert innlegg','uv-core'), function($post){
         wp_nonce_field('uv_related_post_action', 'uv_related_post_nonce');
         $selected = get_post_meta($post->ID, 'uv_related_post', true);
         $posts    = get_posts([
@@ -210,7 +210,7 @@ add_action('add_meta_boxes_uv_experience', function(){
         ]);
 
         $dropdown  = '<select name="uv_related_post" class="uv-post-select">';
-        $dropdown .= '<option value="0">' . esc_html__('— None —', 'uv-core') . '</option>';
+        $dropdown .= '<option value="0">' . esc_html__('— Ingen —', 'uv-core') . '</option>';
         foreach ($posts as $p) {
             $dropdown .= sprintf(
                 '<option value="%1$s"%2$s>%3$s</option>',
@@ -237,7 +237,7 @@ add_action('save_post_uv_experience', function($post_id){
 
 // Experience users meta box
 add_action('add_meta_boxes_uv_experience', function(){
-    add_meta_box('uv_experience_users', esc_html__('Team Members','uv-core'), function($post){
+    add_meta_box('uv_experience_users', esc_html__('Teammedlemmer','uv-core'), function($post){
         wp_nonce_field('uv_experience_users_action', 'uv_experience_users_nonce');
         $selected = get_post_meta($post->ID, 'uv_experience_users', false);
         $dropdown = wp_dropdown_users([

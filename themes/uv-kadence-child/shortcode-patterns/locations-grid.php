@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Locations Grid
+ * Title: Stedrutenett
  * Slug: uv-kadence-child/locations-grid
  * Categories: shortcode
  */

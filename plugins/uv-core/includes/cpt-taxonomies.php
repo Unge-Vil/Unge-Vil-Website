@@ -3,19 +3,19 @@
 add_action('init', function(){
     // Taxonomies
     register_taxonomy('uv_location', ['post','uv_activity','uv_partner'], [
-        'label' => esc_html__('Locations', 'uv-core'),
+        'label' => esc_html__('Steder', 'uv-core'),
         'public' => true,
         'hierarchical' => true,
         'show_in_rest' => true,
     ]);
     register_taxonomy('uv_activity_type', ['uv_activity'], [
-        'label' => esc_html__('Activity Types', 'uv-core'),
+        'label' => esc_html__('Aktivitetstyper', 'uv-core'),
         'public' => true,
         'hierarchical' => true,
         'show_in_rest' => true,
     ]);
     register_taxonomy('uv_partner_type', ['uv_partner'], [
-        'label' => esc_html__('Partner Types', 'uv-core'),
+        'label' => esc_html__('Partnertyper', 'uv-core'),
         'public' => true,
         'hierarchical' => true,
         'show_in_rest' => true,
@@ -23,7 +23,7 @@ add_action('init', function(){
 
     // CPTs
     register_post_type('uv_activity', [
-        'label' => esc_html__('Activities', 'uv-core'),
+        'label' => esc_html__('Aktiviteter', 'uv-core'),
         'public' => true,
         'show_in_rest' => true,
         'has_archive' => true,
@@ -32,7 +32,7 @@ add_action('init', function(){
         'taxonomies' => ['uv_location','uv_activity_type'],
     ]);
     register_post_type('uv_partner', [
-        'label' => esc_html__('Partners', 'uv-core'),
+        'label' => esc_html__('Partnere', 'uv-core'),
         'public' => true,
         'show_in_rest' => true,
         'has_archive' => true,
@@ -41,7 +41,7 @@ add_action('init', function(){
         'taxonomies' => ['uv_location','uv_partner_type'],
     ]);
     register_post_type('uv_experience', [
-        'label' => esc_html__('Experiences', 'uv-core'),
+        'label' => esc_html__('Erfaringer', 'uv-core'),
         'public' => true,
         'show_in_rest' => true,
         'has_archive' => true,

@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Team Grid
+ * Title: Teamrutenett
  * Slug: uv-kadence-child/team-grid
  * Categories: shortcode
  */

@@ -11,9 +11,9 @@
             const { attributes: { count }, setAttributes } = props;
             return createElement( wp.element.Fragment, {},
                 createElement( InspectorControls, {},
-                    createElement( PanelBody, { title: __( 'Settings', 'uv-core' ), initialOpen: true },
+                    createElement( PanelBody, { title: __( 'Innstillinger', 'uv-core' ), initialOpen: true },
                         createElement( RangeControl, {
-                            label: __( 'Count', 'uv-core' ),
+                            label: __( 'Antall', 'uv-core' ),
                             min: 1,
                             max: 10,
                             value: count,
@@ -30,14 +30,14 @@
                             return createElement(
                                 'p',
                                 { className: 'uv-block-placeholder' },
-                                __( 'Loading preview…', 'uv-core' )
+                                __( 'Laster forhåndsvisning…', 'uv-core' )
                             );
                         },
                         EmptyResponsePlaceholder: function() {
                             return createElement(
                                 'div',
                                 { className: 'uv-block-placeholder' },
-                                __( 'No experiences found.', 'uv-core' )
+                                __( 'Ingen erfaringer funnet.', 'uv-core' )
                             );
                         }
                     } )

@@ -65,7 +65,7 @@ if ($user instanceof WP_User) :
                 $bd = DateTime::createFromFormat('Y-m-d', $birthdate);
                 if ($bd) {
                     $age = (new DateTime())->diff($bd)->y;
-                    echo '<div class="uv-age">' . sprintf(esc_html__('Age: %d', 'uv-kadence-child'), $age) . '</div>';
+                    echo '<div class="uv-age">' . sprintf(esc_html__('Alder: %d', 'uv-kadence-child'), $age) . '</div>';
                 }
             }
 
@@ -107,7 +107,7 @@ if ($user instanceof WP_User) :
         if (function_exists('uv_core_get_experiences_for_user')) {
             $experiences = uv_core_get_experiences_for_user($uid);
             if ($experiences) {
-                echo '<h2>' . esc_html__('Experiences', 'uv-kadence-child') . '</h2>';
+                echo '<h2>' . esc_html__('Erfaringer', 'uv-kadence-child') . '</h2>';
                 echo '<ul class="uv-experiences">';
                 foreach ($experiences as $exp) {
                     echo '<li><a href="' . esc_url(get_permalink($exp)) . '">' . esc_html(get_the_title($exp)) . '</a></li>';
@@ -125,7 +125,7 @@ if ($user instanceof WP_User) :
             )
         );
         if ($articles_query->have_posts()) {
-            echo '<h2>' . esc_html__('Articles', 'uv-kadence-child') . '</h2>';
+            echo '<h2>' . esc_html__('Artikler', 'uv-kadence-child') . '</h2>';
             echo '<ul class="uv-articles">';
             while ($articles_query->have_posts()) {
                 $articles_query->the_post();

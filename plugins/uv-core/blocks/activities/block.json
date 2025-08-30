@@ -1,7 +1,7 @@
 {
   "apiVersion": 2,
   "name": "uv/activities",
-  "title": "Activities",
+  "title": "Aktiviteter",
   "category": "unge-vil",
   "icon": "admin-site",
   "textdomain": "uv-core",

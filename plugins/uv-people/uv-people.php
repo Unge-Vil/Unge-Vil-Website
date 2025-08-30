@@ -85,8 +85,8 @@ add_action('admin_enqueue_scripts', function($hook){
             true
         );
         wp_localize_script('uv-people-admin', 'UVPeople', [
-            'selectAvatar' => __('Select Avatar', 'uv-people'),
-            'useImage' => __('Use Image', 'uv-people'),
+            'selectAvatar' => __('Velg avatar', 'uv-people'),
+            'useImage' => __('Bruk bilde', 'uv-people'),
         ]);
     }
 });
@@ -108,7 +108,7 @@ add_action('admin_head-profile.php', 'uv_people_remove_default_bio_field');
 // Taxonomy: uv_position
 add_action('init', function(){
     register_taxonomy('uv_position', null, [
-        'label'        => __('Positions', 'uv-people'),
+        'label'        => __('Stillinger', 'uv-people'),
         'public'       => false,
         'show_ui'      => true,
         'hierarchical' => false,
@@ -229,7 +229,7 @@ function uv_people_profile_fields($user){
       <tr><th><label for="uv_position_term"><?php esc_html_e('Position','uv-people'); ?></label></th>
         <td>
             <select name="uv_position_term" id="uv_position_term" class="uv-position-select" style="width:100%">
-                <option value=""><?php esc_html_e('Select','uv-people'); ?></option>
+                <option value=""><?php esc_html_e('Velg','uv-people'); ?></option>
                 <?php foreach($positions as $pos): ?>
                 <option value="<?php echo esc_attr($pos->term_id); ?>" <?php selected($position, $pos->term_id); ?>><?php echo esc_html($pos->name); ?></option>
                 <?php endforeach; ?>
@@ -268,7 +268,7 @@ function uv_people_profile_fields($user){
       <tr><th><?php esc_html_e('Avatar (Media Library)','uv-people'); ?></th>
         <td>
           <input type="hidden" id="uv_avatar_id" name="uv_avatar_id" value="<?php echo esc_attr($avatar_id); ?>">
-          <button type="button" class="button" id="uv-avatar-upload"><?php esc_html_e('Select Image','uv-people'); ?></button>
+          <button type="button" class="button" id="uv-avatar-upload"><?php esc_html_e('Velg bilde','uv-people'); ?></button>
           <button type="button" class="button" id="uv-avatar-remove"<?php echo $avatar_id ? '' : ' style="display:none;"'; ?>><?php esc_html_e('Remove','uv-people'); ?></button>
           <div id="uv-avatar-preview"><?php echo $avatar_id ? wp_get_attachment_image($avatar_id,'uv_avatar') : ''; ?></div>
           <p class="description"><?php esc_html_e('This replaces Gravatar and uses a local image.','uv-people'); ?></p>
@@ -345,7 +345,7 @@ function uv_people_get_avatar($user_id){
 // Shortcode: front-end profile edit form
 function uv_people_edit_profile_shortcode(){
     if(!is_user_logged_in()){
-        return '<p>'.esc_html__('You must be logged in to edit your profile.', 'uv-people').'</p>';
+        return '<p>'.esc_html__('Du må være innlogget for å redigere profilen din.', 'uv-people').'</p>';
     }
 
     $user_id = get_current_user_id();
@@ -362,16 +362,16 @@ function uv_people_edit_profile_shortcode(){
                 if(!is_wp_error($attachment_id)){
                     $_POST['uv_avatar_id'] = $attachment_id;
                 } else {
-                    $message = '<div class="uv-edit-profile-message uv-error">'.esc_html__('Avatar upload failed.', 'uv-people').'</div>';
+                    $message = '<div class="uv-edit-profile-message uv-error">'.esc_html__('Opplasting av avatar mislyktes.', 'uv-people').'</div>';
                 }
             }
 
             uv_people_profile_save($user_id);
             if(!$message){
-                $message = '<div class="uv-edit-profile-message uv-success">'.esc_html__('Profile updated.', 'uv-people').'</div>';
+                $message = '<div class="uv-edit-profile-message uv-success">'.esc_html__('Profil oppdatert.', 'uv-people').'</div>';
             }
         } else {
-            $message = '<div class="uv-edit-profile-message uv-error">'.esc_html__('Security check failed.', 'uv-people').'</div>';
+            $message = '<div class="uv-edit-profile-message uv-error">'.esc_html__('Sikkerhetssjekk mislyktes.', 'uv-people').'</div>';
         }
     }
 
@@ -441,7 +441,7 @@ function uv_people_edit_profile_shortcode(){
         <p class="uv-field">
             <label for="uv_position_term"><?php esc_html_e('Position', 'uv-people'); ?></label>
             <select name="uv_position_term" id="uv_position_term">
-                <option value=""><?php esc_html_e('Select', 'uv-people'); ?></option>
+                <option value=""><?php esc_html_e('Velg', 'uv-people'); ?></option>
                 <?php foreach($positions as $pos): ?>
                     <option value="<?php echo esc_attr($pos->term_id); ?>" <?php selected($position, $pos->term_id); ?>><?php echo esc_html($pos->name); ?></option>
                 <?php endforeach; ?>
@@ -553,10 +553,10 @@ function uv_people_team_grid($atts){
             ? '<div class="uv-block-placeholder">'.esc_html($msg).'</div>'
             : '';
     };
-    if(!$a['location']) return $placeholder(__('Select a location.', 'uv-people'));
+    if(!$a['location']) return $placeholder(__('Velg et sted.', 'uv-people'));
     // Guard against missing uv_location taxonomy when uv-core is inactive or removed
     if (!taxonomy_exists('uv_location')) {
-        return $placeholder(__('No locations available.', 'uv-people'));
+        return $placeholder(__('Ingen steder tilgjengelig.', 'uv-people'));
     }
     $loc = sanitize_title($a['location']); // Shortcode expects a location slug
     $term = get_term_by('slug', $loc, 'uv_location'); // Look up the term to obtain its ID
@@ -622,7 +622,7 @@ function uv_people_team_grid($atts){
     }
     unset($it);
     if(!$items){
-        return $placeholder(__('No team members found.', 'uv-people'));
+        return $placeholder(__('Ingen teammedlemmer funnet.', 'uv-people'));
     }
     $cols = max(1, min(6, intval($a['columns'])));
     // sort priority: primary ➜ order ➜ rank ➜ name
@@ -818,7 +818,7 @@ function uv_people_all_team_grid($atts){
 
     if(!$user_ids){
         return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
-            ? '<div class="uv-block-placeholder">'.esc_html__('No team members found.', 'uv-people').'</div>'
+            ? '<div class="uv-block-placeholder">'.esc_html__('Ingen teammedlemmer funnet.', 'uv-people').'</div>'
             : '';
     }
 
@@ -1052,15 +1052,15 @@ add_filter('redirect_canonical', function($redirect_url, $requested_url) {
 // Dashboard widget for team guide links
 add_action('wp_dashboard_setup', function(){
     if (current_user_can('edit_posts')) {
-        wp_add_dashboard_widget('uv_team_guide', esc_html__('Team Guide','uv-people'), function(){
-            echo '<p>'.esc_html__('Quick links for editors:', 'uv-people').'</p>';
+        wp_add_dashboard_widget('uv_team_guide', esc_html__('Teamguide','uv-people'), function(){
+            echo '<p>'.esc_html__('Hurtiglenker for redaktører:', 'uv-people').'</p>';
             echo '<ul>
-                <li><a href="edit-tags.php?taxonomy=uv_location">'.esc_html__('Manage Locations','uv-people').'</a></li>
-                <li><a href="edit.php?post_type=uv_activity">'.esc_html__('Activities','uv-people').'</a></li>
-                <li><a href="edit.php?post_type=uv_partner">'.esc_html__('Partners','uv-people').'</a></li>
-                <li><a href="edit.php">'.esc_html__('News Posts','uv-people').'</a></li>
+                <li><a href="edit-tags.php?taxonomy=uv_location">'.esc_html__('Administrer steder','uv-people').'</a></li>
+                <li><a href="edit.php?post_type=uv_activity">'.esc_html__('Aktiviteter','uv-people').'</a></li>
+                <li><a href="edit.php?post_type=uv_partner">'.esc_html__('Partnere','uv-people').'</a></li>
+                <li><a href="edit.php">'.esc_html__('Nyhetsinnlegg','uv-people').'</a></li>
             </ul>';
-            echo '<p>'.esc_html__('Add your own how-to video links here (edit uv-people plugin).','uv-people').'</p>';
+            echo '<p>'.esc_html__('Legg til egne opplæringsvideoer her (rediger uv-people-plugin).','uv-people').'</p>';
         });
     } else {
         remove_meta_box('uv_team_guide', 'dashboard', 'normal');
@@ -1105,21 +1105,21 @@ add_action('uv_location_edit_form_fields', function($term){
         $ordered[$uid] = $data;
     }
     wp_nonce_field('uv_location_members', 'uv_location_members_nonce');
-    echo '<tr class="form-field"><th scope="row"><label>'.esc_html__('Team members','uv-people').'</label></th><td>';
+    echo '<tr class="form-field"><th scope="row"><label>'.esc_html__('Teammedlemmer','uv-people').'</label></th><td>';
     if ($ordered) {
         echo '<ul id="uv-member-sortable">';
         foreach ($ordered as $uid => $data) {
             $checked = $data['primary'] ? ' checked' : '';
             echo '<li class="uv-member-item" data-uid="'.esc_attr($uid).'">';
             echo '<span class="uv-handle dashicons dashicons-move" style="cursor:move;margin-right:8px;"></span>'.esc_html($data['name']);
-            echo ' <label style="margin-left:10px;"><input type="checkbox" name="uv_primary_team[]" value="'.esc_attr($uid).'"'.$checked.'> '.esc_html__('Primary','uv-people').'</label>';
+            echo ' <label style="margin-left:10px;"><input type="checkbox" name="uv_primary_team[]" value="'.esc_attr($uid).'"'.$checked.'> '.esc_html__('Primær','uv-people').'</label>';
             echo '<input type="hidden" name="uv_member_order[]" value="'.esc_attr($uid).'">';
             echo '</li>';
         }
         echo '</ul>';
-        echo '<p class="description">'.esc_html__('Drag to reorder team members.','uv-people').'</p>';
+        echo '<p class="description">'.esc_html__('Dra for å endre rekkefølgen på teammedlemmer.','uv-people').'</p>';
     } else {
-        echo '<p>'.esc_html__('No team members assigned.','uv-people').'</p>';
+        echo '<p>'.esc_html__('Ingen teammedlemmer tildelt.','uv-people').'</p>';
     }
     echo '</td></tr>';
 });

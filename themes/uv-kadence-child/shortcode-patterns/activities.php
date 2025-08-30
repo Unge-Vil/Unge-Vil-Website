@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Activities
+ * Title: Aktiviteter
  * Slug: uv-kadence-child/activities
  * Categories: shortcode
  */
