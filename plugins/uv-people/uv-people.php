@@ -786,12 +786,12 @@ function uv_people_all_team_grid($atts){
         foreach ($location_ids as $loc_id) {
             $meta_query[] = [
                 'key'     => 'uv_location_terms',
-                'value'   => '"' . $loc_id . '"',
+                'value'   => 'i:' . $loc_id . ';',
                 'compare' => 'LIKE',
             ];
             $meta_query[] = [
                 'key'     => 'uv_primary_locations',
-                'value'   => '"' . $loc_id . '"',
+                'value'   => 'i:' . $loc_id . ';',
                 'compare' => 'LIKE',
             ];
         }
