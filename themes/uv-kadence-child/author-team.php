@@ -97,7 +97,9 @@ if ($user instanceof WP_User) :
             }
             echo '</div>';
         }
-        $bio = get_the_author_meta( 'description', $uid );
+        $bio_nb = get_user_meta( $uid, 'uv_bio_nb', true );
+        $bio_en = get_user_meta( $uid, 'uv_bio_en', true );
+        $bio    = ( $lang === 'en' ) ? ( $bio_en ?: $bio_nb ) : ( $bio_nb ?: $bio_en );
         if ( $bio ) {
             echo '<div class="uv-bio">' . wp_kses_post( wpautop( $bio ) ) . '</div>';
         }

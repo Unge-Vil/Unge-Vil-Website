@@ -165,9 +165,11 @@ function uv_people_profile_fields($user){
     $position    = get_user_meta($user->ID, 'uv_position_term', true);
     $quote_nb    = get_user_meta($user->ID, 'uv_quote_nb', true);
     $quote_en    = get_user_meta($user->ID, 'uv_quote_en', true);
-    $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
-    $avatar_id  = get_user_meta($user->ID, 'uv_avatar_id', true);
-    $birthdate  = get_user_meta($user->ID, 'uv_birthdate', true);
+    $bio_nb      = get_user_meta($user->ID, 'uv_bio_nb', true);
+    $bio_en      = get_user_meta($user->ID, 'uv_bio_en', true);
+    $show_phone  = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
+    $avatar_id   = get_user_meta($user->ID, 'uv_avatar_id', true);
+    $birthdate   = get_user_meta($user->ID, 'uv_birthdate', true);
     // Guard against missing uv_location taxonomy when uv-core is inactive or removed
     $locations  = [];
     if (taxonomy_exists('uv_location')) {
@@ -224,13 +226,26 @@ function uv_people_profile_fields($user){
                 <?php endforeach; ?>
             </select>
         </td></tr>
-      <tr><th><label for="description"><?php esc_html_e('Biographical Info','uv-people'); ?></label></th>
+      <tr><th><label for="uv_bio_nb"><?php esc_html_e('Biography (Norwegian)','uv-people'); ?></label></th>
         <td><?php
             wp_editor(
-                get_the_author_meta('description', $user->ID),
-                'description',
+                $bio_nb,
+                'uv_bio_nb',
                 [
-                    'textarea_name' => 'description',
+                    'textarea_name' => 'uv_bio_nb',
+                    'textarea_rows' => 5,
+                    'media_buttons' => false,
+                    'teeny'         => true,
+                ]
+            );
+        ?></td></tr>
+      <tr><th><label for="uv_bio_en"><?php esc_html_e('Biography (English)','uv-people'); ?></label></th>
+        <td><?php
+            wp_editor(
+                $bio_en,
+                'uv_bio_en',
+                [
+                    'textarea_name' => 'uv_bio_en',
                     'textarea_rows' => 5,
                     'media_buttons' => false,
                     'teeny'         => true,
@@ -259,12 +274,8 @@ add_action('edit_user_profile_update','uv_people_profile_save');
 function uv_people_profile_save($user_id){
     if(!current_user_can('edit_user', $user_id)) return;
     check_admin_referer('update-user_' . $user_id);
-    if(isset($_POST['description'])){
-        wp_update_user([
-            'ID'          => $user_id,
-            'description' => wp_kses_post(wp_unslash($_POST['description'])),
-        ]);
-    }
+    if(isset($_POST['uv_bio_nb'])) update_user_meta($user_id, 'uv_bio_nb', wp_kses_post(wp_unslash($_POST['uv_bio_nb'])));
+    if(isset($_POST['uv_bio_en'])) update_user_meta($user_id, 'uv_bio_en', wp_kses_post(wp_unslash($_POST['uv_bio_en'])));
     if(isset($_POST['uv_phone'])) update_user_meta($user_id, 'uv_phone', sanitize_text_field($_POST['uv_phone']));
     if(isset($_POST['uv_position_term'])) update_user_meta($user_id, 'uv_position_term', absint($_POST['uv_position_term']));
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
@@ -338,13 +349,6 @@ function uv_people_edit_profile_shortcode(){
                 }
             }
 
-            if(isset($_POST['description'])){
-                wp_update_user([
-                    'ID'          => $user_id,
-                    'description' => wp_kses_post(wp_unslash($_POST['description'])),
-                ]);
-            }
-
             uv_people_profile_save($user_id);
             if(!$message){
                 $message = '<div class="uv-edit-profile-message uv-success">'.esc_html__('Profile updated.', 'uv-people').'</div>';
@@ -357,7 +361,8 @@ function uv_people_edit_profile_shortcode(){
     $phone       = get_user_meta($user_id, 'uv_phone', true);
     $quote_nb    = get_user_meta($user_id, 'uv_quote_nb', true);
     $quote_en    = get_user_meta($user_id, 'uv_quote_en', true);
-    $description = get_the_author_meta('description', $user_id);
+    $bio_nb      = get_user_meta($user_id, 'uv_bio_nb', true);
+    $bio_en      = get_user_meta($user_id, 'uv_bio_en', true);
     $avatar_id   = get_user_meta($user_id, 'uv_avatar_id', true);
     $position    = get_user_meta($user_id, 'uv_position_term', true);
     $birthdate   = get_user_meta($user_id, 'uv_birthdate', true);
@@ -446,13 +451,28 @@ function uv_people_edit_profile_shortcode(){
         </p>
         <?php endif; ?>
         <p class="uv-field">
-            <label for="description"><?php esc_html_e('Biographical Info', 'uv-people'); ?></label>
+            <label for="uv_bio_nb"><?php esc_html_e('Biography (Norwegian)', 'uv-people'); ?></label>
             <?php
             wp_editor(
-                $description,
-                'description',
+                $bio_nb,
+                'uv_bio_nb',
                 [
-                    'textarea_name' => 'description',
+                    'textarea_name' => 'uv_bio_nb',
+                    'textarea_rows' => 5,
+                    'media_buttons' => false,
+                    'teeny'         => true,
+                ]
+            );
+            ?>
+        </p>
+        <p class="uv-field">
+            <label for="uv_bio_en"><?php esc_html_e('Biography (English)', 'uv-people'); ?></label>
+            <?php
+            wp_editor(
+                $bio_en,
+                'uv_bio_en',
+                [
+                    'textarea_name' => 'uv_bio_en',
                     'textarea_rows' => 5,
                     'media_buttons' => false,
                     'teeny'         => true,
@@ -659,7 +679,9 @@ function uv_people_team_grid($atts){
         $quote = ($lang==='en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
         echo '</div>';
         echo '</a>';
-        $bio = get_the_author_meta('description', $uid);
+        $bio_nb = get_user_meta($uid,'uv_bio_nb',true);
+        $bio_en = get_user_meta($uid,'uv_bio_en',true);
+        $bio = ($lang==='en') ? ($bio_en ?: $bio_nb) : ($bio_nb ?: $bio_en);
         if($bio) echo '<div class="uv-bio">'.wp_kses_post(wpautop($bio)).'</div>';
         // contact visibility
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
@@ -894,7 +916,9 @@ function uv_people_all_team_grid($atts){
         if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
         echo '</div>';
         echo '</a>';
-        $bio = get_the_author_meta('description', $uid);
+        $bio_nb = get_user_meta($uid,'uv_bio_nb',true);
+        $bio_en = get_user_meta($uid,'uv_bio_en',true);
+        $bio = ($lang==='en') ? ($bio_en ?: $bio_nb) : ($bio_nb ?: $bio_en);
         if($bio) echo '<div class="uv-bio">'.wp_kses_post(wpautop($bio)).'</div>';
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
         if(($phone && $show_phone) || $email){
