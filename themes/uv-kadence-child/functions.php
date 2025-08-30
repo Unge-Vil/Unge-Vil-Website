@@ -188,8 +188,29 @@ add_action('admin_enqueue_scripts', function($hook) {
 function uv_render_control_panel() {
     $user = wp_get_current_user();
     $display_name = $user ? $user->display_name : '';
+    $uid = $user ? $user->ID : 0;
     $img_base = get_stylesheet_directory_uri() . '/assets/img';
     $knowledge_url = esc_url(get_option('uv_knowledge_url'));
+
+    $avatar = '';
+    if ($uid) {
+        if (function_exists('uv_people_get_avatar')) {
+            $avatar = uv_people_get_avatar($uid);
+        } else {
+            $avatar = get_avatar($uid, 96, '', '', ['loading' => 'lazy']);
+        }
+    }
+
+    $age = '';
+    $birthdate = $uid ? get_user_meta($uid, 'uv_birthdate', true) : '';
+    if ($birthdate) {
+        $bd = DateTime::createFromFormat('Y-m-d', $birthdate);
+        if ($bd) {
+            $age = (new DateTime())->diff($bd)->y;
+        }
+    }
+
+    $locations = $uid ? get_user_meta($uid, 'uv_location_terms', true) : [];
 
     $links = [
         [
@@ -235,6 +256,31 @@ function uv_render_control_panel() {
     echo '<img class="uv-admin-logo" src="' . esc_url($img_base . '/UngeVil_admin_logo.png') . '" alt="Unge Vil" />';
     echo '<h1>' . sprintf(esc_html__('Welcome, %s!', 'uv-kadence-child'), esc_html($display_name)) . '</h1>';
     echo '</div>';
+
+    if ($avatar || $age || (is_array($locations) && $locations)) {
+        echo '<div class="uv-admin-user">';
+        if ($avatar) {
+            echo '<div class="uv-avatar">' . $avatar . '</div>';
+        }
+        if ($age || (is_array($locations) && $locations)) {
+            echo '<div class="uv-user-meta">';
+            if ($age) {
+                echo '<div class="uv-age">' . sprintf(esc_html__('Age: %d', 'uv-kadence-child'), (int) $age) . '</div>';
+            }
+            if (is_array($locations) && $locations) {
+                echo '<div class="uv-locations">';
+                foreach ($locations as $loc_id) {
+                    $loc_term = get_term($loc_id, 'uv_location');
+                    if (!is_wp_error($loc_term) && $loc_term) {
+                        echo '<span class="uv-location-pill">' . esc_html($loc_term->name) . '</span>';
+                    }
+                }
+                echo '</div>';
+            }
+            echo '</div>';
+        }
+        echo '</div>';
+    }
 
     echo '<nav><ul class="uv-links">';
     foreach ($links as $link) {
