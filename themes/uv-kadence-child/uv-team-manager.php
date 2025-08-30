@@ -20,16 +20,50 @@ class UV_Team_Manager_Table extends WP_List_Table {
         ];
     }
 
+    public function get_sortable_columns() {
+        return [
+            'name'     => ['name', true],
+            'position' => ['position', false],
+        ];
+    }
+
     public function prepare_items() {
-        $query = new WP_User_Query([
-            'orderby' => 'display_name',
-            'order'   => 'ASC',
-            'number'  => 999,
-        ]);
+        $per_page = 20;
+        $paged    = $this->get_pagenum();
+        $search   = isset($_REQUEST['s']) ? sanitize_text_field(wp_unslash($_REQUEST['s'])) : '';
+        $sortable = $this->get_sortable_columns();
+        $orderby  = isset($_REQUEST['orderby']) && array_key_exists($_REQUEST['orderby'], $sortable)
+            ? sanitize_key($_REQUEST['orderby'])
+            : 'name';
+        $order = isset($_REQUEST['order']) && 'desc' === strtolower($_REQUEST['order']) ? 'DESC' : 'ASC';
+
+        $args = [
+            'number' => $per_page,
+            'paged'  => $paged,
+            'order'  => $order,
+        ];
+
+        if ($search) {
+            $args['search'] = '*' . $search . '*';
+        }
+
+        if ('position' === $orderby) {
+            $args['meta_key'] = 'uv_position_term';
+            $args['orderby']  = 'meta_value';
+        } else {
+            $args['orderby'] = 'display_name';
+        }
+
+        $query       = new WP_User_Query($args);
         $this->items = $query->get_results();
+
+        $this->set_pagination_args([
+            'total_items' => $query->get_total(),
+            'per_page'    => $per_page,
+        ]);
+
         $columns = $this->get_columns();
-        $hidden = [];
-        $sortable = [];
+        $hidden  = [];
         $this->_column_headers = [$columns, $hidden, $sortable];
     }
 
@@ -122,6 +156,10 @@ function uv_render_team_manager_page() {
     ?>
     <div class="wrap">
         <h1><?php esc_html_e('Team Manager', 'uv-kadence-child'); ?></h1>
+        <form method="get">
+            <input type="hidden" name="page" value="uv-team-manager" />
+            <?php $table->search_box(__('Search Users', 'uv-kadence-child'), 'uv-team-search'); ?>
+        </form>
         <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
             <?php wp_nonce_field('uv_team_manager_save', 'uv_team_manager_nonce'); ?>
             <input type="hidden" name="action" value="uv_team_manager_save" />
