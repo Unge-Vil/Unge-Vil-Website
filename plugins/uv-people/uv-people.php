@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UV People
  * Description: Extends WordPress Users with public fields, media-library avatars, per-location assignments, and a Team grid shortcode.
- * Version: 0.6.4
+ * Version: 0.6.5
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Unge Vil
@@ -13,7 +13,7 @@
 if (!defined('ABSPATH')) exit;
 
 if (!defined('UV_PEOPLE_VERSION')) {
-    define('UV_PEOPLE_VERSION', '0.6.4');
+    define('UV_PEOPLE_VERSION', '0.6.5');
 }
 
 $update_checker_path = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
@@ -81,6 +81,48 @@ add_action('init', function(){
     ]);
 });
 
+// Term meta: uv_rank_weight
+add_action('init', function(){
+    register_term_meta('uv_position', 'uv_rank_weight', [
+        'type'              => 'number',
+        'single'            => true,
+        'sanitize_callback' => 'intval',
+        'show_in_rest'      => true,
+    ]);
+});
+
+add_action('uv_position_add_form_fields', function(){
+    ?>
+    <div class="form-field term-rank-weight-wrap">
+        <label for="uv_rank_weight"><?php esc_html_e('Rank Weight', 'uv-people'); ?></label>
+        <input type="number" name="uv_rank_weight" id="uv_rank_weight" value="" class="small-text">
+        <p class="description"><?php esc_html_e('Sorting weight; lower numbers appear first.', 'uv-people'); ?></p>
+    </div>
+    <?php
+});
+
+add_action('uv_position_edit_form_fields', function($term){
+    $value = get_term_meta($term->term_id, 'uv_rank_weight', true);
+    ?>
+    <tr class="form-field term-rank-weight-wrap">
+        <th scope="row"><label for="uv_rank_weight"><?php esc_html_e('Rank Weight', 'uv-people'); ?></label></th>
+        <td>
+            <input type="number" name="uv_rank_weight" id="uv_rank_weight" value="<?php echo esc_attr($value); ?>" class="small-text">
+            <p class="description"><?php esc_html_e('Sorting weight; lower numbers appear first.', 'uv-people'); ?></p>
+        </td>
+    </tr>
+    <?php
+});
+
+$uv_people_save_rank_weight = function($term_id){
+    if(isset($_POST['uv_rank_weight'])){
+        $val = $_POST['uv_rank_weight'] === '' ? '' : intval($_POST['uv_rank_weight']);
+        update_term_meta($term_id, 'uv_rank_weight', $val);
+    }
+};
+add_action('created_uv_position', $uv_people_save_rank_weight);
+add_action('edited_uv_position', $uv_people_save_rank_weight);
+
 // User profile fields (phone, public email, quote, socials, avatar attachment)
 function uv_people_profile_fields($user){
     $phone       = get_user_meta($user->ID, 'uv_phone', true);
@@ -89,12 +131,6 @@ function uv_people_profile_fields($user){
     $quote_en    = get_user_meta($user->ID, 'uv_quote_en', true);
     $show_phone = get_user_meta($user->ID, 'uv_show_phone', true) === '1';
     $avatar_id  = get_user_meta($user->ID, 'uv_avatar_id', true);
-    $rank_number = get_user_meta($user->ID, 'uv_rank_number', true);
-    if($rank_number === '') {
-        $rank_number = 999;
-    } else {
-        $rank_number = intval($rank_number);
-    }
     // Guard against missing uv_location taxonomy when uv-core is inactive or removed
     $locations  = [];
     if (taxonomy_exists('uv_location')) {
@@ -138,8 +174,6 @@ function uv_people_profile_fields($user){
             <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
             <br><label><input type="checkbox" name="uv_show_phone" value="1" <?php checked($show_phone); ?>> <?php esc_html_e('Show on profile','uv-people'); ?></label>
         </td></tr>
-      <tr><th><label for="uv_rank_number"><?php esc_html_e('Rank Number','uv-people'); ?></label></th>
-        <td><input type="number" name="uv_rank_number" id="uv_rank_number" value="<?php echo esc_attr($rank_number); ?>" class="small-text"></td></tr>
       <tr><th><label for="uv_position_term"><?php esc_html_e('Position','uv-people'); ?></label></th>
         <td>
             <select name="uv_position_term" id="uv_position_term" class="uv-position-select" style="width:100%">
@@ -176,8 +210,6 @@ function uv_people_profile_save($user_id){
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
     if(isset($_POST['uv_quote_en'])) update_user_meta($user_id, 'uv_quote_en', sanitize_textarea_field($_POST['uv_quote_en']));
     if(isset($_POST['uv_avatar_id'])) update_user_meta($user_id, 'uv_avatar_id', absint($_POST['uv_avatar_id']));
-    $rank = isset($_POST['uv_rank_number']) && $_POST['uv_rank_number'] !== '' ? intval($_POST['uv_rank_number']) : 999;
-    update_user_meta($user_id, 'uv_rank_number', $rank);
     update_user_meta($user_id, 'uv_show_phone', isset($_POST['uv_show_phone']) ? '1' : '0');
     if(isset($_POST['uv_locations'])){
         $loc_ids = array_filter(array_map('intval', (array)$_POST['uv_locations']));
@@ -366,13 +398,19 @@ function uv_people_team_grid($atts){
         $items = [];
         foreach ($users as $u) {
             $uid = $u->ID;
-            $rank = get_user_meta($uid, 'uv_rank_number', true);
-            $rank = ($rank === '' ? 999 : intval($rank));
+            $role_term = get_user_meta($uid, 'uv_position_term', true);
+            $rank = 999;
+            if ($role_term) {
+                $rw = get_term_meta($role_term, 'uv_rank_weight', true);
+                if ($rw !== '' && $rw !== false) {
+                    $rank = intval($rw);
+                }
+            }
             $primary_ids = get_user_meta($uid, 'uv_primary_locations', true);
             if(!is_array($primary_ids)) $primary_ids = [];
             $items[] = [
                 'user_id'   => $uid,
-                'role_term' => get_user_meta($uid, 'uv_position_term', true),
+                'role_term' => $role_term,
                 'primary'   => in_array($term->term_id, $primary_ids, true),
                 'rank'      => $rank,
             ];
@@ -549,8 +587,14 @@ function uv_people_all_team_grid($atts){
 
     $sorted = [];
     foreach ($user_ids as $uid) {
-        $rank = get_user_meta($uid, 'uv_rank_number', true);
-        $rank = ($rank === '' ? 999 : intval($rank));
+        $role_term = get_user_meta($uid, 'uv_position_term', true);
+        $rank = 999;
+        if ($role_term) {
+            $rw = get_term_meta($role_term, 'uv_rank_weight', true);
+            if ($rw !== '' && $rw !== false) {
+                $rank = intval($rw);
+            }
+        }
         $primary_ids = get_user_meta($uid, 'uv_primary_locations', true);
         if(!is_array($primary_ids)) $primary_ids = [];
         $primary = $location_ids ? (bool) array_intersect($primary_ids, $location_ids) : !empty($primary_ids);
@@ -689,6 +733,18 @@ function uv_people_invalidate_team_cache(){
 add_action('added_user_meta', 'uv_people_invalidate_team_cache');
 add_action('updated_user_meta', 'uv_people_invalidate_team_cache');
 add_action('deleted_user_meta', 'uv_people_invalidate_team_cache');
+
+$uv_people_invalidate_term_meta = function($mid, $term_id, $meta_key){
+    if ($meta_key === 'uv_rank_weight') {
+        uv_people_invalidate_team_cache();
+    }
+};
+add_action('added_term_meta', $uv_people_invalidate_term_meta, 10, 3);
+add_action('updated_term_meta', $uv_people_invalidate_term_meta, 10, 3);
+add_action('deleted_term_meta', $uv_people_invalidate_term_meta, 10, 3);
+add_action('created_uv_position', 'uv_people_invalidate_team_cache');
+add_action('edited_uv_position', 'uv_people_invalidate_team_cache');
+add_action('delete_uv_position', 'uv_people_invalidate_team_cache');
 
 // Block registration
 add_action('init', function(){
@@ -885,5 +941,24 @@ if (defined('WP_CLI') && WP_CLI) {
         }
 
         WP_CLI::success(sprintf('Migrated %d legacy meta entries.', $migrated));
+    });
+
+    WP_CLI::add_command('uv-people migrate-rank-weight', function(){
+        $users = get_users([
+            'meta_key' => 'uv_rank_number',
+            'number'   => -1,
+            'fields'   => 'ID',
+        ]);
+        $migrated = 0;
+        foreach ($users as $uid) {
+            $rank = get_user_meta($uid, 'uv_rank_number', true);
+            $term_id = get_user_meta($uid, 'uv_position_term', true);
+            if ($term_id && $rank !== '') {
+                update_term_meta($term_id, 'uv_rank_weight', intval($rank));
+                $migrated++;
+            }
+            delete_user_meta($uid, 'uv_rank_number');
+        }
+        WP_CLI::success(sprintf('Migrated %d rank numbers to term meta.', $migrated));
     });
 }

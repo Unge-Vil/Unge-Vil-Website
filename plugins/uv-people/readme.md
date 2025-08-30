@@ -38,6 +38,8 @@ Team assignment lookups are cached in transients for faster rendering. Cache ent
 All strings use the `uv-people` text domain. Place translation files in `languages/` or manage translations through Polylang or another translation plugin.
 
 ## Changelog
+### 0.6.5
+- Move rank sorting to `uv_rank_weight` term meta and add WP-CLI migration.
 ### 0.6.4
 - Allow users to edit location and primary contact assignments via shortcode profile form.
 ### 0.6.3
