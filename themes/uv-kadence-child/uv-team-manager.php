@@ -181,6 +181,7 @@ function uv_team_manager_save_handler() {
         if ($uid <= 0 || !current_user_can('edit_user', $uid)) {
             continue;
         }
+        $fields = wp_unslash($fields);
         if (isset($fields['phone'])) {
             update_user_meta($uid, 'uv_phone', sanitize_text_field($fields['phone']));
         }
