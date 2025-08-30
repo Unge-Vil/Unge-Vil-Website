@@ -78,6 +78,25 @@ if ($user instanceof WP_User) :
             ?>
         </header>
         <?php
+        $locations = get_user_meta($uid, 'uv_location_terms', true);
+        if (is_array($locations) && $locations) {
+            echo '<div class="uv-locations">';
+            foreach ($locations as $loc_id) {
+                $loc_term = get_term($loc_id, 'uv_location');
+                if (!is_wp_error($loc_term) && $loc_term) {
+                    if (function_exists('pll_get_term') && $lang) {
+                        $tid = pll_get_term($loc_term->term_id, $lang);
+                        if ($tid) {
+                            $loc_term = get_term($tid, 'uv_location');
+                        }
+                    }
+                    if ($loc_term && !is_wp_error($loc_term)) {
+                        echo '<span class="uv-location-pill">' . esc_html($loc_term->name) . '</span>';
+                    }
+                }
+            }
+            echo '</div>';
+        }
         $bio = get_the_author_meta( 'description', $uid );
         if ( $bio ) {
             echo '<div class="uv-bio">' . wp_kses_post( wpautop( $bio ) ) . '</div>';
