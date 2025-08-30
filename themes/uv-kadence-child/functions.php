@@ -292,3 +292,4 @@ function uv_render_settings_page() {
     <?php
 }
 
+require_once get_stylesheet_directory() . '/uv-team-manager.php';
