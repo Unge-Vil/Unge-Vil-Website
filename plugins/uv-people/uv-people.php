@@ -441,7 +441,14 @@ add_action('init', 'uv_people_migrate_birthdates_to_iso');
 // Shortcode: Team grid by location
 function uv_people_team_grid($atts){
     wp_enqueue_style('uv-team-grid-style', plugin_dir_url(__FILE__) . 'blocks/team-grid/style.css', [], UV_PEOPLE_VERSION);
-    $a = shortcode_atts(['location'=>'','columns'=>4,'highlight_primary'=>1], $atts);
+    $a = shortcode_atts([
+        'location'          => '',
+        'columns'           => 4,
+        'highlight_primary' => 1,
+        'per_page'          => 100,
+        'page'              => 1,
+        'show_nav'          => false,
+    ], $atts);
     $placeholder = function($msg){
         return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
             ? '<div class="uv-block-placeholder">'.esc_html($msg).'</div>'
@@ -455,8 +462,11 @@ function uv_people_team_grid($atts){
     $loc = sanitize_title($a['location']); // Shortcode expects a location slug
     $term = get_term_by('slug', $loc, 'uv_location'); // Look up the term to obtain its ID
     if(!$term) return $placeholder(__('Location not found.', 'uv-people'));
-    $page = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : 1;
-    $cache_key = 'uv_people_team_grid_' . md5($term->term_id . '|' . $page);
+
+    $per_page = max(1, intval($a['per_page']));
+    $page = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : max(1, intval($a['page']));
+
+    $cache_key = 'uv_people_team_grid_' . md5($term->term_id);
     $items = get_transient($cache_key);
     if ($items === false) {
         // Fetch users assigned to this location
@@ -512,6 +522,12 @@ function uv_people_team_grid($atts){
         return strcasecmp($an, $bn);
     });
     $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
+
+    $total_pages = (int) ceil(count($items) / $per_page);
+    $page = min($page, $total_pages ? $total_pages : 1);
+    $offset = ($page - 1) * $per_page;
+    $items = array_slice($items, $offset, $per_page);
+
     ob_start();
     echo '<div class="uv-team-grid columns-'.$cols.'" role="list">';
     foreach($items as $it){
