@@ -608,7 +608,7 @@ function uv_people_all_team_grid($atts){
         $phone = get_user_meta($uid,'uv_phone',true);
         $email = $user->user_email;
         $classes = 'uv-person';
-        if (!empty($it['primary'])) {
+        if (empty($a['allLocations']) && !empty($it['primary'])) {
             $classes .= ' uv-primary-contact';
         }
         $url = add_query_arg(
