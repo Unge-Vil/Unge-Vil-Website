@@ -121,6 +121,17 @@ add_action('admin_menu', function() {
     );
 });
 
+add_action('admin_menu', function() {
+    add_submenu_page(
+        null,
+        __('Edit Profile', 'uv-kadence-child'),
+        __('Edit Profile', 'uv-kadence-child'),
+        'read',
+        'uv-edit-profile',
+        'uv_render_edit_profile_page'
+    );
+});
+
 // Redirect non-admins to the Control Panel after login.
 add_filter('login_redirect', function($redirect_to, $request, $user) {
     if (is_wp_error($user)) {
@@ -214,7 +225,7 @@ function uv_render_control_panel() {
 
     $links = [
         [
-            'url'    => admin_url('profile.php'),
+            'url'    => admin_url('admin.php?page=uv-edit-profile'),
             'img'    => 'profile.png',
             'label'  => __('Profile', 'uv-kadence-child'),
             'target' => '_self',
@@ -292,6 +303,24 @@ function uv_render_control_panel() {
     }
     echo '</ul></nav>';
     echo '</div>';
+}
+
+/**
+ * Render the Edit Profile admin page.
+ */
+function uv_render_edit_profile_page() {
+    if (!is_user_logged_in()) {
+        wp_die(__('You do not have permission to access this page.', 'uv-kadence-child'));
+    }
+
+    $current_user_id = get_current_user_id();
+    $requested_id    = isset($_GET['user_id']) ? (int) $_GET['user_id'] : $current_user_id;
+
+    if ($requested_id !== $current_user_id) {
+        wp_die(__('You can only access your own profile.', 'uv-kadence-child'));
+    }
+
+    echo do_shortcode('[uv_edit_profile]');
 }
 
 // Register option for Knowledge URL
