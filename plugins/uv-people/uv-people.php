@@ -489,6 +489,14 @@ function uv_people_team_grid($atts){
     $term = get_term_by('slug', $loc, 'uv_location'); // Look up the term to obtain its ID
     if(!$term) return $placeholder(__('Location not found.', 'uv-people'));
 
+    $order_meta = get_term_meta($term->term_id, 'uv_member_order', true);
+    $order_map = [];
+    if (is_array($order_meta)) {
+        foreach ($order_meta as $idx => $uid) {
+            $order_map[intval($uid)] = $idx;
+        }
+    }
+
     $per_page = max(1, intval($a['per_page']));
     $page = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : max(1, intval($a['page']));
 
@@ -535,13 +543,19 @@ function uv_people_team_grid($atts){
         }
         set_transient($cache_key, $items, uv_people_cache_ttl());
     }
+    foreach ($items as &$it) {
+        $uid = intval($it['user_id']);
+        $it['order'] = $order_map[$uid] ?? PHP_INT_MAX;
+    }
+    unset($it);
     if(!$items){
         return $placeholder(__('No team members found.', 'uv-people'));
     }
     $cols = max(1, min(6, intval($a['columns'])));
-    // sort priority: primary ➜ rank ➜ name
+    // sort priority: primary ➜ order ➜ rank ➜ name
     usort($items, function($a,$b){
         if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
+        if($a['order'] !== $b['order']) return $a['order'] < $b['order'] ? -1 : 1;
         if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
         $an = get_the_author_meta('display_name', $a['user_id']);
         $bn = get_the_author_meta('display_name', $b['user_id']);
@@ -663,6 +677,30 @@ function uv_people_all_team_grid($atts){
         }
     }
 
+    $order_map = [];
+    $order_locations = $location_ids;
+    if (empty($order_locations)) {
+        $all_terms = get_terms([
+            'taxonomy'   => 'uv_location',
+            'fields'     => 'ids',
+            'hide_empty' => false,
+        ]);
+        if (!is_wp_error($all_terms) && $all_terms) {
+            $order_locations = array_map('intval', $all_terms);
+        }
+    }
+    foreach ($order_locations as $loc_id) {
+        $order_meta = get_term_meta($loc_id, 'uv_member_order', true);
+        if (is_array($order_meta)) {
+            foreach ($order_meta as $idx => $uid) {
+                $uid = intval($uid);
+                if (!isset($order_map[$uid]) || $idx < $order_map[$uid]) {
+                    $order_map[$uid] = $idx;
+                }
+            }
+        }
+    }
+
     $per_page = max(1, intval($a['per_page']));
     $page     = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : max(1, intval($a['page']));
 
@@ -728,10 +766,12 @@ function uv_people_all_team_grid($atts){
             'rank'    => $rank,
             'name'    => $name,
             'primary' => $primary,
+            'order'   => $order_map[$uid] ?? PHP_INT_MAX,
         ];
     }
     usort($sorted, function($a,$b){
         if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
+        if($a['order'] !== $b['order']) return $a['order'] < $b['order'] ? -1 : 1;
         if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
         return strcasecmp($a['name'], $b['name']);
     });
@@ -760,6 +800,7 @@ function uv_people_all_team_grid($atts){
                 'user'    => $user_map[$uid],
                 'rank'    => $it['rank'],
                 'primary' => !empty($it['primary']),
+                'order'   => $it['order'],
             ];
         }
     }
