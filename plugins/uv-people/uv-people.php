@@ -44,10 +44,9 @@ add_action('admin_enqueue_scripts', function($hook){
     $screen = get_current_screen();
     $is_user_page = in_array($hook, ['profile.php', 'user-edit.php'], true);
     $is_control_panel = ('toplevel_page_uv-control-panel' === $hook);
-    $is_assignment_cpt = $screen && 'uv_team_assignment' === $screen->post_type && in_array($hook, ['post.php', 'post-new.php'], true);
     $is_location_term = $screen && 'uv_location' === $screen->taxonomy && 'term' === $screen->base;
 
-    if ($is_user_page || $is_control_panel || $is_assignment_cpt || $is_location_term) {
+    if ($is_user_page || $is_control_panel || $is_location_term) {
         if ($is_user_page) {
             wp_enqueue_media();
         }
@@ -70,20 +69,9 @@ add_action('admin_enqueue_scripts', function($hook){
     }
 });
 
-// CPT: uv_team_assignment (user ↔ location w/ role & order)
-add_action('init', function(){
-    register_post_type('uv_team_assignment', [
-        'label' => __('Team Assignments', 'uv-people'),
-        'public' => false,
-        'show_ui' => true,
-        'supports' => ['title','author'],
-        'menu_icon' => 'dashicons-groups'
-    ]);
-});
-
 // Taxonomy: uv_position
 add_action('init', function(){
-    register_taxonomy('uv_position', ['uv_team_assignment'], [
+    register_taxonomy('uv_position', null, [
         'label'        => __('Positions', 'uv-people'),
         'public'       => false,
         'show_ui'      => true,
@@ -92,121 +80,6 @@ add_action('init', function(){
         'meta_box_cb'  => false,
     ]);
 });
-
-// Meta boxes for uv_team_assignment
-add_action('add_meta_boxes_uv_team_assignment', function(){
-    add_meta_box('uv_ta_fields', __('Assignment', 'uv-people'), function($post){
-        $user_id = get_post_meta($post->ID, 'uv_user_id', true);
-        if (!$user_id && $post->post_author) {
-            $user_id = $post->post_author;
-        }
-        $user_ids = $user_id ? [$user_id] : [];
-        $loc_id   = get_post_meta($post->ID, 'uv_location_id', true);
-        $role_term = get_post_meta($post->ID, 'uv_role_term', true);
-        $primary = get_post_meta($post->ID, 'uv_is_primary', true);
-        $order   = get_post_meta($post->ID, 'uv_order_weight', true);
-        // Guard against missing uv_location taxonomy when uv-core is inactive or removed
-        $locations = [];
-        if (taxonomy_exists('uv_location')) {
-            $locations = get_terms(['taxonomy' => 'uv_location', 'hide_empty' => false]);
-            if (is_wp_error($locations)) {
-                $locations = [];
-            }
-        }
-        $positions = get_terms(['taxonomy' => 'uv_position', 'hide_empty' => false]);
-        if (is_wp_error($positions)) {
-            $positions = [];
-        }
-        ?>
-        <?php wp_nonce_field('uv_ta_save', 'uv_ta_nonce'); ?>
-        <p><label><?php esc_html_e('Users','uv-people'); ?></label>
-        <?php
-        $dropdown = wp_dropdown_users([
-            'name'             => 'uv_user_ids[]',
-            'id'               => 'uv_user_ids',
-            'selected'         => $user_ids,
-            'include_selected' => true,
-            'multi'            => true,
-            'show'             => 'display_name',
-            'number'           => 50,
-            'class'            => 'uv-user-select',
-            'echo'             => false,
-        ]);
-        echo str_replace('<select', '<select style="width:100%;height:8em;"', $dropdown);
-        ?>
-        </p>
-        <p><label><?php esc_html_e('Location','uv-people'); ?></label>
-        <select name="uv_location_id" class="uv-location-select" style="width:100%">
-            <option value=""><?php esc_html_e('Select','uv-people'); ?></option>
-            <?php foreach($locations as $t): ?>
-            <option value="<?php echo esc_attr($t->term_id); ?>" <?php selected($loc_id, $t->term_id); ?>><?php echo esc_html($t->name); ?></option>
-            <?php endforeach; ?>
-        </select></p>
-        <p><label><?php esc_html_e('Position','uv-people'); ?></label>
-        <select name="uv_role_term" class="uv-position-select" style="width:100%">
-            <option value=""><?php esc_html_e('Select','uv-people'); ?></option>
-            <?php foreach($positions as $p): ?>
-            <option value="<?php echo esc_attr($p->term_id); ?>" <?php selected($role_term, $p->term_id); ?>><?php echo esc_html($p->name); ?></option>
-            <?php endforeach; ?>
-        </select></p>
-        <p><label><input type="checkbox" name="uv_is_primary" value="1" <?php checked($primary, '1'); ?>> <?php esc_html_e('Primary contact','uv-people'); ?></label></p>
-        <p><label><?php esc_html_e('Order weight (lower = earlier)','uv-people'); ?></label>
-        <input type="number" name="uv_order_weight" value="<?php echo esc_attr($order?:'10'); ?>" style="width:100%"></p>
-        <?php
-    }, 'uv_team_assignment', 'normal');
-});
-
-function uv_save_team_assignment($post_id){
-    if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-    if(!isset($_POST['uv_ta_nonce']) || !wp_verify_nonce($_POST['uv_ta_nonce'], 'uv_ta_save')) return;
-    if(!current_user_can('edit_post', $post_id)) return;
-
-    remove_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
-
-    $user_ids  = isset($_POST['uv_user_ids']) ? array_filter(array_map('absint', (array)$_POST['uv_user_ids'])) : [];
-    $loc_id    = isset($_POST['uv_location_id']) ? absint($_POST['uv_location_id']) : 0;
-    $role_term = isset($_POST['uv_role_term']) ? absint($_POST['uv_role_term']) : 0;
-    $order     = isset($_POST['uv_order_weight']) ? absint($_POST['uv_order_weight']) : '';
-    $primary   = isset($_POST['uv_is_primary']) ? '1' : '0';
-
-    if($loc_id) update_post_meta($post_id, 'uv_location_id', $loc_id);
-    if($role_term) update_post_meta($post_id, 'uv_role_term', $role_term);
-    if($order !== '') update_post_meta($post_id, 'uv_order_weight', (int) $order);
-    update_post_meta($post_id, 'uv_is_primary', $primary);
-
-    if($user_ids){
-        $first = array_shift($user_ids);
-        update_post_meta($post_id, 'uv_user_id', $first);
-
-        $term = get_term($loc_id, 'uv_location');
-
-        wp_update_post([
-            'ID'         => $post_id,
-            'post_author'=> $first,
-            'post_title' => get_the_author_meta('display_name', $first) . ' - ' . ( $term ? $term->name : '' ),
-        ]);
-
-        foreach($user_ids as $uid){
-            $title = get_the_author_meta('display_name', $uid) . ' - ' . ($term ? $term->name : '');
-            $new_id = wp_insert_post([
-                'post_type'   => 'uv_team_assignment',
-                'post_status' => 'publish',
-                'post_title'  => $title,
-                'post_author' => $uid,
-            ]);
-            if($new_id){
-                update_post_meta($new_id, 'uv_user_id', $uid);
-                if($loc_id) update_post_meta($new_id, 'uv_location_id', $loc_id);
-                if($role_term) update_post_meta($new_id, 'uv_role_term', $role_term);
-                update_post_meta($new_id, 'uv_is_primary', $primary);
-                if($order !== '') update_post_meta($new_id, 'uv_order_weight', (int) $order);
-            }
-        }
-    }
-
-    add_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
-}
-add_action('save_post_uv_team_assignment', 'uv_save_team_assignment');
 
 // User profile fields (phone, public email, quote, socials, avatar attachment)
 function uv_people_profile_fields($user){
@@ -236,10 +109,12 @@ function uv_people_profile_fields($user){
     }
     $assigned   = get_user_meta($user->ID, 'uv_location_terms', true);
     if(!is_array($assigned)) $assigned = [];
+    $primary_locations = get_user_meta($user->ID, 'uv_primary_locations', true);
+    if(!is_array($primary_locations)) $primary_locations = [];
     ?>
     <h2><?php esc_html_e('Public Profile (Unge Vil)','uv-people'); ?></h2>
     <table class="form-table">
-      <tr><th><label for="uv_locations"><?php esc_html_e('Locations','uv-people'); ?></label></th>
+        <tr><th><label for="uv_locations"><?php esc_html_e('Locations','uv-people'); ?></label></th>
         <td>
             <input type="hidden" name="uv_locations[]" value="">
             <select name="uv_locations[]" id="uv_locations" class="uv-location-select" multiple style="width:100%">
@@ -247,6 +122,16 @@ function uv_people_profile_fields($user){
                 <option value="<?php echo esc_attr($loc->term_id); ?>" <?php selected(in_array($loc->term_id, $assigned)); ?>><?php echo esc_html($loc->name); ?></option>
                 <?php endforeach; ?>
             </select>
+        </td></tr>
+        <tr><th><label for="uv_primary_locations"><?php esc_html_e('Primary Locations','uv-people'); ?></label></th>
+        <td>
+            <input type="hidden" name="uv_primary_locations[]" value="">
+            <select name="uv_primary_locations[]" id="uv_primary_locations" class="uv-location-select" multiple style="width:100%">
+                <?php foreach($locations as $loc): ?>
+                <option value="<?php echo esc_attr($loc->term_id); ?>" <?php selected(in_array($loc->term_id, $primary_locations)); ?>><?php echo esc_html($loc->name); ?></option>
+                <?php endforeach; ?>
+            </select>
+            <p class="description"><?php esc_html_e('Locations where this user is a primary contact.','uv-people'); ?></p>
         </td></tr>
       <tr><th><label for="uv_phone"><?php esc_html_e('Phone (public optional)','uv-people'); ?></label></th>
         <td>
@@ -297,47 +182,14 @@ function uv_people_profile_save($user_id){
     if(isset($_POST['uv_locations'])){
         $loc_ids = array_filter(array_map('intval', (array)$_POST['uv_locations']));
         update_user_meta($user_id, 'uv_location_terms', $loc_ids);
-
-        $existing = get_posts([
-            'post_type'      => 'uv_team_assignment',
-            'posts_per_page' => -1,
-            'post_status'    => 'any',
-            'no_found_rows'  => true,
-            'fields'         => 'ids',
-            'meta_query'     => [
-                ['key' => 'uv_user_id', 'value' => $user_id, 'compare' => '='],
-            ],
-        ]);
-        $existing_map = [];
-        foreach($existing as $pid){
-            $lid = get_post_meta($pid, 'uv_location_id', true);
-            $existing_map[$lid] = $pid;
-        }
-        foreach($loc_ids as $lid){
-            if(isset($existing_map[$lid])){
-                unset($existing_map[$lid]);
-                continue;
-            }
-            $term = get_term($lid, 'uv_location');
-            $title = get_the_author_meta('display_name', $user_id) . ' - ' . ($term ? $term->name : '');
-            $post_id = wp_insert_post([
-                'post_type'   => 'uv_team_assignment',
-                'post_status' => 'publish',
-                'post_title'  => $title,
-                'post_author' => $user_id,
-            ]);
-            if($post_id){
-                update_post_meta($post_id, 'uv_user_id', $user_id);
-                update_post_meta($post_id, 'uv_location_id', $lid);
-                $pos_term = absint(get_user_meta($user_id, 'uv_position_term', true));
-                if($pos_term) update_post_meta($post_id, 'uv_role_term', $pos_term);
-                update_post_meta($post_id, 'uv_is_primary', '0');
-                update_post_meta($post_id, 'uv_order_weight', '10');
-            }
-        }
-        foreach($existing_map as $post_id){
-            wp_delete_post($post_id, true);
-        }
+    } else {
+        delete_user_meta($user_id, 'uv_location_terms');
+    }
+    if(isset($_POST['uv_primary_locations'])){
+        $primary_ids = array_filter(array_map('intval', (array)$_POST['uv_primary_locations']));
+        update_user_meta($user_id, 'uv_primary_locations', $primary_ids);
+    } else {
+        delete_user_meta($user_id, 'uv_primary_locations');
     }
 }
 
@@ -463,35 +315,33 @@ function uv_people_team_grid($atts){
     $cache_key = 'uv_people_team_grid_' . md5($term->term_id . '|' . $page);
     $items = get_transient($cache_key);
     if ($items === false) {
-        // Fetch only assignments tied to this location
-        $q = new WP_Query([
-            'post_type'     => 'uv_team_assignment',
-            'posts_per_page'=> -1,
-            'no_found_rows' => true,
-            'fields'        => 'ids',
-            'meta_query'    => [
-                ['key' => 'uv_location_id', 'value' => strval($term->term_id), 'compare' => '=']
-            ]
+        // Fetch users assigned to this location
+        $users = get_users([
+            'number'     => -1,
+            'fields'     => ['ID'],
+            'meta_query' => [
+                [
+                    'key'     => 'uv_location_terms',
+                    'value'   => '"' . $term->term_id . '"',
+                    'compare' => 'LIKE',
+                ],
+            ],
         ]);
         $items = [];
-        if ($q->have_posts()) {
-            foreach($q->posts as $pid){
-                $uid = get_post_meta($pid,'uv_user_id',true);
-                $rank = get_user_meta($uid, 'uv_rank_number', true);
-                $rank = ($rank === '' ? 999 : intval($rank));
-                $items[] = [
-                    'id'        => $pid,
-                    'user_id'   => $uid,
-                    'role_term' => get_post_meta($pid,'uv_role_term',true),
-                    'role_nb'   => get_post_meta($pid,'uv_role_nb',true), // fallback legacy
-                    'role_en'   => get_post_meta($pid,'uv_role_en',true), // fallback legacy
-                    'primary'   => get_post_meta($pid,'uv_is_primary',true) === '1',
-                    'rank'      => $rank,
-                    'order'     => isset($order_map[$uid]) ? $order_map[$uid] : null,
-                ];
-            }
+        foreach ($users as $u) {
+            $uid = $u->ID;
+            $rank = get_user_meta($uid, 'uv_rank_number', true);
+            $rank = ($rank === '' ? 999 : intval($rank));
+            $primary_ids = get_user_meta($uid, 'uv_primary_locations', true);
+            if(!is_array($primary_ids)) $primary_ids = [];
+            $items[] = [
+                'user_id'   => $uid,
+                'role_term' => get_user_meta($uid, 'uv_position_term', true),
+                'primary'   => in_array($term->term_id, $primary_ids, true),
+                'rank'      => $rank,
+                'order'     => isset($order_map[$uid]) ? $order_map[$uid] : null,
+            ];
         }
-        wp_reset_postdata();
         set_transient($cache_key, $items, uv_people_cache_ttl());
     }
     if(!$items){
@@ -637,46 +487,30 @@ function uv_people_all_team_grid($atts){
 
     $cache_key_parts = [ implode(',', $location_ids), $page ];
     $cache_key = 'uv_people_all_team_grid_' . md5( implode('|', $cache_key_parts) );
-    $assignments = get_transient($cache_key);
-    if ($assignments === false) {
-        // Fetch all team assignments and group them by user
-        $assignments = get_posts([
-            'post_type'      => 'uv_team_assignment',
-            'numberposts'    => -1,
-            'fields'         => 'ids',
-            'no_found_rows'  => true,
-            'meta_query'     => $meta_query,
+    $users = get_transient($cache_key);
+    if ($users === false) {
+        $users = get_users([
+            'number' => -1,
+            'fields' => ['ID'],
         ]);
-        set_transient($cache_key, $assignments, uv_people_cache_ttl());
+        set_transient($cache_key, $users, uv_people_cache_ttl());
     }
     $grouped = [];
-    foreach ( $assignments as $aid ) {
-        $uid = intval( get_post_meta( $aid, 'uv_user_id', true ) );
-        if ( ! $uid ) {
+    foreach ($users as $u) {
+        $uid = is_object($u) ? $u->ID : (int)$u;
+        $loc_ids = get_user_meta($uid, 'uv_location_terms', true);
+        if (!is_array($loc_ids)) $loc_ids = [];
+        if (empty($loc_ids)) continue;
+        if ($location_ids && !array_intersect($loc_ids, $location_ids)) {
             continue;
         }
-        if ( ! isset( $grouped[ $uid ] ) ) {
-            $grouped[ $uid ] = [
-                'matched' => false,
-                'primary' => false,
-                'rank'    => null,
-            ];
-        }
-        $loc_id  = intval( get_post_meta( $aid, 'uv_location_id', true ) );
-        $matches = empty( $location_ids ) || in_array( $loc_id, $location_ids, true );
-        if ( $matches ) {
-            $grouped[ $uid ]['matched'] = true;
-            if ( get_post_meta( $aid, 'uv_is_primary', true ) === '1' ) {
-                $grouped[ $uid ]['primary'] = true;
-            }
-            $arank = get_post_meta( $aid, 'uv_rank_number', true );
-            if ( $arank !== '' ) {
-                $arank = intval( $arank );
-                if ( ! isset( $grouped[ $uid ]['rank'] ) || $arank < $grouped[ $uid ]['rank'] ) {
-                    $grouped[ $uid ]['rank'] = $arank;
-                }
-            }
-        }
+        $primary_ids = get_user_meta($uid, 'uv_primary_locations', true);
+        if(!is_array($primary_ids)) $primary_ids = [];
+        $grouped[$uid] = [
+            'matched' => true,
+            'primary' => $location_ids ? (bool) array_intersect($primary_ids, $location_ids) : !empty($primary_ids),
+            'rank'    => get_user_meta($uid, 'uv_rank_number', true),
+        ];
     }
     $user_ids = array_keys( array_filter( $grouped, function( $u ){ return $u['matched']; } ) );
 
@@ -825,7 +659,6 @@ function uv_people_invalidate_team_cache(){
     $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_uv_people_all_team_grid_%'");
     $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_uv_people_all_team_grid_%'");
 }
-add_action('save_post_uv_team_assignment', 'uv_people_invalidate_team_cache');
 add_action('added_user_meta', 'uv_people_invalidate_team_cache');
 add_action('updated_user_meta', 'uv_people_invalidate_team_cache');
 add_action('deleted_user_meta', 'uv_people_invalidate_team_cache');
@@ -888,7 +721,6 @@ add_action('wp_dashboard_setup', function(){
             <li><a href="edit.php?post_type=uv_activity">'.esc_html__('Activities','uv-people').'</a></li>
             <li><a href="edit.php?post_type=uv_partner">'.esc_html__('Partners','uv-people').'</a></li>
             <li><a href="edit.php">'.esc_html__('News Posts','uv-people').'</a></li>
-            <li><a href="edit.php?post_type=uv_team_assignment">'.esc_html__('Team Assignments','uv-people').'</a></li>
         </ul>';
         echo '<p>'.esc_html__('Add your own how-to video links here (edit uv-people plugin).','uv-people').'</p>';
     });
@@ -897,23 +729,24 @@ add_action('wp_dashboard_setup', function(){
 // Team members list with primary toggle and ordering controls on uv_location term edit screen
 add_action('uv_location_edit_form_fields', function($term){
     $term_id = $term->term_id;
-    $assignments = get_posts([
-        'post_type'      => 'uv_team_assignment',
-        'posts_per_page' => -1,
-        'post_status'    => 'any',
-        'no_found_rows'  => true,
-        'fields'         => 'ids',
-        'meta_query'     => [
-            ['key' => 'uv_location_id', 'value' => strval($term_id), 'compare' => '='],
+    $users = get_users([
+        'number'     => -1,
+        'fields'     => ['ID', 'display_name'],
+        'meta_query' => [
+            [
+                'key'     => 'uv_location_terms',
+                'value'   => '"' . $term_id . '"',
+                'compare' => 'LIKE',
+            ],
         ],
     ]);
     $members = [];
-    foreach ($assignments as $pid) {
-        $uid = intval(get_post_meta($pid, 'uv_user_id', true));
-        if (!$uid) continue;
-        $members[$uid] = [
-            'name'    => get_the_author_meta('display_name', $uid),
-            'primary' => (get_post_meta($pid, 'uv_is_primary', true) === '1'),
+    foreach ($users as $u) {
+        $primary = get_user_meta($u->ID, 'uv_primary_locations', true);
+        if(!is_array($primary)) $primary = [];
+        $members[$u->ID] = [
+            'name'    => $u->display_name,
+            'primary' => in_array($term_id, $primary, true),
         ];
     }
     $order = get_term_meta($term_id, 'uv_member_order', true);
@@ -961,23 +794,30 @@ function uv_people_save_location_members($term_id){
     update_term_meta($term_id, 'uv_member_order', $order_ids);
     $primary_ids = isset($_POST['uv_primary_team']) ? array_filter(array_map('intval', (array)$_POST['uv_primary_team'])) : [];
     update_term_meta($term_id, 'uv_primary_team', $primary_ids);
-    $assignments = get_posts([
-        'post_type'      => 'uv_team_assignment',
-        'posts_per_page' => -1,
-        'post_status'    => 'any',
-        'no_found_rows'  => true,
-        'fields'         => 'ids',
-        'meta_query'     => [
-            ['key' => 'uv_location_id', 'value' => strval($term_id), 'compare' => '='],
+    $users = get_users([
+        'number'     => -1,
+        'fields'     => ['ID'],
+        'meta_query' => [
+            [
+                'key'     => 'uv_location_terms',
+                'value'   => '"' . $term_id . '"',
+                'compare' => 'LIKE',
+            ],
         ],
     ]);
-    foreach ($assignments as $pid) {
-        $uid = intval(get_post_meta($pid, 'uv_user_id', true));
-        $pos = array_search($uid, $order_ids, true);
-        $weight = ($pos !== false) ? $pos + 1 : 999;
-        update_post_meta($pid, 'uv_order_weight', $weight);
-        $is_primary = in_array($uid, $primary_ids, true) ? '1' : '0';
-        update_post_meta($pid, 'uv_is_primary', $is_primary);
+    foreach ($users as $u) {
+        $uid = $u->ID;
+        $primary_locs = get_user_meta($uid, 'uv_primary_locations', true);
+        if(!is_array($primary_locs)) $primary_locs = [];
+        $has = in_array($term_id, $primary_locs, true);
+        $should = in_array($uid, $primary_ids, true);
+        if ($should && !$has) {
+            $primary_locs[] = $term_id;
+            update_user_meta($uid, 'uv_primary_locations', $primary_locs);
+        } elseif (!$should && $has) {
+            $primary_locs = array_diff($primary_locs, [$term_id]);
+            update_user_meta($uid, 'uv_primary_locations', array_values($primary_locs));
+        }
     }
 }
 add_action('edited_uv_location', 'uv_people_save_location_members');
@@ -1013,29 +853,6 @@ if (defined('WP_CLI') && WP_CLI) {
                     update_user_meta($uid, 'uv_quote_en', $legacy);
                 }
                 delete_user_meta($uid, 'uv_quote');
-                $migrated++;
-            }
-        }
-
-        // Migrate assignment roles
-        $assignments = get_posts([
-            'post_type'      => 'uv_team_assignment',
-            'posts_per_page' => -1,
-            'post_status'    => 'any',
-            'no_found_rows'  => true,
-            'fields'         => 'ids',
-            'meta_key'       => 'uv_role_title',
-        ]);
-        foreach ($assignments as $post_id) {
-            $legacy = get_post_meta($post_id, 'uv_role_title', true);
-            if ($legacy) {
-                if (!get_post_meta($post_id, 'uv_role_nb', true)) {
-                    update_post_meta($post_id, 'uv_role_nb', $legacy);
-                }
-                if (!get_post_meta($post_id, 'uv_role_en', true)) {
-                    update_post_meta($post_id, 'uv_role_en', $legacy);
-                }
-                delete_post_meta($post_id, 'uv_role_title');
                 $migrated++;
             }
         }

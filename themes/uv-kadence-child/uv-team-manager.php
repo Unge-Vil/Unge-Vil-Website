@@ -17,7 +17,6 @@ class UV_Team_Manager_Table extends WP_List_Table {
             'position'  => __('Position', 'uv-kadence-child'),
             'locations' => __('Locations', 'uv-kadence-child'),
             'primary'   => __('Primary', 'uv-kadence-child'),
-            'order'     => __('Order', 'uv-kadence-child'),
         ];
     }
 
@@ -93,34 +92,8 @@ class UV_Team_Manager_Table extends WP_List_Table {
     }
 
     protected function column_primary($user) {
-        $assignments = get_posts([
-            'post_type'   => 'uv_team_assignment',
-            'numberposts' => -1,
-            'fields'      => 'ids',
-            'author'      => $user->ID,
-        ]);
-        $is_primary = false;
-        foreach ($assignments as $pid) {
-            if (get_post_meta($pid, 'uv_is_primary', true) === '1') {
-                $is_primary = true;
-                break;
-            }
-        }
+        $is_primary = !empty(get_user_meta($user->ID, 'uv_primary_locations', true));
         return '<input type="checkbox" name="uv_team_manager[' . $user->ID . '][primary]" value="1" ' . checked($is_primary, true, false) . ' />';
-    }
-
-    protected function column_order($user) {
-        $assignments = get_posts([
-            'post_type'   => 'uv_team_assignment',
-            'numberposts' => 1,
-            'fields'      => 'ids',
-            'author'      => $user->ID,
-        ]);
-        $order = '';
-        if ($assignments) {
-            $order = get_post_meta($assignments[0], 'uv_order_weight', true);
-        }
-        return '<input type="number" name="uv_team_manager[' . $user->ID . '][order]" value="' . esc_attr($order) . '" />';
     }
 }
 
@@ -166,52 +139,10 @@ function uv_team_manager_save_handler() {
         if (isset($fields['locations'])) {
             $loc_ids = array_filter(array_map('intval', explode(',', $fields['locations'])));
             update_user_meta($uid, 'uv_location_terms', $loc_ids);
-            $existing = get_posts([
-                'post_type'      => 'uv_team_assignment',
-                'posts_per_page' => -1,
-                'post_status'    => 'any',
-                'no_found_rows'  => true,
-                'fields'         => 'ids',
-                'meta_query'     => [
-                    ['key' => 'uv_user_id', 'value' => $uid, 'compare' => '='],
-                ],
-            ]);
-            $existing_map = [];
-            foreach ($existing as $pid) {
-                $lid = get_post_meta($pid, 'uv_location_id', true);
-                $existing_map[$lid] = $pid;
-            }
-            foreach ($loc_ids as $lid) {
-                if (isset($existing_map[$lid])) {
-                    $pid = $existing_map[$lid];
-                    unset($existing_map[$lid]);
-                } else {
-                    $term = get_term($lid, 'uv_location');
-                    $title = get_the_author_meta('display_name', $uid) . ' - ' . ($term ? $term->name : '');
-                    $pid = wp_insert_post([
-                        'post_type'   => 'uv_team_assignment',
-                        'post_status' => 'publish',
-                        'post_title'  => $title,
-                        'post_author' => $uid,
-                    ]);
-                    if ($pid) {
-                        update_post_meta($pid, 'uv_user_id', $uid);
-                        update_post_meta($pid, 'uv_location_id', $lid);
-                    }
-                }
-                if (isset($pid) && $pid) {
-                    if (isset($fields['position']) && $fields['position']) {
-                        update_post_meta($pid, 'uv_role_term', absint($fields['position']));
-                    }
-                    $is_primary = !empty($fields['primary']) ? '1' : '0';
-                    update_post_meta($pid, 'uv_is_primary', $is_primary);
-                    if (isset($fields['order']) && $fields['order'] !== '') {
-                        update_post_meta($pid, 'uv_order_weight', (int)$fields['order']);
-                    }
-                }
-            }
-            foreach ($existing_map as $pid) {
-                wp_delete_post($pid, true);
+            if (!empty($fields['primary'])) {
+                update_user_meta($uid, 'uv_primary_locations', $loc_ids);
+            } else {
+                delete_user_meta($uid, 'uv_primary_locations');
             }
         }
     }
