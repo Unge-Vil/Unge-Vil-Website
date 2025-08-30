@@ -188,6 +188,19 @@ function uv_people_profile_fields($user){
                 <?php endforeach; ?>
             </select>
         </td></tr>
+      <tr><th><label for="description"><?php esc_html_e('Biographical Info','uv-people'); ?></label></th>
+        <td><?php
+            wp_editor(
+                get_the_author_meta('description', $user->ID),
+                'description',
+                [
+                    'textarea_name' => 'description',
+                    'textarea_rows' => 5,
+                    'media_buttons' => false,
+                    'teeny'         => true,
+                ]
+            );
+        ?></td></tr>
       <tr><th><label for="uv_quote_nb"><?php esc_html_e('Volunteer Quote (Norwegian)','uv-people'); ?></label></th>
         <td><textarea name="uv_quote_nb" id="uv_quote_nb" rows="4" class="large-text"><?php echo esc_textarea($quote_nb); ?></textarea></td></tr>
       <tr><th><label for="uv_quote_en"><?php esc_html_e('Volunteer Quote (English)','uv-people'); ?></label></th>
@@ -210,6 +223,12 @@ add_action('edit_user_profile_update','uv_people_profile_save');
 function uv_people_profile_save($user_id){
     if(!current_user_can('edit_user', $user_id)) return;
     check_admin_referer('update-user_' . $user_id);
+    if(isset($_POST['description'])){
+        wp_update_user([
+            'ID'          => $user_id,
+            'description' => wp_kses_post(wp_unslash($_POST['description'])),
+        ]);
+    }
     if(isset($_POST['uv_phone'])) update_user_meta($user_id, 'uv_phone', sanitize_text_field($_POST['uv_phone']));
     if(isset($_POST['uv_position_term'])) update_user_meta($user_id, 'uv_position_term', absint($_POST['uv_position_term']));
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
@@ -277,6 +296,13 @@ function uv_people_edit_profile_shortcode(){
                 }
             }
 
+            if(isset($_POST['description'])){
+                wp_update_user([
+                    'ID'          => $user_id,
+                    'description' => wp_kses_post(wp_unslash($_POST['description'])),
+                ]);
+            }
+
             uv_people_profile_save($user_id);
             if(!$message){
                 $message = '<div class="uv-edit-profile-message uv-success">'.esc_html__('Profile updated.', 'uv-people').'</div>';
@@ -289,6 +315,7 @@ function uv_people_edit_profile_shortcode(){
     $phone       = get_user_meta($user_id, 'uv_phone', true);
     $quote_nb    = get_user_meta($user_id, 'uv_quote_nb', true);
     $quote_en    = get_user_meta($user_id, 'uv_quote_en', true);
+    $description = get_the_author_meta('description', $user_id);
     $avatar_id   = get_user_meta($user_id, 'uv_avatar_id', true);
     $position    = get_user_meta($user_id, 'uv_position_term', true);
     $birthdate   = get_user_meta($user_id, 'uv_birthdate', true);
@@ -311,6 +338,7 @@ function uv_people_edit_profile_shortcode(){
 
     ob_start();
     wp_enqueue_style('uv-people-edit-profile', plugin_dir_url(__FILE__) . 'assets/edit-profile.css', [], UV_PEOPLE_VERSION);
+    wp_enqueue_editor();
 
     if($message){
         echo $message;
@@ -355,6 +383,21 @@ function uv_people_edit_profile_shortcode(){
             </select>
         </p>
         <?php endif; ?>
+        <p class="uv-field">
+            <label for="description"><?php esc_html_e('Biographical Info', 'uv-people'); ?></label>
+            <?php
+            wp_editor(
+                $description,
+                'description',
+                [
+                    'textarea_name' => 'description',
+                    'textarea_rows' => 5,
+                    'media_buttons' => false,
+                    'teeny'         => true,
+                ]
+            );
+            ?>
+        </p>
         <p class="uv-field">
             <label for="uv_quote_nb"><?php esc_html_e('Quote (Norwegian)', 'uv-people'); ?></label>
             <textarea name="uv_quote_nb" id="uv_quote_nb" rows="4"><?php echo esc_textarea($quote_nb); ?></textarea>
