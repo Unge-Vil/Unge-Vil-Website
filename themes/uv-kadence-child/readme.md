@@ -1,6 +1,9 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.6.3
+- Allow avatar editing in team manager.
+- Improve login redirects and team layout styling.
 ### 0.6.2
 - Enhancements and bug fixes.
 ### 0.6.1
