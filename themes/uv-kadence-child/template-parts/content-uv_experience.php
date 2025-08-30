@@ -28,9 +28,27 @@
                         continue;
                     }
 
-                    $role_nb = get_user_meta( $user_id, 'uv_position_nb', true );
-                    $role_en = get_user_meta( $user_id, 'uv_position_en', true );
-                    $role    = ( 'en' === $lang ) ? ( $role_en ?: $role_nb ) : ( $role_nb ?: $role_en );
+                    $role    = '';
+                    $role_term = get_user_meta( $user_id, 'uv_position_term', true );
+                    if ( $role_term ) {
+                        $t = get_term( $role_term, 'uv_position' );
+                        if ( ! is_wp_error( $t ) && $t ) {
+                            if ( function_exists( 'pll_get_term' ) && $lang ) {
+                                $tid = pll_get_term( $t->term_id, $lang );
+                                if ( $tid ) {
+                                    $t = get_term( $tid, 'uv_position' );
+                                }
+                            }
+                            if ( $t && ! is_wp_error( $t ) ) {
+                                $role = $t->name;
+                            }
+                        }
+                    }
+                    if ( ! $role ) {
+                        $role_nb = get_user_meta( $user_id, 'uv_position_nb', true );
+                        $role_en = get_user_meta( $user_id, 'uv_position_en', true );
+                        $role    = ( 'en' === $lang ) ? ( $role_en ?: $role_nb ) : ( $role_nb ?: $role_en );
+                    }
                     $url     = add_query_arg(
                         [
                             'team'        => 1,
