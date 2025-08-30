@@ -28,11 +28,14 @@ jQuery(function($){
         if (!wp || !wp.media) {
             return;
         }
+        if (typeof UVTeamManager === "undefined") {
+            return;
+        }
         var $wrap = $(this).closest(".uv-avatar-field");
         var frame = wp.media({
-            title: (window.UVTeamManager && UVTeamManager.selectAvatar) || "Select Avatar",
+            title: UVTeamManager.selectAvatar,
             library: { type: "image" },
-            button: { text: (window.UVTeamManager && UVTeamManager.useImage) || "Use this image" },
+            button: { text: UVTeamManager.useImage },
             multiple: false
         });
         frame.on("select", function(){
