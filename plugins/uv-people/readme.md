@@ -37,6 +37,10 @@ Team assignment lookups are cached in transients for faster rendering. Cache ent
 All strings use the `uv-people` text domain. Place translation files in `languages/` or manage translations through Polylang or another translation plugin.
 
 ## Changelog
+### 0.6.3
+- Add user profile edit shortcode.
+- Introduce `uv_position` taxonomy and sortable team members.
+- Cache team grid assignments.
 ### 0.6.2
 - Enhancements and bug fixes.
 ### 0.6.1
