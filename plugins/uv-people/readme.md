@@ -20,6 +20,9 @@ UV People adds user profile fields, per-location assignments, and a team grid sh
 ### Sorting
 Primary contacts are shown first in the grid, followed by other members sorted by their custom order weight and then alphabetically by display name.
 
+## Caching
+Team assignment lookups are cached in transients for faster rendering. Cache entries expire after one hour by default. Use the `uv_people_cache_ttl` filter to adjust the duration. The cache is cleared automatically when team assignments or user profile data change.
+
 ## Usage
 
 ```html
