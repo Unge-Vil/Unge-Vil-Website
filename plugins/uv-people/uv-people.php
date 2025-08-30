@@ -78,6 +78,7 @@ add_action('init', function(){
         'hierarchical' => false,
         'show_in_rest' => true,
         'meta_box_cb'  => false,
+        'show_in_menu' => 'users.php',
     ]);
 });
 
