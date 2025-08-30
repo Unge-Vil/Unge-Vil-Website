@@ -47,7 +47,7 @@ body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-se
 @media (min-width:1200px){.uv-team-grid.columns-4{grid-template-columns:repeat(4,1fr)}}
 @media (min-width:1500px){.uv-team-grid.columns-5{grid-template-columns:repeat(5,1fr)}}
 @media (min-width:1800px){.uv-team-grid.columns-6{grid-template-columns:repeat(6,1fr)}}
-.uv-team-member{max-width:800px;margin-left:auto;margin-right:auto}
+.uv-team-member{max-width:800px;margin-left:auto;margin-right:auto;padding:0 1rem}
 
 /* Visually hide skip link until focused */
 .skip-link{position:absolute;top:-40px;left:0;background:#000;color:#fff;padding:.5rem;z-index:100;text-decoration:none}
