@@ -2,7 +2,7 @@ jQuery(function($){
     var frame;
     $('#uv-avatar-upload').on('click', function(e){
         e.preventDefault();
-        frame = wp.media({title: UVPeople.selectAvatar, multiple:false});
+        frame = wp.media({title: UVPeople.selectAvatar, multiple:false, button:{ text: UVPeople.useImage }});
         frame.on('select', function(){
             var att = frame.state().get('selection').first().toJSON();
             $('#uv_avatar_id').val(att.id);

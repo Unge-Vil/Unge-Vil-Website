@@ -86,6 +86,7 @@ add_action('admin_enqueue_scripts', function($hook){
         );
         wp_localize_script('uv-people-admin', 'UVPeople', [
             'selectAvatar' => __('Select Avatar', 'uv-people'),
+            'useImage' => __('Use Image', 'uv-people'),
         ]);
     }
 });
