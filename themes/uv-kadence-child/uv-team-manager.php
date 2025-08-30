@@ -152,7 +152,8 @@ function uv_team_manager_save_handler() {
         $loc_ids = array_map('intval', isset($fields['locations']) ? (array)$fields['locations'] : []);
         update_user_meta($uid, 'uv_location_terms', $loc_ids);
 
-        $primary = array_map('intval', isset($fields['primary_locations']) ? (array)$fields['primary_locations'] : []);
+        $primary_raw = array_map('intval', isset($fields['primary_locations']) ? (array)$fields['primary_locations'] : []);
+        $primary = array_values(array_intersect($primary_raw, $loc_ids));
         if (!empty($primary)) {
             update_user_meta($uid, 'uv_primary_locations', $primary);
         } else {
@@ -181,5 +182,21 @@ add_action('admin_enqueue_scripts', function ($hook) {
     }
     wp_enqueue_style('select2');
     wp_enqueue_script('select2');
-    wp_add_inline_script('select2', 'jQuery(function($){ $(".uv-location-select, .uv-primary-location-select").select2(); });');
+    wp_add_inline_script('select2', 'jQuery(function($){
+        $(".uv-location-select, .uv-primary-location-select").select2();
+        $(".uv-location-select").on("change", function(){
+            var $loc = $(this);
+            var selected = $loc.val() || [];
+            var $primary = $loc.closest("tr").find(".uv-primary-location-select");
+            $primary.find("option").each(function(){
+                var val = $(this).val();
+                var allowed = selected.indexOf(val) !== -1;
+                $(this).prop("disabled", !allowed);
+                if(!allowed){
+                    $(this).prop("selected", false);
+                }
+            });
+            $primary.trigger("change.select2");
+        }).trigger("change");
+    });');
 });
