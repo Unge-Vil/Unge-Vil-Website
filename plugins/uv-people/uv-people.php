@@ -114,7 +114,15 @@ add_action('init', function(){
         'hierarchical' => false,
         'show_in_rest' => true,
         'meta_box_cb'  => false,
-        'show_in_menu' => 'users.php',
+        // Place the taxonomy under the UV Control Panel so non-admins can reach it
+        'show_in_menu' => 'uv-control-panel',
+        // Ensure editors can manage and assign terms
+        'capabilities' => [
+            'manage_terms' => 'manage_categories',
+            'edit_terms'   => 'manage_categories',
+            'delete_terms' => 'manage_categories',
+            'assign_terms' => 'edit_posts',
+        ],
     ]);
 });
 
