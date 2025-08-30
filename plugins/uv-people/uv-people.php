@@ -349,6 +349,93 @@ function uv_people_get_avatar($user_id){
     return get_avatar($user_id, 96, '', $alt, ['loading' => 'lazy']); // fallback
 }
 
+// Shortcode: front-end profile edit form
+function uv_people_edit_profile_shortcode(){
+    if(!is_user_logged_in()){
+        return '<p>'.esc_html__('You must be logged in to edit your profile.', 'uv-people').'</p>';
+    }
+
+    $user_id = get_current_user_id();
+    $message = '';
+
+    if('POST' === $_SERVER['REQUEST_METHOD'] && isset($_POST['uv_edit_profile_submit'])){
+        if(isset($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'update-user_' . $user_id)){
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            require_once ABSPATH . 'wp-admin/includes/media.php';
+            require_once ABSPATH . 'wp-admin/includes/image.php';
+
+            if(!empty($_FILES['uv_avatar']['name'])){
+                $attachment_id = media_handle_upload('uv_avatar', 0);
+                if(!is_wp_error($attachment_id)){
+                    $_POST['uv_avatar_id'] = $attachment_id;
+                } else {
+                    $message = '<div class="uv-edit-profile-message uv-error">'.esc_html__('Avatar upload failed.', 'uv-people').'</div>';
+                }
+            }
+
+            uv_people_profile_save($user_id);
+            if(!$message){
+                $message = '<div class="uv-edit-profile-message uv-success">'.esc_html__('Profile updated.', 'uv-people').'</div>';
+            }
+        } else {
+            $message = '<div class="uv-edit-profile-message uv-error">'.esc_html__('Security check failed.', 'uv-people').'</div>';
+        }
+    }
+
+    $phone       = get_user_meta($user_id, 'uv_phone', true);
+    $quote_nb    = get_user_meta($user_id, 'uv_quote_nb', true);
+    $quote_en    = get_user_meta($user_id, 'uv_quote_en', true);
+    $avatar_id   = get_user_meta($user_id, 'uv_avatar_id', true);
+    $position    = get_user_meta($user_id, 'uv_position_term', true);
+    $positions   = get_terms(['taxonomy' => 'uv_position', 'hide_empty' => false]);
+    if(is_wp_error($positions)){
+        $positions = [];
+    }
+
+    ob_start();
+    wp_enqueue_style('uv-people-edit-profile', plugin_dir_url(__FILE__) . 'assets/edit-profile.css', [], UV_PEOPLE_VERSION);
+
+    if($message){
+        echo $message;
+    }
+    ?>
+    <form class="uv-edit-profile-form" method="post" enctype="multipart/form-data">
+        <?php wp_nonce_field('update-user_' . $user_id); ?>
+        <p class="uv-field">
+            <label for="uv_phone"><?php esc_html_e('Phone', 'uv-people'); ?></label>
+            <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>">
+        </p>
+        <p class="uv-field">
+            <label for="uv_position_term"><?php esc_html_e('Position', 'uv-people'); ?></label>
+            <select name="uv_position_term" id="uv_position_term">
+                <option value=""><?php esc_html_e('Select', 'uv-people'); ?></option>
+                <?php foreach($positions as $pos): ?>
+                    <option value="<?php echo esc_attr($pos->term_id); ?>" <?php selected($position, $pos->term_id); ?>><?php echo esc_html($pos->name); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+        <p class="uv-field">
+            <label for="uv_quote_nb"><?php esc_html_e('Quote (Norwegian)', 'uv-people'); ?></label>
+            <textarea name="uv_quote_nb" id="uv_quote_nb" rows="4"><?php echo esc_textarea($quote_nb); ?></textarea>
+        </p>
+        <p class="uv-field">
+            <label for="uv_quote_en"><?php esc_html_e('Quote (English)', 'uv-people'); ?></label>
+            <textarea name="uv_quote_en" id="uv_quote_en" rows="4"><?php echo esc_textarea($quote_en); ?></textarea>
+        </p>
+        <p class="uv-field">
+            <label for="uv_avatar"><?php esc_html_e('Avatar', 'uv-people'); ?></label>
+            <?php if($avatar_id) echo wp_get_attachment_image($avatar_id, 'uv_avatar', false, ['class' => 'uv-current-avatar']); ?>
+            <input type="file" name="uv_avatar" id="uv_avatar" accept="image/*">
+        </p>
+        <p>
+            <button type="submit" name="uv_edit_profile_submit" class="uv-button"><?php esc_html_e('Save Profile', 'uv-people'); ?></button>
+        </p>
+    </form>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('uv_edit_profile', 'uv_people_edit_profile_shortcode');
+
 // Shortcode: Team grid by location
 function uv_people_team_grid($atts){
     wp_enqueue_style('uv-team-grid-style', plugin_dir_url(__FILE__) . 'blocks/team-grid/style.css', [], UV_PEOPLE_VERSION);
