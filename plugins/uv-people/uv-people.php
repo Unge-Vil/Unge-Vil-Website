@@ -77,6 +77,9 @@ add_action('init', function(){
 add_action('add_meta_boxes_uv_team_assignment', function(){
     add_meta_box('uv_ta_fields', __('Assignment', 'uv-people'), function($post){
         $user_id = get_post_meta($post->ID, 'uv_user_id', true);
+        if (!$user_id && $post->post_author) {
+            $user_id = $post->post_author;
+        }
         $user_ids = $user_id ? [$user_id] : [];
         $loc_id  = get_post_meta($post->ID, 'uv_location_id', true);
         $role_nb = get_post_meta($post->ID, 'uv_role_nb', true);
@@ -152,6 +155,13 @@ function uv_save_team_assignment($post_id){
         update_post_meta($post_id, 'uv_user_id', $first);
 
         $term = get_term($loc_id, 'uv_location');
+
+        wp_update_post([
+            'ID'         => $post_id,
+            'post_author'=> $first,
+            'post_title' => get_the_author_meta('display_name', $first) . ' - ' . ( $term ? $term->name : '' ),
+        ]);
+
         foreach($user_ids as $uid){
             $title = get_the_author_meta('display_name', $uid) . ' - ' . ($term ? $term->name : '');
             $new_id = wp_insert_post([
