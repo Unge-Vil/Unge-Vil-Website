@@ -125,6 +125,9 @@ add_filter('login_redirect', function($redirect_to, $request, $user) {
     if (is_wp_error($user)) {
         return $redirect_to;
     }
+    if (is_a($user, 'WP_User') && user_can($user, 'manage_options')) {
+        return $redirect_to;
+    }
     return admin_url('admin.php?page=uv-control-panel');
 }, 10, 3);
 
