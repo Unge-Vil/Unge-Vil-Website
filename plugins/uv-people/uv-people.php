@@ -341,8 +341,6 @@ function uv_people_team_grid($atts){
     $loc = sanitize_title($a['location']); // Shortcode expects a location slug
     $term = get_term_by('slug', $loc, 'uv_location'); // Look up the term to obtain its ID
     if(!$term) return $placeholder(__('Location not found.', 'uv-people'));
-    $order_ids = get_term_meta($term->term_id, 'uv_member_order', true);
-    $order_map = is_array($order_ids) ? array_flip(array_map('intval', $order_ids)) : [];
     $page = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : 1;
     $cache_key = 'uv_people_team_grid_' . md5($term->term_id . '|' . $page);
     $items = get_transient($cache_key);
@@ -352,8 +350,14 @@ function uv_people_team_grid($atts){
             'number'     => -1,
             'fields'     => ['ID'],
             'meta_query' => [
+                'relation' => 'OR',
                 [
                     'key'     => 'uv_location_terms',
+                    'value'   => '"' . $term->term_id . '"',
+                    'compare' => 'LIKE',
+                ],
+                [
+                    'key'     => 'uv_primary_locations',
                     'value'   => '"' . $term->term_id . '"',
                     'compare' => 'LIKE',
                 ],
@@ -371,7 +375,6 @@ function uv_people_team_grid($atts){
                 'role_term' => get_user_meta($uid, 'uv_position_term', true),
                 'primary'   => in_array($term->term_id, $primary_ids, true),
                 'rank'      => $rank,
-                'order'     => isset($order_map[$uid]) ? $order_map[$uid] : null,
             ];
         }
         set_transient($cache_key, $items, uv_people_cache_ttl());
@@ -380,23 +383,14 @@ function uv_people_team_grid($atts){
         return $placeholder(__('No team members found.', 'uv-people'));
     }
     $cols = max(1, min(6, intval($a['columns'])));
-    if($order_map){
-        usort($items, function($a,$b){
-            $oa = $a['order'] !== null ? $a['order'] : 999;
-            $ob = $b['order'] !== null ? $b['order'] : 999;
-            if($oa !== $ob) return $oa < $ob ? -1 : 1;
-            return 0;
-        });
-    } else {
-        // sort priority: primary ➜ rank ➜ name
-        usort($items, function($a,$b){
-            if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
-            if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
-            $an = get_the_author_meta('display_name', $a['user_id']);
-            $bn = get_the_author_meta('display_name', $b['user_id']);
-            return strcasecmp($an, $bn);
-        });
-    }
+    // sort priority: primary ➜ rank ➜ name
+    usort($items, function($a,$b){
+        if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
+        if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
+        $an = get_the_author_meta('display_name', $a['user_id']);
+        $bn = get_the_author_meta('display_name', $b['user_id']);
+        return strcasecmp($an, $bn);
+    });
     $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
     ob_start();
     echo '<div class="uv-team-grid columns-'.$cols.'" role="list">';
@@ -494,13 +488,6 @@ function uv_people_all_team_grid($atts){
         'show_nav'     => false,
     ], $atts);
 
-    $meta_query = [
-        [
-            'key'     => 'uv_location_id',
-            'compare' => 'EXISTS',
-        ],
-    ];
-
     $location_ids = [];
     if( ! empty( $a['locations'] ) && empty( $a['allLocations'] ) ){
         $terms = get_terms([
@@ -517,34 +504,40 @@ function uv_people_all_team_grid($atts){
     $per_page = max(1, intval($a['per_page']));
     $page     = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : max(1, intval($a['page']));
 
-    $cache_key_parts = [ implode(',', $location_ids), $page ];
-    $cache_key = 'uv_people_all_team_grid_' . md5( implode('|', $cache_key_parts) );
-    $users = get_transient($cache_key);
-    if ($users === false) {
-        $users = get_users([
-            'number' => -1,
-            'fields' => ['ID'],
-        ]);
-        set_transient($cache_key, $users, uv_people_cache_ttl());
-    }
-    $grouped = [];
-    foreach ($users as $u) {
-        $uid = is_object($u) ? $u->ID : (int)$u;
-        $loc_ids = get_user_meta($uid, 'uv_location_terms', true);
-        if (!is_array($loc_ids)) $loc_ids = [];
-        if (empty($loc_ids)) continue;
-        if ($location_ids && !array_intersect($loc_ids, $location_ids)) {
-            continue;
+    // Build meta query to fetch users belonging to the requested locations
+    if ($location_ids) {
+        $meta_query = ['relation' => 'OR'];
+        foreach ($location_ids as $loc_id) {
+            $meta_query[] = [
+                'key'     => 'uv_location_terms',
+                'value'   => '"' . $loc_id . '"',
+                'compare' => 'LIKE',
+            ];
+            $meta_query[] = [
+                'key'     => 'uv_primary_locations',
+                'value'   => '"' . $loc_id . '"',
+                'compare' => 'LIKE',
+            ];
         }
-        $primary_ids = get_user_meta($uid, 'uv_primary_locations', true);
-        if(!is_array($primary_ids)) $primary_ids = [];
-        $grouped[$uid] = [
-            'matched' => true,
-            'primary' => $location_ids ? (bool) array_intersect($primary_ids, $location_ids) : !empty($primary_ids),
-            'rank'    => get_user_meta($uid, 'uv_rank_number', true),
+    } else {
+        $meta_query = [
+            'relation' => 'OR',
+            [ 'key' => 'uv_location_terms',    'compare' => 'EXISTS' ],
+            [ 'key' => 'uv_primary_locations', 'compare' => 'EXISTS' ],
         ];
     }
-    $user_ids = array_keys( array_filter( $grouped, function( $u ){ return $u['matched']; } ) );
+
+    $cache_key = 'uv_people_all_team_grid_' . md5(implode(',', $location_ids));
+    $user_ids = get_transient($cache_key);
+    if ($user_ids === false) {
+        $users = get_users([
+            'number'     => -1,
+            'fields'     => ['ID'],
+            'meta_query' => $meta_query,
+        ]);
+        $user_ids = wp_list_pluck($users, 'ID');
+        set_transient($cache_key, $user_ids, uv_people_cache_ttl());
+    }
 
     if(!$user_ids){
         return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
@@ -555,22 +548,23 @@ function uv_people_all_team_grid($atts){
     $offset   = ($page - 1) * $per_page;
 
     $sorted = [];
-    foreach ( $user_ids as $uid ) {
-        $rank = isset( $grouped[ $uid ]['rank'] ) ? $grouped[ $uid ]['rank'] : '';
-        if ( $rank === '' || $rank === null ) {
-            $rank = get_user_meta( $uid, 'uv_rank_number', true );
-        }
-        $rank = ( $rank === '' ? 999 : intval( $rank ) );
-        $name = get_the_author_meta( 'display_name', $uid );
+    foreach ($user_ids as $uid) {
+        $rank = get_user_meta($uid, 'uv_rank_number', true);
+        $rank = ($rank === '' ? 999 : intval($rank));
+        $primary_ids = get_user_meta($uid, 'uv_primary_locations', true);
+        if(!is_array($primary_ids)) $primary_ids = [];
+        $primary = $location_ids ? (bool) array_intersect($primary_ids, $location_ids) : !empty($primary_ids);
+        $name = get_the_author_meta('display_name', $uid);
         $sorted[] = [
             'ID'      => $uid,
             'rank'    => $rank,
             'name'    => $name,
-            'primary' => ! empty( $grouped[ $uid ]['primary'] ),
+            'primary' => $primary,
         ];
     }
     usort($sorted, function($a,$b){
-        if ($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
+        if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
+        if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
         return strcasecmp($a['name'], $b['name']);
     });
 
@@ -583,6 +577,7 @@ function uv_people_all_team_grid($atts){
         'include' => $paged_ids,
         'number'  => $per_page,
         'fields'  => ['ID', 'display_name', 'user_email'],
+        'orderby' => 'include',
     ]);
     $user_map = [];
     foreach ($users as $u) {
@@ -596,7 +591,7 @@ function uv_people_all_team_grid($atts){
             $items[] = [
                 'user'    => $user_map[$uid],
                 'rank'    => $it['rank'],
-                'primary' => !empty( $it['primary'] ),
+                'primary' => !empty($it['primary']),
             ];
         }
     }
