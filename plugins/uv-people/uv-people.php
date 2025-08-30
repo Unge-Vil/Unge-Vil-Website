@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UV People
  * Description: Extends WordPress Users with public fields, media-library avatars, per-location assignments, and a Team grid shortcode.
- * Version: 0.6.3
+ * Version: 0.6.4
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Unge Vil
@@ -13,7 +13,7 @@
 if (!defined('ABSPATH')) exit;
 
 if (!defined('UV_PEOPLE_VERSION')) {
-    define('UV_PEOPLE_VERSION', '0.6.3');
+    define('UV_PEOPLE_VERSION', '0.6.4');
 }
 
 $update_checker_path = __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
@@ -247,6 +247,18 @@ function uv_people_edit_profile_shortcode(){
     if(is_wp_error($positions)){
         $positions = [];
     }
+    // Guard against missing uv_location taxonomy when uv-core is inactive or removed
+    $locations = [];
+    if (taxonomy_exists('uv_location')) {
+        $locations = get_terms(['taxonomy' => 'uv_location', 'hide_empty' => false]);
+        if (is_wp_error($locations)) {
+            $locations = [];
+        }
+    }
+    $assigned = get_user_meta($user_id, 'uv_location_terms', true);
+    if(!is_array($assigned)) $assigned = [];
+    $primary_locations = get_user_meta($user_id, 'uv_primary_locations', true);
+    if(!is_array($primary_locations)) $primary_locations = [];
 
     ob_start();
     wp_enqueue_style('uv-people-edit-profile', plugin_dir_url(__FILE__) . 'assets/edit-profile.css', [], UV_PEOPLE_VERSION);
@@ -270,6 +282,26 @@ function uv_people_edit_profile_shortcode(){
                 <?php endforeach; ?>
             </select>
         </p>
+        <?php if(!empty($locations)): ?>
+        <p class="uv-field">
+            <label for="uv_locations"><?php esc_html_e('Locations', 'uv-people'); ?></label>
+            <input type="hidden" name="uv_locations[]" value="">
+            <select name="uv_locations[]" id="uv_locations" multiple>
+                <?php foreach($locations as $loc): ?>
+                    <option value="<?php echo esc_attr($loc->term_id); ?>" <?php selected(in_array($loc->term_id, $assigned)); ?>><?php echo esc_html($loc->name); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+        <p class="uv-field">
+            <label for="uv_primary_locations"><?php esc_html_e('Primary Locations', 'uv-people'); ?></label>
+            <input type="hidden" name="uv_primary_locations[]" value="">
+            <select name="uv_primary_locations[]" id="uv_primary_locations" multiple>
+                <?php foreach($locations as $loc): ?>
+                    <option value="<?php echo esc_attr($loc->term_id); ?>" <?php selected(in_array($loc->term_id, $primary_locations)); ?>><?php echo esc_html($loc->name); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+        <?php endif; ?>
         <p class="uv-field">
             <label for="uv_quote_nb"><?php esc_html_e('Quote (Norwegian)', 'uv-people'); ?></label>
             <textarea name="uv_quote_nb" id="uv_quote_nb" rows="4"><?php echo esc_textarea($quote_nb); ?></textarea>
