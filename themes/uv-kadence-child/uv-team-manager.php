@@ -43,14 +43,17 @@ class UV_Team_Manager_Table extends WP_List_Table {
 
     protected function column_avatar($user) {
         $avatar_id = get_user_meta($user->ID, 'uv_avatar_id', true);
-        $img = '';
-        if (function_exists('uv_people_get_avatar')) {
-            $img = uv_people_get_avatar($user->ID);
-        } else {
-            $img = get_avatar($user->ID, 32);
-        }
-        return '<div class="uv-avatar">' . $img . '</div>' .
-            '<input type="number" name="uv_team_manager[' . $user->ID . '][avatar_id]" value="' . esc_attr($avatar_id) . '" />';
+        $default = function_exists('uv_people_get_avatar') ? uv_people_get_avatar($user->ID) : get_avatar($user->ID, 32);
+        $preview = $avatar_id ? wp_get_attachment_image($avatar_id, [32, 32]) : $default;
+
+        $html  = '<div class="uv-avatar-field" data-default="' . esc_attr($default) . '">';
+        $html .= '<div class="uv-avatar-preview">' . $preview . '</div>';
+        $html .= '<input type="hidden" class="uv-avatar-id" name="uv_team_manager[' . $user->ID . '][avatar_id]" value="' . esc_attr($avatar_id) . '" />';
+        $html .= '<button type="button" class="button uv-avatar-button">' . esc_html__('Select', 'uv-kadence-child') . '</button>';
+        $html .= '<button type="button" class="button uv-avatar-remove"' . ($avatar_id ? '' : ' style="display:none;"') . '>' . esc_html__('Remove', 'uv-kadence-child') . '</button>';
+        $html .= '</div>';
+
+        return $html;
     }
 
     protected function column_phone($user) {
@@ -182,21 +185,54 @@ add_action('admin_enqueue_scripts', function ($hook) {
     }
     wp_enqueue_style('select2');
     wp_enqueue_script('select2');
-    wp_add_inline_script('select2', 'jQuery(function($){
-        $(".uv-location-select, .uv-primary-location-select").select2();
-        $(".uv-location-select").on("change", function(){
-            var $loc = $(this);
-            var selected = $loc.val() || [];
-            var $primary = $loc.closest("tr").find(".uv-primary-location-select");
-            $primary.find("option").each(function(){
-                var val = $(this).val();
-                var allowed = selected.indexOf(val) !== -1;
-                $(this).prop("disabled", !allowed);
-                if(!allowed){
-                    $(this).prop("selected", false);
-                }
-            });
-            $primary.trigger("change.select2");
-        }).trigger("change");
-    });');
+    wp_enqueue_media();
+
+    $inline = <<<'JS'
+jQuery(function($){
+    $(".uv-location-select, .uv-primary-location-select").select2();
+    $(".uv-location-select").on("change", function(){
+        var $loc = $(this);
+        var selected = $loc.val() || [];
+        var $primary = $loc.closest("tr").find(".uv-primary-location-select");
+        $primary.find("option").each(function(){
+            var val = $(this).val();
+            var allowed = selected.indexOf(val) !== -1;
+            $(this).prop("disabled", !allowed);
+            if(!allowed){
+                $(this).prop("selected", false);
+            }
+        });
+        $primary.trigger("change.select2");
+    }).trigger("change");
+
+    $(document).on("click", ".uv-avatar-button", function(e){
+        e.preventDefault();
+        var $wrap = $(this).closest(".uv-avatar-field");
+        var frame = wp.media({
+            title: "Select Avatar",
+            library: { type: "image" },
+            button: { text: "Use this image" },
+            multiple: false
+        });
+        frame.on("select", function(){
+            var attachment = frame.state().get("selection").first().toJSON();
+            var url = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url;
+            $wrap.find(".uv-avatar-preview").html("<img src=\"" + url + "\" />");
+            $wrap.find(".uv-avatar-id").val(attachment.id);
+            $wrap.find(".uv-avatar-remove").show();
+        });
+        frame.open();
+    });
+
+    $(document).on("click", ".uv-avatar-remove", function(e){
+        e.preventDefault();
+        var $wrap = $(this).closest(".uv-avatar-field");
+        var defaultHtml = $wrap.data("default");
+        $wrap.find(".uv-avatar-preview").html(defaultHtml);
+        $wrap.find(".uv-avatar-id").val("");
+        $(this).hide();
+    });
+});
+JS;
+    wp_add_inline_script('select2', $inline);
 });
