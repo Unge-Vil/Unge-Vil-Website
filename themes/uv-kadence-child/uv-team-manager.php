@@ -188,7 +188,12 @@ function uv_team_manager_save_handler() {
             update_user_meta($uid, 'uv_position_term', absint($fields['position']));
         }
         if (isset($fields['avatar_id'])) {
-            update_user_meta($uid, 'uv_avatar_id', absint($fields['avatar_id']));
+            $avatar_id = absint($fields['avatar_id']);
+            if ($avatar_id) {
+                update_user_meta($uid, 'uv_avatar_id', $avatar_id);
+            } else {
+                delete_user_meta($uid, 'uv_avatar_id');
+            }
         }
         $loc_ids = array_map('intval', isset($fields['locations']) ? (array)$fields['locations'] : []);
         update_user_meta($uid, 'uv_location_terms', $loc_ids);

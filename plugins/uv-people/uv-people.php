@@ -260,6 +260,7 @@ function uv_people_profile_fields($user){
         <td>
           <input type="hidden" id="uv_avatar_id" name="uv_avatar_id" value="<?php echo esc_attr($avatar_id); ?>">
           <button type="button" class="button" id="uv-avatar-upload"><?php esc_html_e('Select Image','uv-people'); ?></button>
+          <button type="button" class="button" id="uv-avatar-remove"<?php echo $avatar_id ? '' : ' style="display:none;"'; ?>><?php esc_html_e('Remove','uv-people'); ?></button>
           <div id="uv-avatar-preview"><?php echo $avatar_id ? wp_get_attachment_image($avatar_id,'uv_avatar') : ''; ?></div>
           <p class="description"><?php esc_html_e('This replaces Gravatar and uses a local image.','uv-people'); ?></p>
         </td></tr>
@@ -280,7 +281,14 @@ function uv_people_profile_save($user_id){
     if(isset($_POST['uv_position_term'])) update_user_meta($user_id, 'uv_position_term', absint($_POST['uv_position_term']));
     if(isset($_POST['uv_quote_nb'])) update_user_meta($user_id, 'uv_quote_nb', sanitize_textarea_field($_POST['uv_quote_nb']));
     if(isset($_POST['uv_quote_en'])) update_user_meta($user_id, 'uv_quote_en', sanitize_textarea_field($_POST['uv_quote_en']));
-    if(isset($_POST['uv_avatar_id'])) update_user_meta($user_id, 'uv_avatar_id', absint($_POST['uv_avatar_id']));
+    if(isset($_POST['uv_avatar_id'])) {
+        $avatar_id = absint($_POST['uv_avatar_id']);
+        if($avatar_id){
+            update_user_meta($user_id, 'uv_avatar_id', $avatar_id);
+        } else {
+            delete_user_meta($user_id, 'uv_avatar_id');
+        }
+    }
     if(isset($_POST['uv_birthdate'])){
         $bd = sanitize_text_field($_POST['uv_birthdate']);
         if($bd){

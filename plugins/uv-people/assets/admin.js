@@ -7,8 +7,15 @@ jQuery(function($){
             var att = frame.state().get('selection').first().toJSON();
             $('#uv_avatar_id').val(att.id);
             $('#uv-avatar-preview').html('<img src="'+att.url+'" style="max-width:128px;border-radius:12px;">');
+            $('#uv-avatar-remove').show();
         });
         frame.open();
+    });
+    $('#uv-avatar-remove').on('click', function(e){
+        e.preventDefault();
+        $('#uv_avatar_id').val('');
+        $('#uv-avatar-preview').html('');
+        $(this).hide();
     });
     if ($.fn.select2) {
         $('.uv-location-select').select2({width:'100%'});
