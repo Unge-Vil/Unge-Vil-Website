@@ -90,6 +90,20 @@ add_action('admin_enqueue_scripts', function($hook){
     }
 });
 
+function uv_people_remove_default_bio_field(){
+    ?>
+    <style>.user-description-wrap{display:none!important;}</style>
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+        var row = document.querySelector('.user-description-wrap');
+        if (row) row.remove();
+    });
+    </script>
+    <?php
+}
+add_action('admin_head-user-edit.php', 'uv_people_remove_default_bio_field');
+add_action('admin_head-profile.php', 'uv_people_remove_default_bio_field');
+
 // Taxonomy: uv_position
 add_action('init', function(){
     register_taxonomy('uv_position', null, [
