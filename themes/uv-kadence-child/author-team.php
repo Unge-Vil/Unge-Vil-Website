@@ -11,7 +11,7 @@ if ($user instanceof WP_User) :
     $uid  = $user->ID;
     $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(), 0, 2);
     ?>
-    <div class="container">
+    <div class="uv-team-container">
         <article class="uv-team-member">
             <header class="uv-member-header">
             <div class="uv-header-block">
