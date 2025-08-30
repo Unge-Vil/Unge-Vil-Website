@@ -29,6 +29,7 @@
 .uv-card-body h3{margin:0;font-size:1rem}
 .uv-member-header{display:flex;flex-direction:column;align-items:center;gap:.5rem}
 .uv-member-header .uv-avatar{margin-top:2rem}
+.uv-header-block{display:flex;flex-direction:column;align-items:center}
 .uv-position{font-size:1rem;color:#555}
 .uv-articles{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
 body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#222}
