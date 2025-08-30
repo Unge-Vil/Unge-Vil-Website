@@ -121,13 +121,18 @@ add_action('admin_menu', function() {
     );
 });
 
+// Redirect non-admins to the Control Panel after login.
 add_filter('login_redirect', function($redirect_to, $request, $user) {
     if (is_wp_error($user)) {
         return $redirect_to;
     }
-    if (is_a($user, 'WP_User') && user_can($user, 'manage_options')) {
+
+    // Allow users with manage options capability (e.g., administrators)
+    // to retain their original destination.
+    if ($user instanceof WP_User && user_can($user, 'manage_options')) {
         return $redirect_to;
     }
+
     return admin_url('admin.php?page=uv-control-panel');
 }, 10, 3);
 
