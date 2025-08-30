@@ -28,3 +28,9 @@
     background-color: #5a0099;
     color: #fff;
 }
+
+.uv-team-container {
+    max-width: min(800px, 100%);
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 5vw, 2rem);
+}
