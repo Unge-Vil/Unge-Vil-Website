@@ -21,6 +21,10 @@
       "type": "boolean",
       "default": true
     },
+    "showAge": {
+      "type": "boolean",
+      "default": false
+    },
     "showQuote": {
       "type": "boolean",
       "default": true
