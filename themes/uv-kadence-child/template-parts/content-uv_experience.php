@@ -105,6 +105,16 @@
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
+            <?php
+            $external_url = get_post_meta( get_the_ID(), 'uv_external_url', true );
+            if ( $external_url ) :
+            ?>
+            <div class="uv-external-link">
+                <a class="uv-related-button" href="<?php echo esc_url( $external_url ); ?>" target="_blank" rel="noopener">
+                    <?php esc_html_e( 'Visit website', 'uv-core' ); ?>
+                </a>
+            </div>
+            <?php endif; ?>
         </div>
 
         <?php
