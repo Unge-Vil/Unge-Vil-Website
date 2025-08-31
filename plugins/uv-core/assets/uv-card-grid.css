@@ -4,5 +4,11 @@
     list-style: none; /* Remove default list styling */
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: repeat(var(--uv-columns, 4), minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+@media (max-width: 600px) {
+    .uv-card-grid {
+        grid-template-columns: 1fr;
+    }
 }

@@ -5,12 +5,12 @@ import fetchTerms from '../utils/fetchTerms';
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
     const { InspectorControls, useBlockProps } = wp.blockEditor;
-    const { PanelBody, SelectControl, RangeControl } = wp.components;
+    const { PanelBody, SelectControl } = wp.components;
     const ServerSideRender = wp.serverSideRender;
 
     registerBlockType( 'uv/activities', {
         edit: function( props ) {
-            const { attributes: { location, columns }, setAttributes } = props;
+            const { attributes: { location }, setAttributes } = props;
             const query = { per_page: 100 };
             const { terms, error } = fetchTerms( 'uv_location', query );
             const options = terms ? terms.map( function( t ) {
@@ -26,14 +26,6 @@ import fetchTerms from '../utils/fetchTerms';
                             value: location,
                             options: [ { label: __( 'Velg', 'uv-core' ), value: '' } ].concat( options ),
                             onChange: function( value ) { setAttributes( { location: value } ); },
-                            style: { height: '40px', marginBottom: 0 }
-                        } ),
-                        createElement( RangeControl, {
-                            label: __( 'Kolonner', 'uv-core' ),
-                            min: 1,
-                            max: 6,
-                            value: columns,
-                            onChange: function( value ) { setAttributes( { columns: value } ); },
                             style: { height: '40px', marginBottom: 0 }
                         } )
                     )

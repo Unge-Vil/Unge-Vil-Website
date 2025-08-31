@@ -7,8 +7,7 @@
   "textdomain": "uv-core",
   "attributes": {
     "location": {"type": "string", "default": ""},
-    "type": {"type": "string", "default": ""},
-    "columns": {"type": "number", "default": 4}
+    "type": {"type": "string", "default": ""}
   },
   "editorScript": "file:./build/index.js",
   "style": "file:./style.css"

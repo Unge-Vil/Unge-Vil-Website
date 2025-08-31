@@ -6,8 +6,7 @@
   "icon": "admin-site",
   "textdomain": "uv-core",
   "attributes": {
-    "location": {"type": "string", "default": ""},
-    "columns": {"type": "number", "default": 3}
+    "location": {"type": "string", "default": ""}
   },
   "editorScript": "file:./build/index.js",
   "style": "file:./style.css"
