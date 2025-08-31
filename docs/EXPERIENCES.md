@@ -14,3 +14,6 @@ Use the **External URL** meta box to provide a link to an outside website. If fi
 
 ## Linking to a WordPress User
 Use the **Team Members** meta box (`uv_experience_users`) to associate one or more WordPress users with an Experience. Start typing in the selector to search and choose people; multiple users can be selected. On the front end, the selected users appear beneath the Experience content with their profile details. Team visibility is managed separately through User → Location assignments.
+
+## Attaching Partners
+Use the **Partners** meta box to associate one or more partner posts with the Experience. Begin typing in the selector to search for partners and select as many as needed. The chosen partners will be displayed after the team members on the front end.

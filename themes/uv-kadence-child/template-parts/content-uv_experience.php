@@ -106,6 +106,90 @@
             </div>
             <?php endif; ?>
             <?php
+            $partners = get_post_meta( get_the_ID(), 'uv_experience_partners', false );
+            if ( $partners ) :
+                if ( function_exists( 'uv_core_enqueue_card_grid_style' ) ) {
+                    uv_core_enqueue_card_grid_style();
+                }
+                $partner_query = new WP_Query(
+                    [
+                        'post_type'      => 'uv_partner',
+                        'post__in'       => array_map( 'absint', $partners ),
+                        'posts_per_page' => -1,
+                        'orderby'        => 'post__in',
+                    ]
+                );
+                if ( $partner_query->have_posts() ) :
+            ?>
+            <h2><?php esc_html_e( 'Partners', 'uv-core' ); ?></h2>
+            <ul class="uv-card-list uv-card-grid">
+                <?php
+                while ( $partner_query->have_posts() ) :
+                    $partner_query->the_post();
+                    $link    = get_post_meta( get_the_ID(), 'uv_partner_url', true );
+                    $display = get_post_meta( get_the_ID(), 'uv_partner_display', true );
+                    if ( ! $display ) {
+                        $display = has_post_thumbnail() ? 'circle_title' : 'title_only';
+                    }
+                    if ( ! has_post_thumbnail() ) {
+                        $display = 'title_only';
+                    }
+                    $classes = 'uv-card uv-partner uv-partner--' . esc_attr( $display );
+                    echo '<li class="' . $classes . '">';
+                    echo $link
+                        ? '<a href="' . esc_url( $link ) . '" target="_blank" rel="noopener nofollow">'
+                        : '<a href="' . esc_url( get_permalink() ) . '" rel="noopener">';
+                    $fallback     = '<span class="uv-partner-icon"></span>';
+                    $render_thumb = function( $attrs = [] ) use ( $fallback ) {
+                        if ( has_post_thumbnail() ) {
+                            $attrs = wp_parse_args( $attrs, [ 'alt' => esc_attr( get_the_title() ) ] );
+                            the_post_thumbnail( 'uv_card', $attrs );
+                        } else {
+                            echo $fallback;
+                        }
+                    };
+                    switch ( $display ) {
+                        case 'logo_only':
+                            $render_thumb();
+                            break;
+                        case 'circle_title':
+                            $render_thumb( [ 'class' => 'is-circle' ] );
+                            echo '<div class="uv-card-body"><strong>' . esc_html( get_the_title() ) . '</strong>';
+                            $excerpt = get_the_excerpt();
+                            if ( $excerpt ) {
+                                echo '<div>' . esc_html( $excerpt ) . '</div>';
+                            }
+                            echo '</div>';
+                            break;
+                        case 'title_only':
+                            echo '<div class="uv-card-body"><strong>' . esc_html( get_the_title() ) . '</strong>';
+                            $excerpt = get_the_excerpt();
+                            if ( $excerpt ) {
+                                echo '<div>' . esc_html( $excerpt ) . '</div>';
+                            }
+                            echo '</div>';
+                            break;
+                        case 'logo_title':
+                        default:
+                            $render_thumb();
+                            echo '<div class="uv-card-body"><strong>' . esc_html( get_the_title() ) . '</strong>';
+                            $excerpt = get_the_excerpt();
+                            if ( $excerpt ) {
+                                echo '<div>' . esc_html( $excerpt ) . '</div>';
+                            }
+                            echo '</div>';
+                            break;
+                    }
+                    echo '</a></li>';
+                endwhile;
+                wp_reset_postdata();
+                ?>
+            </ul>
+            <?php
+                endif;
+            endif;
+            ?>
+            <?php
             $external_url = get_post_meta( get_the_ID(), 'uv_external_url', true );
             if ( $external_url ) :
             ?>
