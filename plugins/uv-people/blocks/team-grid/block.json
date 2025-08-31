@@ -25,6 +25,10 @@
     "show_nav": {
       "type": "boolean",
       "default": false
+    },
+    "showAge": {
+      "type": "boolean",
+      "default": false
     }
   },
   "editorScript": "file:./index.js",

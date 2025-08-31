@@ -547,6 +547,7 @@ function uv_people_team_grid($atts){
         'per_page'          => 100,
         'page'              => 1,
         'show_nav'          => false,
+        'show_age'          => false,
     ], $atts);
     $placeholder = function($msg){
         return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
@@ -664,6 +665,17 @@ function uv_people_team_grid($atts){
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
         echo '<h3>'.esc_html($name).'</h3>';
+        if($a['show_age']){
+            $birthdate = get_user_meta($uid,'uv_birthdate',true);
+            if($birthdate){
+                $bd = DateTime::createFromFormat('Y-m-d',$birthdate);
+                if($bd){
+                    $age = (new DateTime())->diff($bd)->y;
+                    $label = ($age >= 30) ? esc_html__('Voksen leder','uv-people') : esc_html__('Ung leder','uv-people');
+                    echo '<span class="uv-age-pill">'.esc_html($label).'</span>';
+                }
+            }
+        }
         $role = '';
         $role_term = $it['role_term'];
         if(!$role_term){
@@ -939,7 +951,8 @@ function uv_people_all_team_grid($atts){
                 $bd = DateTime::createFromFormat('Y-m-d', $birthdate);
                 if($bd){
                     $age = (new DateTime())->diff($bd)->y;
-                    echo '<div class="uv-age">'.sprintf(esc_html__('Alder: %d','uv-people'), $age).'</div>';
+                    $label = ($age >= 30) ? esc_html__('Voksen leder','uv-people') : esc_html__('Ung leder','uv-people');
+                    echo '<span class="uv-age-pill">'.esc_html($label).'</span>';
                 }
             }
         }
