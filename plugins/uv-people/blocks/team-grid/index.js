@@ -1,1 +1,99 @@
-(()=>{"use strict";const{useSelect:e}=wp.data,t={};!function(o){const{createElement:n}=o.element,{registerBlockType:l}=o.blocks,{__}=o.i18n,{InspectorControls:r,useBlockProps:a}=o.blockEditor,{PanelBody:c,SelectControl:i,RangeControl:s}=o.components,u=o.serverSideRender;l("uv/team-grid",{edit:function(l){const{attributes:{location:p,columns:m},setAttributes:d}=l,{terms:v,error:g}=function(o,n){n=n||{per_page:100};const l=o+JSON.stringify(n);return e(function(e){const r=e("core"),a=r.getEntityRecords("taxonomy",o,n),c={terms:a,error:r.getLastEntityRecordsError?r.getLastEntityRecordsError("taxonomy",o,n):null};return a&&(t[l]=c),t[l]||c},[])}("uv_location",{per_page:100}),b=v?v.map(function(e){return{label:e.name,value:e.slug}}):[];return n(o.element.Fragment,{},n(r,{},n(c,{title:__("Innstillinger","uv-people"),initialOpen:!0},g?n("p",{className:"uv-block-placeholder"},__("Kunne ikke laste steder.","uv-people")):n(i,{label:__("Sted","uv-people"),value:p,options:[{label:__("Velg","uv-people"),value:""}].concat(b),onChange:function(e){d({location:e})},style:{height:"40px",marginBottom:0}}),n(s,{label:__("Kolonner","uv-people"),min:1,max:6,value:m,onChange:function(e){d({columns:e})},style:{height:"40px",marginBottom:0}}))),n("div",a(),n(u,{block:"uv/team-grid",attributes:l.attributes,LoadingResponsePlaceholder:function(){return n("p",{className:"uv-block-placeholder"},__("Laster forhåndsvisning…","uv-people"))},EmptyResponsePlaceholder:function(){return n("div",{className:"uv-block-placeholder"},__("Ingen teammedlemmer funnet.","uv-people"))}})))},save:function(){return null}})}(window.wp)})();
+( function( wp ) {
+    const { createElement: el, Fragment } = wp.element;
+    const { registerBlockType } = wp.blocks;
+    const { __ } = wp.i18n;
+    const { InspectorControls, useBlockProps } = wp.blockEditor;
+    const { PanelBody, SelectControl, RangeControl, ToggleControl } = wp.components;
+    const ServerSideRender = wp.serverSideRender;
+    const { useSelect } = wp.data;
+
+    const cache = {};
+
+    function useTaxonomy( taxonomy, query = { per_page: 100 } ) {
+        const key = taxonomy + JSON.stringify( query );
+        return useSelect( ( select ) => {
+            if ( cache[ key ] ) {
+                return cache[ key ];
+            }
+            const core = select( 'core' );
+            const terms = core.getEntityRecords( 'taxonomy', taxonomy, query );
+            const result = {
+                terms,
+                error: core.getLastEntityRecordsError
+                    ? core.getLastEntityRecordsError( 'taxonomy', taxonomy, query )
+                    : null,
+            };
+            if ( terms ) {
+                cache[ key ] = result;
+            }
+            return result;
+        }, [] );
+    }
+
+    registerBlockType( 'uv/team-grid', {
+        edit( props ) {
+            const {
+                attributes: { location, columns, showAge },
+                setAttributes,
+            } = props;
+
+            const { terms, error } = useTaxonomy( 'uv_location' );
+            const options = terms ? terms.map( ( term ) => ( { label: term.name, value: term.slug } ) ) : [];
+
+            return el(
+                Fragment,
+                {},
+                el(
+                    InspectorControls,
+                    {},
+                    el(
+                        PanelBody,
+                        { title: __( 'Innstillinger', 'uv-people' ), initialOpen: true },
+                        error
+                            ? el(
+                                  'p',
+                                  { className: 'uv-block-placeholder' },
+                                  __( 'Kunne ikke laste steder.', 'uv-people' )
+                              )
+                            : el( SelectControl, {
+                                  label: __( 'Sted', 'uv-people' ),
+                                  value: location,
+                                  options: [ { label: __( 'Velg', 'uv-people' ), value: '' }, ...options ],
+                                  onChange: ( value ) => setAttributes( { location: value } ),
+                                  style: { height: '40px', marginBottom: 0 },
+                              } ),
+                        el( ToggleControl, {
+                            label: __( 'Vis alder', 'uv-people' ),
+                            checked: showAge,
+                            onChange: ( value ) => setAttributes( { showAge: value } ),
+                            style: { height: '40px', marginBottom: 0 },
+                        } ),
+                        el( RangeControl, {
+                            label: __( 'Kolonner', 'uv-people' ),
+                            min: 1,
+                            max: 6,
+                            value: columns,
+                            onChange: ( value ) => setAttributes( { columns: value } ),
+                            style: { height: '40px', marginBottom: 0 },
+                        } )
+                    )
+                ),
+                el(
+                    'div',
+                    useBlockProps(),
+                    el( ServerSideRender, {
+                        block: 'uv/team-grid',
+                        attributes: props.attributes,
+                        LoadingResponsePlaceholder: () =>
+                            el( 'p', { className: 'uv-block-placeholder' }, __( 'Laster forhåndsvisning…', 'uv-people' ) ),
+                        EmptyResponsePlaceholder: () =>
+                            el( 'div', { className: 'uv-block-placeholder' }, __( 'Ingen teammedlemmer funnet.', 'uv-people' ) ),
+                    } )
+                )
+            );
+        },
+        save() {
+            return null;
+        },
+    } );
+} )( window.wp );

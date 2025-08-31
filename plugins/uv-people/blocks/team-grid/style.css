@@ -76,6 +76,16 @@
     line-height: 1;
 }
 
+.uv-age-pill {
+    display: inline-block;
+    background: var(--uv-pink, #ad1457);
+    color: #fff;
+    border-radius: 999px;
+    padding: .25rem .5rem;
+    margin: .25rem .25rem 0 0;
+    font-size: .875rem;
+}
+
 @media (max-width: 600px) {
     .uv-team-grid {
         grid-template-columns: 1fr;
