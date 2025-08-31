@@ -739,6 +739,7 @@ function uv_people_all_team_grid($atts){
         'show_nav'     => false,
         'show_quote'   => true,
         'show_bio'     => false,
+        'show_age'     => false,
     ], $atts);
 
     $location_ids = [];
@@ -932,6 +933,16 @@ function uv_people_all_team_grid($atts){
             $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
         }
         if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
+        if($a['show_age']){
+            $birthdate = get_user_meta($uid,'uv_birthdate',true);
+            if($birthdate){
+                $bd = DateTime::createFromFormat('Y-m-d', $birthdate);
+                if($bd){
+                    $age = (new DateTime())->diff($bd)->y;
+                    echo '<div class="uv-age">'.sprintf(esc_html__('Alder: %d','uv-people'), $age).'</div>';
+                }
+            }
+        }
         echo '</div>';
         echo '</a>';
         if($a['show_bio']){
@@ -1032,6 +1043,10 @@ add_action('init', function(){
                 'default' => true,
             ],
             'show_bio' => [
+                'type'    => 'boolean',
+                'default' => false,
+            ],
+            'show_age' => [
                 'type'    => 'boolean',
                 'default' => false,
             ],

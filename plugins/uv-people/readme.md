@@ -17,7 +17,8 @@ UV People adds user profile fields, per-location assignments, and a team grid sh
    - `per_page` (default: 100) number of team members per page.
    - `page` (default: 1) which page to display. Also respects the `uv_page` query parameter.
    - `show_nav` (0 or 1) display pagination links.
-  - `show_quote` (0 or 1) display the volunteer quote if available.
+   - `show_quote` (0 or 1) display the volunteer quote if available.
+   - `show_age` (0 or 1) display the age if a birthdate is available.
 
 ### Sorting
 Primary contacts are shown first in the grid, followed by other members sorted by their custom order weight and then alphabetically by display name.
