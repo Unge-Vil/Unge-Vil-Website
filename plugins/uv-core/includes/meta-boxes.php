@@ -256,6 +256,39 @@ add_action('save_post_uv_experience', function($post_id){
     }
 }, 10, 1);
 
+// Experience partners meta box
+add_action('add_meta_boxes_uv_experience', function(){
+    add_meta_box('uv_experience_partners', esc_html__('Partners','uv-core'), function($post){
+        wp_nonce_field('uv_experience_partners_action', 'uv_experience_partners_nonce');
+        $selected = get_post_meta($post->ID, 'uv_experience_partners', false);
+        $partners = get_posts([
+            'post_type'      => 'uv_partner',
+            'posts_per_page' => -1,
+            'orderby'        => 'title',
+            'order'          => 'ASC',
+        ]);
+        echo '<select multiple="multiple" style="width:100%;" name="uv_experience_partners[]" id="uv_experience_partners" class="uv-post-select">';
+        foreach($partners as $p){
+            printf('<option value="%1$s"%2$s>%3$s</option>',
+                esc_attr($p->ID),
+                selected(in_array($p->ID, $selected), true, false),
+                esc_html(get_the_title($p))
+            );
+        }
+        echo '</select>';
+    }, 'uv_experience', 'side', 'high');
+});
+add_action('save_post_uv_experience', function($post_id){
+    if(!isset($_POST['uv_experience_partners_nonce'])) return;
+    if(!current_user_can('edit_post', $post_id)) return;
+    check_admin_referer('uv_experience_partners_action', 'uv_experience_partners_nonce');
+    $partner_ids = isset($_POST['uv_experience_partners']) ? array_filter(array_map('absint', (array)$_POST['uv_experience_partners'])) : [];
+    delete_post_meta($post_id, 'uv_experience_partners');
+    foreach($partner_ids as $pid){
+        add_post_meta($post_id, 'uv_experience_partners', $pid);
+    }
+}, 10, 1);
+
 // Experience users meta box
 add_action('add_meta_boxes_uv_experience', function(){
     add_meta_box('uv_experience_users', esc_html__('Teammedlemmer','uv-core'), function($post){
@@ -296,6 +329,13 @@ add_action('init', function(){
     ]);
     register_post_meta('uv_experience', 'uv_related_post', [
         'single' => true,
+        'type' => 'integer',
+        'show_in_rest' => true,
+        'sanitize_callback' => 'absint',
+        'auth_callback' => function(){ return current_user_can('edit_posts'); },
+    ]);
+    register_post_meta('uv_experience', 'uv_experience_partners', [
+        'single' => false,
         'type' => 'integer',
         'show_in_rest' => true,
         'sanitize_callback' => 'absint',

@@ -8,7 +8,7 @@ msgstr ""
 msgid "Activities"
 msgstr "Aktiviteter"
 
-#: blocks/partners/block.json
+#: blocks/partners/block.json includes/meta-boxes.php themes/uv-kadence-child/template-parts/content-uv_experience.php
 msgid "Partners"
 msgstr "Partnere"
 
