@@ -199,6 +199,27 @@ add_action('save_post_uv_partner', function($post_id){
     }
 }, 10, 1);
 
+// External URL meta box
+add_action('add_meta_boxes_uv_experience', function(){
+    add_meta_box('uv_external_url', esc_html__('External URL', 'uv-core'), function($post){
+        $val = get_post_meta($post->ID, 'uv_external_url', true);
+        wp_nonce_field('uv_external_url_action', 'uv_external_url_nonce');
+        echo '<p><label class="screen-reader-text" for="uv_external_url">' . esc_html__('External URL', 'uv-core') . '</label>';
+        echo '<input type="url" id="uv_external_url" style="width:100%" name="uv_external_url" value="' . esc_attr($val) . '"></p>';
+    }, 'uv_experience', 'side', 'high');
+});
+add_action('save_post_uv_experience', function($post_id){
+    if(!isset($_POST['uv_external_url_nonce'])) return;
+    if(!current_user_can('edit_post', $post_id)) return;
+    check_admin_referer('uv_external_url_action', 'uv_external_url_nonce');
+    $url = isset($_POST['uv_external_url']) ? esc_url_raw($_POST['uv_external_url']) : '';
+    if($url){
+        update_post_meta($post_id, 'uv_external_url', $url);
+    }else{
+        delete_post_meta($post_id, 'uv_external_url');
+    }
+}, 10, 1);
+
 // Related post meta box
 add_action('add_meta_boxes_uv_experience', function(){
     add_meta_box('uv_related_post', esc_html__('Relatert innlegg','uv-core'), function($post){
@@ -266,6 +287,13 @@ add_action('save_post_uv_experience', function($post_id){
 }, 10, 1);
 
 add_action('init', function(){
+    register_post_meta('uv_experience', 'uv_external_url', [
+        'single' => true,
+        'type' => 'string',
+        'show_in_rest' => true,
+        'sanitize_callback' => 'esc_url_raw',
+        'auth_callback' => function(){ return current_user_can('edit_posts'); },
+    ]);
     register_post_meta('uv_experience', 'uv_related_post', [
         'single' => true,
         'type' => 'integer',
