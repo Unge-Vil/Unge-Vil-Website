@@ -147,9 +147,9 @@ add_filter('login_redirect', function($redirect_to, $request, $user) {
     return admin_url('admin.php?page=uv-control-panel');
 }, 10, 3);
 
-// Enqueue styles for the Control Panel admin page
+// Enqueue styles for the Control Panel and Edit Profile admin pages
 add_action('admin_enqueue_scripts', function($hook) {
-    if ('toplevel_page_uv-control-panel' !== $hook) {
+    if (!in_array($hook, ['toplevel_page_uv-control-panel', 'admin_page_uv-edit-profile'], true)) {
         return;
     }
 
@@ -320,7 +320,15 @@ function uv_render_edit_profile_page() {
         wp_die(__('Du kan bare få tilgang til din egen profil.', 'uv-kadence-child'));
     }
 
+    $img_base = get_stylesheet_directory_uri() . '/assets/img';
+
+    echo '<div class="wrap uv-edit-profile-admin">';
+    echo '<div class="uv-admin-header">';
+    echo '<img class="uv-admin-logo" src="' . esc_url($img_base . '/UngeVil_admin_logo.png') . '" alt="Unge Vil" />';
+    echo '<h1>' . esc_html__('Rediger profil', 'uv-kadence-child') . '</h1>';
+    echo '</div>';
     echo do_shortcode('[uv_edit_profile]');
+    echo '</div>';
 }
 
 // Register option for Knowledge URL
