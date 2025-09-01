@@ -48,7 +48,7 @@ add_action('uv_location_add_form_fields', function(){
       <?php wp_nonce_field('uv_location_image_action', 'uv_location_image_nonce'); ?>
       <label for="uv_location_image"><?php esc_html_e('Stedsbilde', 'uv-core'); ?></label>
       <input type="hidden" id="uv_location_image" name="uv_location_image" value="">
-      <button class="button uv-upload"><?php esc_html_e('Velg bilde', 'uv-core'); ?></button>
+      <button type="button" class="button uv-upload"><?php esc_html_e('Velg bilde', 'uv-core'); ?></button>
       <p class="description"><?php esc_html_e('Brukes på stedskort.', 'uv-core'); ?></p>
     </div>
     <?php
@@ -63,7 +63,7 @@ add_action('uv_location_edit_form_fields', function($term){
       <td>
         <?php wp_nonce_field('uv_location_image_action', 'uv_location_image_nonce'); ?>
         <input type="hidden" id="uv_location_image" name="uv_location_image" value="<?php echo esc_attr($val); ?>">
-        <button class="button uv-upload"><?php esc_html_e('Velg bilde', 'uv-core'); ?></button>
+        <button type="button" class="button uv-upload"><?php esc_html_e('Velg bilde', 'uv-core'); ?></button>
         <div><?php echo $img; ?></div>
       </td>
     </tr>
