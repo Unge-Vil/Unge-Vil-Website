@@ -361,6 +361,7 @@ function uv_render_control_panel() {
 
     echo '<nav>';
     foreach ($sections as $section) {
+        echo '<div class="uv-control-section">';
         echo '<h2>' . esc_html($section['title']) . '</h2>';
         echo '<ul class="uv-links">';
         foreach ($section['links'] as $link) {
@@ -371,6 +372,7 @@ function uv_render_control_panel() {
             echo '</a></li>';
         }
         echo '</ul>';
+        echo '</div>';
     }
     echo '</nav>';
     echo '</div>';
