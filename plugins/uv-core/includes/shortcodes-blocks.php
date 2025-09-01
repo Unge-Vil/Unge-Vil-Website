@@ -143,15 +143,24 @@ function uv_core_partners($atts){
     if($q->have_posts()){
         echo '<ul class="uv-card-list uv-card-grid">';
         while($q->have_posts()){ $q->the_post();
-            $link = get_post_meta(get_the_ID(), 'uv_partner_url', true);
-            $display = get_post_meta(get_the_ID(), 'uv_partner_display', true);
-            if(!$display) $display = has_post_thumbnail() ? 'circle_title' : 'title_only';
-            if(!has_post_thumbnail()) $display = 'title_only';
-            $classes = 'uv-card uv-partner uv-partner--'.esc_attr($display);
-            echo '<li class="'.$classes.'">';
-            echo $link
-                ? '<a href="' . esc_url( $link ) . '" target="_blank" rel="noopener nofollow">'
-                : '<a href="' . esc_url( get_permalink() ) . '" rel="noopener">';
+            $link     = get_post_meta( get_the_ID(), 'uv_partner_url', true );
+            $display  = get_post_meta( get_the_ID(), 'uv_partner_display', true );
+            if ( ! $display ) {
+                $display = has_post_thumbnail() ? 'circle_title' : 'title_only';
+            }
+            if ( ! has_post_thumbnail() ) {
+                $display = 'title_only';
+            }
+            $classes  = 'uv-card uv-partner uv-partner--' . esc_attr( $display );
+            $external = ! empty( $link );
+            echo '<li class="' . $classes . '">';
+            if ( $external ) {
+                /* translators: %s: Partner name */
+                $new_tab_label = sprintf( esc_html__( '%s (opens in a new tab)', 'uv-core' ), get_the_title() );
+                echo '<a href="' . esc_url( $link ) . '" target="_blank" rel="noopener nofollow" aria-label="' . esc_attr( $new_tab_label ) . '" title="' . esc_attr( $new_tab_label ) . '">';
+            } else {
+                echo '<a href="' . esc_url( get_permalink() ) . '" rel="noopener">';
+            }
             $fallback = '<span class="uv-partner-icon"></span>';
             $render_thumb = function($attrs = []) use ($fallback){
                 if(has_post_thumbnail()){
@@ -192,6 +201,9 @@ function uv_core_partners($atts){
                     }
                     echo '</div>';
                     break;
+            }
+            if ( $external ) {
+                echo '<span class="uv-new-tab-icon" aria-hidden="true">&#8599;</span>';
             }
             echo '</a></li>';
         }
