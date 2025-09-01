@@ -39,6 +39,7 @@
                     allLocations,
                     showQuote,
                     showBio,
+                    showEmail,
                     showAge,
                     sortBy,
                 },
@@ -93,6 +94,12 @@
                             label: __( 'Vis bio', 'uv-people' ),
                             checked: showBio,
                             onChange: ( value ) => setAttributes( { showBio: value } ),
+                            style: { height: '40px', marginBottom: 0 },
+                        } ),
+                        el( ToggleControl, {
+                            label: __( 'Vis e-post', 'uv-people' ),
+                            checked: showEmail,
+                            onChange: ( value ) => setAttributes( { showEmail: value } ),
                             style: { height: '40px', marginBottom: 0 },
                         } ),
                         el( SelectControl, {
