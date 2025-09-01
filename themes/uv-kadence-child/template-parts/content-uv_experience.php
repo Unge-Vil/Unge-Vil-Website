@@ -108,9 +108,6 @@
             <?php
             $partners = get_post_meta( get_the_ID(), 'uv_experience_partners', false );
             if ( $partners ) :
-                if ( function_exists( 'uv_core_enqueue_card_grid_style' ) ) {
-                    uv_core_enqueue_card_grid_style();
-                }
                 $partner_query = new WP_Query(
                     [
                         'post_type'      => 'uv_partner',

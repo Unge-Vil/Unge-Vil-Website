@@ -2,7 +2,14 @@
     display: grid;
     gap: 1.5rem;
     align-items: stretch;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 .uv-card {
     list-style: none;
+}
+
+@media (max-width: 600px) {
+    .uv-card-list {
+        grid-template-columns: 1fr;
+    }
 }

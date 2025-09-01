@@ -67,17 +67,7 @@ function uv_core_posts_news($atts){
 }
 add_shortcode('uv_news','uv_core_posts_news');
 
-function uv_core_enqueue_card_grid_style() {
-    wp_enqueue_style(
-        'uv-card-grid',
-        plugins_url('assets/uv-card-grid.css', dirname(__DIR__) . '/uv-core.php'),
-        [],
-        UV_CORE_VERSION
-    );
-}
-
 function uv_core_activities($atts){
-    uv_core_enqueue_card_grid_style();
     $a = shortcode_atts(['location'=>'','columns'=>4], $atts);
     $cols = max(1, intval($a['columns']));
     $args = ['post_type'=>'uv_activity','posts_per_page'=>-1];
@@ -135,7 +125,6 @@ function uv_core_experiences($atts){
 add_shortcode('uv_experiences','uv_core_experiences');
 
 function uv_core_partners($atts){
-    uv_core_enqueue_card_grid_style();
     $a = shortcode_atts(['location'=>'','type'=>'','columns'=>4], $atts);
     $cols = max(1, intval($a['columns']));
     $args = ['post_type'=>'uv_partner','posts_per_page'=>-1];
