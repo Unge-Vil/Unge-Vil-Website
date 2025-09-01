@@ -12,3 +12,29 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (min-width: 600px) {
+    .uv-card-grid.columns-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (min-width: 900px) {
+    .uv-card-grid.columns-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (min-width: 1200px) {
+    .uv-card-grid.columns-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media (min-width: 1500px) {
+    .uv-card-grid.columns-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+@media (min-width: 1800px) {
+    .uv-card-grid.columns-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
