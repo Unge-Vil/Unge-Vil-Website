@@ -6,9 +6,9 @@
   --uv-avatar-size:140px;
   }
  .uv-card-list{list-style:none;display:grid;gap:1rem;padding:0}
- .uv-card-grid{margin:0;padding:0;list-style:none;display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+ .uv-card-grid{margin:0;padding:0;list-style:none;display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
  @media (max-width:600px){.uv-card-grid{grid-template-columns:1fr}}
-  .uv-card{display:flex;flex-direction:column;min-height:200px;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
+ .uv-card{display:flex;flex-direction:column;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
 .uv-card a{display:block;text-decoration:none}
 .uv-card a:hover,.uv-card a:focus{text-decoration:underline}
 .uv-card img{width:100%;aspect-ratio:4/3;object-fit:cover}
