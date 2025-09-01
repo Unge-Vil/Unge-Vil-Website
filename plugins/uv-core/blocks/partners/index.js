@@ -5,12 +5,12 @@ import fetchTerms from '../utils/fetchTerms';
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
     const { InspectorControls, useBlockProps } = wp.blockEditor;
-    const { PanelBody, SelectControl, RangeControl } = wp.components;
+    const { PanelBody, SelectControl, RangeControl, ToggleControl } = wp.components;
     const ServerSideRender = wp.serverSideRender;
 
     registerBlockType( 'uv/partners', {
         edit: function( props ) {
-            const { attributes: { location, type, columns }, setAttributes } = props;
+            const { attributes: { location, type, columns, showLocations }, setAttributes } = props;
             const query = { per_page: 100 };
             const locationData = fetchTerms( 'uv_location', query );
             const typeData = fetchTerms( 'uv_partner_type', query );
@@ -48,6 +48,11 @@ import fetchTerms from '../utils/fetchTerms';
                             value: columns,
                             onChange: function( value ) { setAttributes( { columns: value } ); },
                             style: { height: '40px', marginBottom: 0 }
+                        } ),
+                        createElement( ToggleControl, {
+                            label: __( 'Vis steder', 'uv-core' ),
+                            checked: showLocations,
+                            onChange: function( value ) { setAttributes( { showLocations: value } ); }
                         } )
                     )
                 ),

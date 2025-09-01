@@ -39,3 +39,7 @@
         grid-template-columns: repeat(6, 1fr);
     }
 }
+
+.uv-partner-locations {
+    margin-top: .5rem;
+}

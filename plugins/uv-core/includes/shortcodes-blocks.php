@@ -125,8 +125,9 @@ function uv_core_experiences($atts){
 add_shortcode('uv_experiences','uv_core_experiences');
 
 function uv_core_partners($atts){
-    $a = shortcode_atts(['location'=>'','type'=>'','columns'=>4], $atts);
+    $a = shortcode_atts(['location'=>'','type'=>'','columns'=>4,'showLocations'=>false], $atts);
     $cols = max(1, intval($a['columns']));
+    $show_locations = ! empty( $a['showLocations'] );
     $args = ['post_type'=>'uv_partner','posts_per_page'=>-1,'no_found_rows'=>true];
     $taxq = [];
     $loc = $a['location'] ? sanitize_title($a['location']) : '';
@@ -170,9 +171,23 @@ function uv_core_partners($atts){
                     echo $fallback;
                 }
             };
+            $loc_html = '';
+            if ( $show_locations ) {
+                $loc_terms = get_the_terms( get_the_ID(), 'uv_location' );
+                if ( $loc_terms && ! is_wp_error( $loc_terms ) ) {
+                    $loc_html .= '<div class="uv-partner-locations">';
+                    foreach ( $loc_terms as $loc_term ) {
+                        $loc_html .= '<span class="uv-location-pill">' . esc_html( $loc_term->name ) . '</span>';
+                    }
+                    $loc_html .= '</div>';
+                }
+            }
             switch($display){
                 case 'logo_only':
                     $render_thumb();
+                    if ( $loc_html ) {
+                        echo '<div class="uv-card-body">' . $loc_html . '</div>';
+                    }
                     break;
                 case 'circle_title':
                     $render_thumb(['class'=>'is-circle']);
@@ -181,6 +196,7 @@ function uv_core_partners($atts){
                     if ( $excerpt ) {
                         echo '<div>' . esc_html( $excerpt ) . '</div>';
                     }
+                    echo $loc_html;
                     echo '</div>';
                     break;
                 case 'title_only':
@@ -189,6 +205,7 @@ function uv_core_partners($atts){
                     if ( $excerpt ) {
                         echo '<div>' . esc_html( $excerpt ) . '</div>';
                     }
+                    echo $loc_html;
                     echo '</div>';
                     break;
                 case 'logo_title':
@@ -199,6 +216,7 @@ function uv_core_partners($atts){
                     if ( $excerpt ) {
                         echo '<div>' . esc_html( $excerpt ) . '</div>';
                     }
+                    echo $loc_html;
                     echo '</div>';
                     break;
             }
