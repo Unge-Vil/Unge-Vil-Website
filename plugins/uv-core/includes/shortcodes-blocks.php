@@ -38,7 +38,7 @@ add_shortcode('uv_locations_grid','uv_core_locations_grid');
 
 function uv_core_posts_news($atts){
     $a = shortcode_atts(['location'=>'','count'=>3], $atts);
-    $args = ['post_type'=>'post','posts_per_page'=>intval($a['count'])];
+    $args = ['post_type'=>'post','posts_per_page'=>intval($a['count']),'no_found_rows'=>true];
     if($a['location']){
         $loc = sanitize_title($a['location']);
         $args['tax_query'] = [[
@@ -70,7 +70,7 @@ add_shortcode('uv_news','uv_core_posts_news');
 function uv_core_activities($atts){
     $a = shortcode_atts(['location'=>'','columns'=>4], $atts);
     $cols = max(1, intval($a['columns']));
-    $args = ['post_type'=>'uv_activity','posts_per_page'=>-1];
+    $args = ['post_type'=>'uv_activity','posts_per_page'=>-1,'no_found_rows'=>true];
     if($a['location']){
         $loc = sanitize_title($a['location']);
         $args['tax_query'] = [[
@@ -101,7 +101,7 @@ add_shortcode('uv_activities','uv_core_activities');
 
 function uv_core_experiences($atts){
     $a = shortcode_atts(['count'=>3], $atts);
-    $args = ['post_type'=>'uv_experience','posts_per_page'=>intval($a['count'])];
+    $args = ['post_type'=>'uv_experience','posts_per_page'=>intval($a['count']),'no_found_rows'=>true];
     $q = new WP_Query($args);
     ob_start();
     if($q->have_posts()){
@@ -127,7 +127,7 @@ add_shortcode('uv_experiences','uv_core_experiences');
 function uv_core_partners($atts){
     $a = shortcode_atts(['location'=>'','type'=>'','columns'=>4], $atts);
     $cols = max(1, intval($a['columns']));
-    $args = ['post_type'=>'uv_partner','posts_per_page'=>-1];
+    $args = ['post_type'=>'uv_partner','posts_per_page'=>-1,'no_found_rows'=>true];
     $taxq = [];
     $loc = $a['location'] ? sanitize_title($a['location']) : '';
     $type = $a['type'] ? sanitize_title($a['type']) : '';
