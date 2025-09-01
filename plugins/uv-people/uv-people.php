@@ -219,7 +219,7 @@ function uv_people_profile_fields($user){
         </td></tr>
       <tr><th><label for="uv_phone"><?php esc_html_e('Phone (public optional)','uv-people'); ?></label></th>
         <td>
-            <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
+            <input type="tel" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text">
             <br><label><input type="checkbox" name="uv_show_phone" value="1" <?php checked($show_phone); ?>> <?php esc_html_e('Show on profile','uv-people'); ?></label>
         </td></tr>
       <tr><th><label for="uv_birthdate"><?php esc_html_e('Birthdate','uv-people'); ?></label></th>
@@ -432,7 +432,7 @@ function uv_people_edit_profile_shortcode(){
         <?php wp_nonce_field('update-user_' . $user_id); ?>
         <p class="uv-field">
             <label for="uv_phone"><?php esc_html_e('Phone', 'uv-people'); ?></label>
-            <input type="text" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>">
+            <input type="tel" name="uv_phone" id="uv_phone" value="<?php echo esc_attr($phone); ?>">
         </p>
         <p class="uv-field">
             <label for="uv_birthdate"><?php esc_html_e('Birthdate', 'uv-people'); ?></label>
