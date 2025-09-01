@@ -223,44 +223,110 @@ function uv_render_control_panel() {
 
     $locations = $uid ? get_user_meta($uid, 'uv_location_terms', true) : [];
 
-    $links = [
+    $sections = [
         [
-            'url'    => admin_url('admin.php?page=uv-edit-profile'),
-            'img'    => 'profile.png',
-            'label'  => __('Profil', 'uv-kadence-child'),
-            'target' => '_self',
+            'title' => __('Hva vil du gjøre?', 'uv-kadence-child'),
+            'links' => [
+                [
+                    'url'    => admin_url('admin.php?page=uv-edit-profile'),
+                    'img'    => 'profile.png',
+                    'label'  => __('Rediger min profil', 'uv-kadence-child'),
+                    'target' => '_self',
+                ],
+                [
+                    'url'    => admin_url('edit.php?post_type=uv_activity'),
+                    'img'    => 'activities.png',
+                    'label'  => __('Aktiviteter', 'uv-kadence-child'),
+                    'target' => '_self',
+                ],
+                [
+                    'url'    => admin_url('edit.php'),
+                    'img'    => 'news.png',
+                    'label'  => __('Nyheter', 'uv-kadence-child'),
+                    'target' => '_self',
+                ],
+                [
+                    'url'    => admin_url('edit.php?post_type=uv_partner'),
+                    'img'    => 'partners.png',
+                    'label'  => __('Partnere', 'uv-kadence-child'),
+                    'target' => '_self',
+                ],
+                [
+                    'url'    => admin_url('edit.php?post_type=uv_experience'),
+                    'img'    => 'experience.png',
+                    'label'  => __('Erfaringer', 'uv-kadence-child'),
+                    'target' => '_self',
+                ],
+            ],
         ],
         [
-            'url'    => admin_url('edit.php?post_type=uv_activity'),
-            'img'    => 'activities.png',
-            'label'  => __('Aktiviteter', 'uv-kadence-child'),
-            'target' => '_self',
-        ],
-        [
-            'url'    => admin_url('edit-tags.php?taxonomy=uv_location'),
-            'img'    => 'locations.png',
-            'label'  => __('Steder', 'uv-kadence-child'),
-            'target' => '_self',
-        ],
-        [
-            'url'    => admin_url('edit.php'),
-            'img'    => 'news.png',
-            'label'  => __('Nyheter', 'uv-kadence-child'),
-            'target' => '_self',
-        ],
-        [
-            'url'    => admin_url('edit.php?post_type=uv_partner'),
-            'img'    => 'partners.png',
-            'label'  => __('Partnere', 'uv-kadence-child'),
-            'target' => '_self',
-        ],
-        [
-            'url'    => $knowledge_url ?: '#',
-            'img'    => 'knowledge.png',
-            'label'  => __('Kunnskap', 'uv-kadence-child'),
-            'target' => '_blank',
+            'title' => __('Andre verktøy', 'uv-kadence-child'),
+            'links' => [
+                [
+                    'url'    => $knowledge_url ?: '#',
+                    'img'    => 'knowledge.png',
+                    'label'  => __('Kunnskap', 'uv-kadence-child'),
+                    'target' => '_blank',
+                ],
+                [
+                    'url'    => 'https://mail.google.com/',
+                    'img'    => 'gmail.svg',
+                    'label'  => __('Gmail', 'uv-kadence-child'),
+                    'target' => '_blank',
+                ],
+                [
+                    'url'    => 'https://chat.google.com/',
+                    'img'    => 'chat.svg',
+                    'label'  => __('Chat', 'uv-kadence-child'),
+                    'target'  => '_blank',
+                ],
+                [
+                    'url'    => 'https://drive.google.com/',
+                    'img'    => 'drive.svg',
+                    'label'  => __('Drive', 'uv-kadence-child'),
+                    'target' => '_blank',
+                ],
+                [
+                    'url'    => 'https://monday.com/',
+                    'img'    => 'monday.svg',
+                    'label'  => __('Monday', 'uv-kadence-child'),
+                    'target' => '_blank',
+                ],
+                [
+                    'url'    => 'https://www.canva.com/',
+                    'img'    => 'canva.svg',
+                    'label'  => __('Canva', 'uv-kadence-child'),
+                    'target' => '_blank',
+                ],
+            ],
         ],
     ];
+
+    if (current_user_can('manage_options')) {
+        $sections[] = [
+            'title' => __('Admin', 'uv-kadence-child'),
+            'links' => [
+                [
+                    'url'    => admin_url('users.php'),
+                    'img'    => 'multipleusers.png',
+                    'label'  => __('Brukere', 'uv-kadence-child'),
+                    'target' => '_self',
+                ],
+                [
+                    'url'    => admin_url('edit-tags.php?taxonomy=uv_location'),
+                    'img'    => 'locations.png',
+                    'label'  => __('Steder', 'uv-kadence-child'),
+                    'target' => '_self',
+                ],
+                [
+                    'url'    => admin_url('edit-tags.php?taxonomy=uv_position'),
+                    'img'    => 'positions.png',
+                    'label'  => __('Stillinger', 'uv-kadence-child'),
+                    'target' => '_self',
+                ],
+            ],
+        ];
+    }
 
     echo '<div class="wrap uv-control-panel">';
     echo '<div class="uv-admin-header">';
@@ -293,15 +359,20 @@ function uv_render_control_panel() {
         echo '</div>';
     }
 
-    echo '<nav><ul class="uv-links">';
-    foreach ($links as $link) {
-        $target = $link['target'] === '_blank' ? ' target="_blank" rel="noopener"' : '';
-        echo '<li><a class="uv-link-card" href="' . esc_url($link['url']) . '"' . $target . '>';
-        echo '<img src="' . esc_url($img_base . '/' . $link['img']) . '" alt="" />';
-        echo '<span>' . esc_html($link['label']) . '</span>';
-        echo '</a></li>';
+    echo '<nav>';
+    foreach ($sections as $section) {
+        echo '<h2>' . esc_html($section['title']) . '</h2>';
+        echo '<ul class="uv-links">';
+        foreach ($section['links'] as $link) {
+            $target = $link['target'] === '_blank' ? ' target="_blank" rel="noopener"' : '';
+            echo '<li><a class="uv-link-card" href="' . esc_url($link['url']) . '"' . $target . '>';
+            echo '<img src="' . esc_url($img_base . '/' . $link['img']) . '" alt="" />';
+            echo '<span>' . esc_html($link['label']) . '</span>';
+            echo '</a></li>';
+        }
+        echo '</ul>';
     }
-    echo '</ul></nav>';
+    echo '</nav>';
     echo '</div>';
 }
 
