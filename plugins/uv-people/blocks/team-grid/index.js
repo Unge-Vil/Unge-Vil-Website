@@ -33,7 +33,7 @@
     registerBlockType( 'uv/team-grid', {
         edit( props ) {
             const {
-                attributes: { location, columns, showAge },
+                attributes: { location, columns, showAge, sortBy },
                 setAttributes,
             } = props;
 
@@ -66,6 +66,17 @@
                             label: __( 'Vis alder', 'uv-people' ),
                             checked: showAge,
                             onChange: ( value ) => setAttributes( { showAge: value } ),
+                            style: { height: '40px', marginBottom: 0 },
+                        } ),
+                        el( SelectControl, {
+                            label: __( 'Sorter etter', 'uv-people' ),
+                            value: sortBy,
+                            options: [
+                                { label: __( 'Standard', 'uv-people' ), value: 'default' },
+                                { label: __( 'Alder', 'uv-people' ), value: 'age' },
+                                { label: __( 'Navn', 'uv-people' ), value: 'name' },
+                            ],
+                            onChange: ( value ) => setAttributes( { sortBy: value } ),
                             style: { height: '40px', marginBottom: 0 },
                         } ),
                         el( RangeControl, {

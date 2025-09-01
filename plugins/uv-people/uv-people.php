@@ -548,6 +548,8 @@ function uv_people_team_grid($atts){
         'page'              => 1,
         'show_nav'          => false,
         'show_age'          => false,
+        'sortBy'            => 'default',
+        'sort_by'           => 'default',
     ], $atts);
     $placeholder = function($msg){
         return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
@@ -573,6 +575,11 @@ function uv_people_team_grid($atts){
 
     $per_page = max(1, intval($a['per_page']));
     $page = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : max(1, intval($a['page']));
+    $sort = isset($atts['sort_by']) ? $a['sort_by'] : $a['sortBy'];
+    $sort = sanitize_key($sort);
+    if (!in_array($sort, ['age', 'name'], true)) {
+        $sort = 'default';
+    }
 
     $cache_key = 'uv_people_team_grid_' . md5($term->term_id);
     $items = get_transient($cache_key);
@@ -620,17 +627,40 @@ function uv_people_team_grid($atts){
     foreach ($items as &$it) {
         $uid = intval($it['user_id']);
         $it['order'] = $order_map[$uid] ?? PHP_INT_MAX;
+        if ($sort === 'age') {
+            $birthdate = get_user_meta($uid, 'uv_birthdate', true);
+            $it['age'] = PHP_INT_MAX;
+            if ($birthdate) {
+                $bd = DateTime::createFromFormat('Y-m-d', $birthdate);
+                if ($bd) {
+                    $it['age'] = (new DateTime())->diff($bd)->y;
+                }
+            }
+        }
     }
     unset($it);
     if(!$items){
         return $placeholder(__('Ingen teammedlemmer funnet.', 'uv-people'));
     }
     $cols = max(1, min(6, intval($a['columns'])));
-    // sort priority: primary ➜ order ➜ rank ➜ name
-    usort($items, function($a,$b){
-        if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
-        if($a['order'] !== $b['order']) return $a['order'] < $b['order'] ? -1 : 1;
-        if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
+    // sort priority based on selection
+    usort($items, function($a, $b) use ($sort) {
+        if ($sort === 'age') {
+            if ($a['age'] !== $b['age']) {
+                return $a['age'] < $b['age'] ? -1 : 1;
+            }
+            $an = get_the_author_meta('display_name', $a['user_id']);
+            $bn = get_the_author_meta('display_name', $b['user_id']);
+            return strcasecmp($an, $bn);
+        }
+        if ($sort === 'name') {
+            $an = get_the_author_meta('display_name', $a['user_id']);
+            $bn = get_the_author_meta('display_name', $b['user_id']);
+            return strcasecmp($an, $bn);
+        }
+        if ($a['primary'] !== $b['primary']) return $a['primary'] ? -1 : 1;
+        if ($a['order'] !== $b['order']) return $a['order'] < $b['order'] ? -1 : 1;
+        if ($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
         $an = get_the_author_meta('display_name', $a['user_id']);
         $bn = get_the_author_meta('display_name', $b['user_id']);
         return strcasecmp($an, $bn);
@@ -752,6 +782,8 @@ function uv_people_all_team_grid($atts){
         'showQuote'    => true,
         'showBio'      => false,
         'showAge'      => false,
+        'sortBy'       => 'default',
+        'sort_by'      => 'default',
     ], $atts);
 
     $location_ids = [];
@@ -793,6 +825,11 @@ function uv_people_all_team_grid($atts){
 
     $per_page = max(1, intval($a['per_page']));
     $page     = isset($_GET['uv_page']) ? max(1, intval($_GET['uv_page'])) : max(1, intval($a['page']));
+    $sort     = isset($atts['sort_by']) ? $a['sort_by'] : $a['sortBy'];
+    $sort     = sanitize_key($sort);
+    if (!in_array($sort, ['age', 'name'], true)) {
+        $sort = 'default';
+    }
 
     // Build meta query to fetch users belonging to the requested locations
     if ($location_ids) {
@@ -851,15 +888,33 @@ function uv_people_all_team_grid($atts){
         if(!is_array($primary_ids)) $primary_ids = [];
         $primary = $location_ids ? (bool) array_intersect($primary_ids, $location_ids) : !empty($primary_ids);
         $name = get_the_author_meta('display_name', $uid);
+        $age = PHP_INT_MAX;
+        if ($sort === 'age') {
+            $birthdate = get_user_meta($uid, 'uv_birthdate', true);
+            if ($birthdate) {
+                $bd = DateTime::createFromFormat('Y-m-d', $birthdate);
+                if ($bd) {
+                    $age = (new DateTime())->diff($bd)->y;
+                }
+            }
+        }
         $sorted[] = [
             'ID'      => $uid,
             'rank'    => $rank,
             'name'    => $name,
             'primary' => $primary,
             'order'   => $order_map[$uid] ?? PHP_INT_MAX,
+            'age'     => $age,
         ];
     }
-    usort($sorted, function($a,$b){
+    usort($sorted, function($a, $b) use ($sort) {
+        if ($sort === 'age') {
+            if ($a['age'] !== $b['age']) return $a['age'] < $b['age'] ? -1 : 1;
+            return strcasecmp($a['name'], $b['name']);
+        }
+        if ($sort === 'name') {
+            return strcasecmp($a['name'], $b['name']);
+        }
         if($a['primary'] !== $b['primary']) return $a['primary']? -1 : 1;
         if($a['order'] !== $b['order']) return $a['order'] < $b['order'] ? -1 : 1;
         if($a['rank'] !== $b['rank']) return $a['rank'] < $b['rank'] ? -1 : 1;
@@ -1062,6 +1117,10 @@ add_action('init', function(){
             'showAge' => [
                 'type'    => 'boolean',
                 'default' => false,
+            ],
+            'sortBy' => [
+                'type'    => 'string',
+                'default' => 'default',
             ],
         ],
     ]);

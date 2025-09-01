@@ -3,7 +3,7 @@
     const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
     const { InspectorControls, useBlockProps } = wp.blockEditor;
-    const { PanelBody, RangeControl, FormTokenField, ToggleControl } = wp.components;
+    const { PanelBody, RangeControl, FormTokenField, ToggleControl, SelectControl } = wp.components;
     const ServerSideRender = wp.serverSideRender;
     const { useSelect } = wp.data;
 
@@ -40,6 +40,7 @@
                     showQuote,
                     showBio,
                     showAge,
+                    sortBy,
                 },
                 setAttributes,
             } = props;
@@ -92,6 +93,17 @@
                             label: __( 'Vis bio', 'uv-people' ),
                             checked: showBio,
                             onChange: ( value ) => setAttributes( { showBio: value } ),
+                            style: { height: '40px', marginBottom: 0 },
+                        } ),
+                        el( SelectControl, {
+                            label: __( 'Sorter etter', 'uv-people' ),
+                            value: sortBy,
+                            options: [
+                                { label: __( 'Standard', 'uv-people' ), value: 'default' },
+                                { label: __( 'Alder', 'uv-people' ), value: 'age' },
+                                { label: __( 'Navn', 'uv-people' ), value: 'name' },
+                            ],
+                            onChange: ( value ) => setAttributes( { sortBy: value } ),
                             style: { height: '40px', marginBottom: 0 },
                         } ),
                         el( RangeControl, {
