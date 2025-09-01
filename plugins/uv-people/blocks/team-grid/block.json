@@ -29,6 +29,11 @@
     "showAge": {
       "type": "boolean",
       "default": false
+    },
+    "sortBy": {
+      "type": "string",
+      "enum": ["default", "age", "name"],
+      "default": "default"
     }
   },
   "editorScript": "file:./index.js",
