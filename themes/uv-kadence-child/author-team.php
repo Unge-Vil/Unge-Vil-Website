@@ -132,8 +132,6 @@ if ($user instanceof WP_User) :
                     echo '<li><a href="' . esc_url(get_permalink($exp)) . '">' . esc_html(get_the_title($exp)) . '</a></li>';
                 }
                 echo '</ul>';
-            } elseif (current_user_can('edit_users')) {
-                echo '<p class="uv-experiences-placeholder">' . esc_html__('Ingen registrerte erfaringer.', 'uv-kadence-child') . '</p>';
             }
         }
 
