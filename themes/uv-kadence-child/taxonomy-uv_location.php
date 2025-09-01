@@ -13,7 +13,7 @@ if ( $term && ! is_wp_error( $term ) ) {
     $slug   = $term->slug;
     $img_id = get_term_meta( $term->term_id, 'uv_location_image', true );
     ?>
-    <main id="main-content" class="site-main">
+    <main id="main-content" role="main" class="site-main">
         <article class="uv-location">
             <div class="uv-card">
                 <?php if ( $img_id ) : ?>

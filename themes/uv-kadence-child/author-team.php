@@ -6,7 +6,7 @@
 
 get_header();
 ?>
-<main id="main-content" class="site-main">
+<main id="main-content" role="main" class="site-main">
 <?php
 $user = get_queried_object();
 if ($user instanceof WP_User) :
