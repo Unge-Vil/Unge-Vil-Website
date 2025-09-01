@@ -367,7 +367,7 @@ function uv_render_control_panel() {
         foreach ($section['links'] as $link) {
             $target = $link['target'] === '_blank' ? ' target="_blank" rel="noopener"' : '';
             echo '<li><a class="uv-link-card" href="' . esc_url($link['url']) . '"' . $target . '>';
-            echo '<img src="' . esc_url($img_base . '/' . $link['img']) . '" alt="" />';
+            echo '<img src="' . esc_url($img_base . '/' . $link['img']) . '" alt="" aria-hidden="true" role="presentation" />';
             echo '<span>' . esc_html($link['label']) . '</span>';
             echo '</a></li>';
         }
