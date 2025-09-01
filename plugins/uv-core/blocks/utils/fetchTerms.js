@@ -20,5 +20,5 @@ export default function fetchTerms( taxonomy, query ) {
             cache[ cacheKey ] = result;
         }
         return cache[ cacheKey ] || result;
-    }, [] );
+    }, [ taxonomy, JSON.stringify( query ) ] );
 }
