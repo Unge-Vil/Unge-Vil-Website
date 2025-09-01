@@ -781,6 +781,7 @@ function uv_people_all_team_grid($atts){
         'show_nav'     => false,
         'showQuote'    => true,
         'showBio'      => false,
+        'showEmail'    => false,
         'showAge'      => false,
         'sortBy'       => 'default',
         'sort_by'      => 'default',
@@ -1020,11 +1021,11 @@ function uv_people_all_team_grid($atts){
             if($bio) echo '<div class="uv-bio">'.wp_kses_post(wpautop($bio)).'</div>';
         }
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
-        if(($phone && $show_phone) || $email){
+        if(($phone && $show_phone) || ($a['showEmail'] && $email)){
             $email_label = ($lang==='en') ? __('Email:','uv-people') : __('E-post:','uv-people');
             $phone_label = ($lang==='en') ? __('Mobile:','uv-people') : __('Mobil:','uv-people');
             echo '<div class="uv-contact">';
-            if($email) echo '<div class="uv-email"><span class="label">'.esc_html($email_label).'</span><a href="mailto:'.esc_attr($email).'">'.esc_html($email).'</a></div>';
+            if($a['showEmail'] && $email) echo '<div class="uv-email"><span class="label">'.esc_html($email_label).'</span><a href="mailto:'.esc_attr($email).'">'.esc_html($email).'</a></div>';
             if($phone && $show_phone) echo '<div class="uv-mobile"><span class="label">'.esc_html($phone_label).'</span><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
             echo '</div>';
         }
@@ -1111,6 +1112,10 @@ add_action('init', function(){
                 'default' => true,
             ],
             'showBio' => [
+                'type'    => 'boolean',
+                'default' => false,
+            ],
+            'showEmail' => [
                 'type'    => 'boolean',
                 'default' => false,
             ],
