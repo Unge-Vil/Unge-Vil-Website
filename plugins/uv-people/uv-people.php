@@ -749,9 +749,9 @@ function uv_people_all_team_grid($atts){
         'per_page'     => 100,
         'page'         => 1,
         'show_nav'     => false,
-        'show_quote'   => true,
-        'show_bio'     => false,
-        'show_age'     => false,
+        'showQuote'    => true,
+        'showBio'      => false,
+        'showAge'      => false,
     ], $atts);
 
     $location_ids = [];
@@ -945,7 +945,7 @@ function uv_people_all_team_grid($atts){
             $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
         }
         if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
-        if($a['show_age']){
+        if($a['showAge']){
             $birthdate = get_user_meta($uid,'uv_birthdate',true);
             if($birthdate){
                 $bd = DateTime::createFromFormat('Y-m-d', $birthdate);
@@ -958,7 +958,7 @@ function uv_people_all_team_grid($atts){
         }
         echo '</div>';
         echo '</a>';
-        if($a['show_bio']){
+        if($a['showBio']){
             $bio_nb = get_user_meta($uid,'uv_bio_nb',true);
             $bio_en = get_user_meta($uid,'uv_bio_en',true);
             $bio = ($lang==='en') ? ($bio_en ?: $bio_nb) : ($bio_nb ?: $bio_en);
@@ -976,7 +976,7 @@ function uv_people_all_team_grid($atts){
         $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
         $quote_en = get_user_meta($uid,'uv_quote_en',true);
         $quote = ($lang==='en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
-        if ($a['show_quote'] && $quote) echo '<div class="uv-quote"><span class="uv-quote-icon">&ldquo;</span>'.esc_html($quote).'</div>';
+        if ($a['showQuote'] && $quote) echo '<div class="uv-quote"><span class="uv-quote-icon">&ldquo;</span>'.esc_html($quote).'</div>';
         echo '</article>';
     }
     echo '</div>';
@@ -1051,15 +1051,15 @@ add_action('init', function(){
                 'type'    => 'boolean',
                 'default' => false,
             ],
-            'show_quote' => [
+            'showQuote' => [
                 'type'    => 'boolean',
                 'default' => true,
             ],
-            'show_bio' => [
+            'showBio' => [
                 'type'    => 'boolean',
                 'default' => false,
             ],
-            'show_age' => [
+            'showAge' => [
                 'type'    => 'boolean',
                 'default' => false,
             ],
