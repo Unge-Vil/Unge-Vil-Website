@@ -9,7 +9,7 @@
  .uv-card-grid{margin:0;padding:0;list-style:none;display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
  @media (max-width:600px){.uv-card-grid{grid-template-columns:1fr}}
  .uv-card{display:flex;flex-direction:column;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
-.uv-card a{display:block;text-decoration:none}
+.uv-card a{display:block;text-decoration:none;position:relative}
 .uv-card a:hover,.uv-card a:focus{text-decoration:underline}
 .uv-card img{width:100%;aspect-ratio:4/3;object-fit:cover}
 .uv-card .uv-card-body{padding:12px}
@@ -60,3 +60,6 @@ body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-se
 .skip-link:focus{top:0;text-decoration:underline}
 
 .uv-team-member .uv-quote{margin-top:1.5rem;padding:1rem 1.5rem;background:var(--uv-yellow);border-left:4px solid var(--uv-purple);font-style:italic;text-align:center}
+
+.uv-new-tab-icon{position:absolute;top:8px;right:8px;width:.75rem;height:.75rem;background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M5 3h8v8'/%3E%3Cpath d='M13 3L3 13'/%3E%3C/svg%3E");font-size:0;pointer-events:none}
+
