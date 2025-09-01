@@ -54,6 +54,15 @@ body.toplevel_page_uv-control-panel h3 {
   margin-bottom: 2rem;
 }
 
+/* Wrapper for each control panel section */
+.uv-control-section {
+  margin-bottom: 2rem;
+}
+
+.uv-control-section h2 {
+  margin: 0 0 1rem;
+}
+
 .uv-avatar img {
   width: var(--uv-avatar-size);
   height: var(--uv-avatar-size);
