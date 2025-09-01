@@ -10,7 +10,7 @@ do_action( 'kadence_before_main_content' );
 
 <div class="container">
     <div id="primary" class="content-area">
-        <main id="main-content" class="site-main" role="main">
+        <main id="main-content" role="main" class="site-main">
             <?php
             do_action( 'kadence_before_content' );
 
