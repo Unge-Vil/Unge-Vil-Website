@@ -5,7 +5,9 @@
  */
 
 get_header();
-
+?>
+<main id="main-content" class="site-main">
+<?php
 $user = get_queried_object();
 if ($user instanceof WP_User) :
     $uid  = $user->ID;
@@ -155,5 +157,5 @@ if ($user instanceof WP_User) :
         </article>
     </div>
 <?php endif; ?>
-
+</main>
 <?php get_footer();
