@@ -56,8 +56,11 @@ body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-se
 .uv-team-member{max-width:800px;margin-left:auto;margin-right:auto;padding:0 1rem}
 
 /* Visually hide skip link until focused */
-.skip-link{position:absolute;top:-40px;left:0;background:#000;color:#fff;padding:.5rem;z-index:100;text-decoration:none}
+.skip-link{position:absolute;top:-40px;left:0;background:#fff;color:#003366;padding:.5rem;z-index:100;text-decoration:none}
 .skip-link:focus{top:0;text-decoration:underline}
+
+/* Active menu link */
+#menu-item-261185>a[aria-current="page"]{color:#003366;background:#fff}
 
 .uv-team-member .uv-quote{margin-top:1.5rem;padding:1rem 1.5rem;background:var(--uv-yellow);border-left:4px solid var(--uv-purple);font-style:italic;text-align:center}
 
