@@ -1,0 +1,71 @@
+# Norwegian Bokmal translations for uv-core package.
+# Copyright (C) 2025 THE uv-core'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the uv-core package.
+# Automatically generated, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: uv-core 0.7.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-29 19:58+0000\n"
+"PO-Revision-Date: 2025-09-19 09:17+0200\n"
+"Last-Translator: \n"
+"Language-Team: none\n"
+"Language: no\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.7\n"
+
+#: plugins/uv-core/uv-core.php:14
+msgid "Locations"
+msgstr "Lokasjoner"
+
+#: plugins/uv-core/uv-core.php:20
+msgid "Activity Types"
+msgstr "Aktivitetstyper"
+
+#: plugins/uv-core/uv-core.php:26
+msgid "Partner Types"
+msgstr "Partnertyper"
+
+#: plugins/uv-core/uv-core.php:34
+msgid "Activities"
+msgstr "Aktiviteter"
+
+#: plugins/uv-core/uv-core.php:43
+msgid "Partners"
+msgstr "Partnere"
+
+#: plugins/uv-core/uv-core.php:52
+msgid "Experiences"
+msgstr "Erfaringer"
+
+#: plugins/uv-core/uv-core.php:67 plugins/uv-core/uv-core.php:94
+msgid "Location Image"
+msgstr "Lokasjonsbilde"
+
+#: plugins/uv-core/uv-core.php:69 plugins/uv-core/uv-core.php:98
+msgid "Select Image"
+msgstr "Velg bilde"
+
+#: plugins/uv-core/uv-core.php:70
+msgid "Used on location cards."
+msgstr "Brukes på lokasjonskort."
+
+#: plugins/uv-core/uv-core.php:246
+msgid "External URL"
+msgstr "Ekstern URL"
+
+#: plugins/uv-core/uv-core.php:249
+msgid "Website"
+msgstr "Nettside"
+
+#: plugins/uv-core/blocks/news/block.json
+msgid "News"
+msgstr "Nyheter"
+
+#: plugins/uv-core/blocks/locations-grid/block.json
+msgid "Locations Grid"
+msgstr "Lokasjoner Grid"
