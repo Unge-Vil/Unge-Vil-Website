@@ -190,9 +190,15 @@
             $external_url = get_post_meta( get_the_ID(), 'uv_external_url', true );
             if ( $external_url ) :
             ?>
-            <div class="uv-external-link">
+            <div class="uv-related-link uv-related-link--external">
                 <a class="uv-related-button" href="<?php echo esc_url( $external_url ); ?>" target="_blank" rel="noopener">
-                    <?php esc_html_e( 'Visit website', 'uv-core' ); ?>
+                    <span class="uv-related-button__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                            <path d="M18 4.5h-5.25M18 4.5l-7.5 7.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                        </svg>
+                    </span>
+                    <span class="uv-related-button__text"><?php esc_html_e( 'Besøk nettsiden', 'uv-kadence-child' ); ?></span>
                 </a>
             </div>
             <?php endif; ?>
@@ -202,8 +208,16 @@
         $related = absint( get_post_meta( get_the_ID(), 'uv_related_post', true ) );
         if ( $related ) :
         ?>
-        <div class="uv-related-post">
-            <a class="uv-related-button" href="<?php echo esc_url( get_permalink( $related ) ); ?>"><?php esc_html_e( 'Read blog post', 'uv-kadence-child' ); ?></a>
+        <div class="uv-related-link uv-related-link--blog">
+            <a class="uv-related-button" href="<?php echo esc_url( get_permalink( $related ) ); ?>">
+                <span class="uv-related-button__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.5 5.25A2.25 2.25 0 0 1 6.75 3h10.5A2.25 2.25 0 0 1 19.5 5.25v13.5A2.25 2.25 0 0 1 17.25 21h-12A2.25 2.25 0 0 1 3 18.75V6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                        <path d="M3 6h15M6.75 9.75h3M6.75 13.5h3m-3 3h3m-6-6h.008M3.75 13.5h.008m-.008 3h.008" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                    </svg>
+                </span>
+                <span class="uv-related-button__text"><?php esc_html_e( 'Les blogginnlegget', 'uv-kadence-child' ); ?></span>
+            </a>
         </div>
         <?php endif; ?>
     </div>

@@ -267,7 +267,11 @@ add_action('add_meta_boxes_uv_experience', function(){
             'orderby'        => 'title',
             'order'          => 'ASC',
         ]);
-        echo '<select multiple="multiple" style="width:100%;" name="uv_experience_partners[]" id="uv_experience_partners" class="uv-post-select">';
+        printf(
+            '<select multiple="multiple" style="width:100%%;" name="uv_experience_partners[]" id="uv_experience_partners" class="uv-post-select" data-placeholder="%s" data-allow-clear="true" data-close-on-select="false">',
+            esc_attr__( 'Velg partnere', 'uv-core' )
+        );
+        echo '<option value=""></option>';
         foreach($partners as $p){
             printf('<option value="%1$s"%2$s>%3$s</option>',
                 esc_attr($p->ID),
@@ -305,7 +309,19 @@ add_action('add_meta_boxes_uv_experience', function(){
             'class'            => 'uv-user-select',
             'echo'             => false,
         ]);
-        echo str_replace('<select', '<select multiple="multiple" style="width:100%;"', $dropdown);
+        if ( $dropdown ) {
+            $dropdown = str_replace('<select', '<select multiple="multiple" style="width:100%;"', $dropdown);
+            $dropdown = preg_replace(
+                '/<select([^>]*)>/',
+                sprintf(
+                    '<select$1 data-placeholder="%s" data-allow-clear="true" data-close-on-select="false"><option value=""></option>',
+                    esc_attr__( 'Velg teammedlemmer', 'uv-core' )
+                ),
+                $dropdown,
+                1
+            );
+            echo $dropdown;
+        }
     }, 'uv_experience', 'side', 'high');
 });
 add_action('save_post_uv_experience', function($post_id){
