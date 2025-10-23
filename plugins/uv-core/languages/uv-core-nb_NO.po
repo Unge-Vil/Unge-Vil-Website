@@ -32,6 +32,10 @@ msgstr "Partnerdetaljer"
 msgid "External URL"
 msgstr "Ekstern URL"
 
+#: includes/meta-boxes.php
+msgid "Clear selection"
+msgstr "Fjern valg"
+
 #: assets/partner-meta.js
 msgid "Display"
 msgstr "Visning"

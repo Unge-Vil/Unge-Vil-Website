@@ -280,6 +280,7 @@ add_action('add_meta_boxes_uv_experience', function(){
             );
         }
         echo '</select>';
+        echo '<p class="uv-meta-actions"><button type="button" class="button button-secondary uv-clear-selection" data-target="#uv_experience_partners">' . esc_html__( 'Clear selection', 'uv-core' ) . '</button></p>';
     }, 'uv_experience', 'side', 'high');
 });
 add_action('save_post_uv_experience', function($post_id){
@@ -321,6 +322,7 @@ add_action('add_meta_boxes_uv_experience', function(){
                 1
             );
             echo $dropdown;
+            echo '<p class="uv-meta-actions"><button type="button" class="button button-secondary uv-clear-selection" data-target="#uv_experience_users">' . esc_html__( 'Clear selection', 'uv-core' ) . '</button></p>';
         }
     }, 'uv_experience', 'side', 'high');
 });

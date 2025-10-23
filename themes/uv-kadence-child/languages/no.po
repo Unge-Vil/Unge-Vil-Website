@@ -18,7 +18,10 @@ msgid "Articles"
 msgstr "Artikler"
 
 msgid "Read blog post"
-msgstr "Les artikkel"
+msgstr "Les blogginnlegget"
+
+msgid "Visit website"
+msgstr "Besøk nettsiden"
 
 msgid "Email:"
 msgstr "E-post:"
