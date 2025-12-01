@@ -36,6 +36,7 @@ It’s designed for **shared hosting**, with a focus on **accessibility, perform
 - **0.7.7:** Version bump for release.
 - **0.7.8:** Experience CTAs refreshed, partner logos sized consistently, and admin selectors improved.
 - **0.7.9:** Removed Polylang dependencies from team displays, prevented auto-translation of names/roles, and cleaned up Experience templates.
+- **0.8.0:** Added grid/list/timeline layouts for Experiences, refreshed card styling with fallbacks, translated Experience UI labels to Norwegian, and narrowed Experience page content for readability.
 - **1.0.0:** Fully bilingual content with streamlined deployment and contributor workflows.
 
 ## Contents

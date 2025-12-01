@@ -1,6 +1,6 @@
 # Updating from GitHub releases
 
-*Latest release: 0.7.8 – Experience CTA refresh, partner logo sizing fixes, and improved admin selectors.*
+*Latest release: 0.8.0 – Experience layouts now support grid/list/timeline views with refreshed cards, Norwegian UI labels, and a narrower Experience content area for readability.*
 
 ## 1. Get the new ZIPs
 1. Visit the repository's [Releases](https://github.com/ungevil/Unge-Vil-Website/releases) page.

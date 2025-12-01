@@ -1,6 +1,8 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.8.0
+- Translated Experience and location UI strings to Norwegian and reduced Experience page width for better readability.
 ### 0.7.9
 - Remove Polylang lookups for team pages, mark names/roles as `notranslate`, and simplify Experience template layout wrappers.
 ### 0.7.8

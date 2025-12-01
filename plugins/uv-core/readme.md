@@ -34,6 +34,8 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Add `.po/.mo` files in a `languages/` folder or use a translation plugin like Polylang.
 
 ## Changelog
+### 0.8.0
+- Added grid, list, and timeline layouts to the Experiences block/shortcode with refreshed card styling, fallback icons, and optional organization/date meta.
 ### 0.7.9
 - Version bump for release; no functional changes.
 ### 0.7.8

@@ -40,6 +40,8 @@ Team assignment lookups are cached in transients for faster rendering. Cache ent
 All strings use the `uv-people` text domain. Place translation files in `languages/` or manage translations through Polylang or another translation plugin.
 
 ## Changelog
+### 0.8.0
+- Version bump to align with core/theme release; no functional changes.
 ### 0.7.9
 - Removed Polylang dependency from team grid queries and mark names/roles as `notranslate` to avoid unintended translations.
 ### 0.7.8
