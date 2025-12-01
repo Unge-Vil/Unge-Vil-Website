@@ -1,6 +1,6 @@
 # Updating from GitHub releases
 
-*Latest release: 0.8.0 – Experience layouts now support grid/list/timeline views with refreshed cards, Norwegian UI labels, and a narrower Experience content area for readability.*
+*Latest release: 0.8.1 – Added a Tools → Clear Team Cache action with broader auto-invalidation and fixed the Experiences block title metadata.*
 
 ## 1. Get the new ZIPs
 1. Visit the repository's [Releases](https://github.com/ungevil/Unge-Vil-Website/releases) page.

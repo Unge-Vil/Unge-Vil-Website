@@ -1,6 +1,8 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.8.1
+- Version bump to align with plugin updates; no theme changes.
 ### 0.8.0
 - Translated Experience and location UI strings to Norwegian and reduced Experience page width for better readability.
 ### 0.7.9
