@@ -34,6 +34,42 @@ function uv_people_cache_ttl(){
     return (int) apply_filters('uv_people_cache_ttl', HOUR_IN_SECONDS);
 }
 
+function uv_people_get_team_grid_cache_key($location_id){
+    return 'uv_people_team_grid_' . md5((string) $location_id);
+}
+
+function uv_people_get_all_team_grid_cache_key($location_ids){
+    $location_ids = array_filter(array_map('intval', (array) $location_ids));
+    sort($location_ids);
+
+    return 'uv_people_all_team_grid_' . md5(implode(',', $location_ids));
+}
+
+function uv_people_get_team_cache_prefixes(){
+    return [
+        'uv_people_team_grid_',
+        'uv_people_all_team_grid_',
+    ];
+}
+
+function uv_people_delete_transients_with_prefix($prefix){
+    global $wpdb;
+
+    $transient_like         = $wpdb->esc_like('_transient_' . $prefix) . '%';
+    $transient_timeout_like = $wpdb->esc_like('_transient_timeout_' . $prefix) . '%';
+
+    $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $transient_like));
+    $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $transient_timeout_like));
+}
+
+function uv_people_clear_team_caches($prefixes = null){
+    $prefixes = $prefixes ?? uv_people_get_team_cache_prefixes();
+
+    foreach ((array) $prefixes as $prefix) {
+        uv_people_delete_transients_with_prefix($prefix);
+    }
+}
+
 // Load textdomain
 add_action('plugins_loaded', function(){
     load_plugin_textdomain('uv-people', false, dirname(plugin_basename(__FILE__)) . '/languages');
@@ -581,7 +617,7 @@ function uv_people_team_grid($atts){
         $sort = 'default';
     }
 
-    $cache_key = 'uv_people_team_grid_' . md5($term->term_id);
+    $cache_key = uv_people_get_team_grid_cache_key($term->term_id);
     $items = get_transient($cache_key);
     if ($items === false) {
         // Fetch users assigned to this location
@@ -847,7 +883,7 @@ function uv_people_all_team_grid($atts){
         ];
     }
 
-    $cache_key = 'uv_people_all_team_grid_' . md5(implode(',', $location_ids));
+    $cache_key = uv_people_get_all_team_grid_cache_key($location_ids);
     $user_ids = get_transient($cache_key);
     if ($user_ids === false) {
         $users = get_users([
@@ -1034,15 +1070,82 @@ function uv_people_all_team_grid($atts){
 }
 
 function uv_people_invalidate_team_cache(){
-    global $wpdb;
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_uv_people_team_grid_%'");
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_uv_people_team_grid_%'");
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_uv_people_all_team_grid_%'");
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_uv_people_all_team_grid_%'");
+    uv_people_clear_team_caches();
 }
+
+function uv_people_invalidate_all_team_cache(){
+    uv_people_clear_team_caches(['uv_people_all_team_grid_']);
+}
+
+$uv_people_maybe_invalidate_location_meta = function($meta_id, $object_id, $meta_key){
+    $location_meta_keys = ['uv_location_terms', 'uv_primary_locations'];
+
+    if (in_array($meta_key, $location_meta_keys, true)) {
+        uv_people_invalidate_all_team_cache();
+    }
+};
+
+add_action('profile_update', 'uv_people_invalidate_all_team_cache');
+add_action('added_user_meta', $uv_people_maybe_invalidate_location_meta, 10, 3);
+add_action('updated_user_meta', $uv_people_maybe_invalidate_location_meta, 10, 3);
+add_action('deleted_user_meta', $uv_people_maybe_invalidate_location_meta, 10, 3);
+add_action('edited_uv_location', 'uv_people_invalidate_all_team_cache');
 add_action('added_user_meta', 'uv_people_invalidate_team_cache');
 add_action('updated_user_meta', 'uv_people_invalidate_team_cache');
 add_action('deleted_user_meta', 'uv_people_invalidate_team_cache');
+
+function uv_people_render_clear_cache_page(){
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    $cleared = isset($_GET['uv_people_cache_cleared']);
+    ?>
+    <div class="wrap">
+        <h1><?php esc_html_e('Clear Team Cache', 'uv-people'); ?></h1>
+        <?php if ($cleared): ?>
+            <div class="notice notice-success is-dismissible">
+                <p><?php esc_html_e('Team caches cleared.', 'uv-people'); ?></p>
+            </div>
+        <?php endif; ?>
+        <p><?php esc_html_e('Use this action after bulk updates to ensure the team grids reflect the latest data.', 'uv-people'); ?></p>
+        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <?php wp_nonce_field('uv_people_clear_team_cache'); ?>
+            <input type="hidden" name="action" value="uv_people_clear_team_cache">
+            <?php submit_button(__('Clear team cache', 'uv-people'), 'primary'); ?>
+        </form>
+    </div>
+    <?php
+}
+
+function uv_people_handle_clear_team_cache_action(){
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have permission to clear the cache.', 'uv-people'));
+    }
+
+    check_admin_referer('uv_people_clear_team_cache');
+
+    uv_people_invalidate_team_cache();
+
+    $redirect = wp_get_referer();
+    if (!$redirect) {
+        $redirect = admin_url('tools.php?page=uv-people-clear-cache');
+    }
+
+    wp_safe_redirect(add_query_arg('uv_people_cache_cleared', '1', $redirect));
+    exit;
+}
+
+add_action('admin_menu', function(){
+    add_management_page(
+        __('Clear Team Cache', 'uv-people'),
+        __('Clear Team Cache', 'uv-people'),
+        'manage_options',
+        'uv-people-clear-cache',
+        'uv_people_render_clear_cache_page'
+    );
+});
+add_action('admin_post_uv_people_clear_team_cache', 'uv_people_handle_clear_team_cache_action');
 
 $uv_people_invalidate_term_meta = function($mid, $term_id, $meta_key){
     if ($meta_key === 'uv_rank_weight') {
