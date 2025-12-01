@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: uv-kadence-child 0.8.0\n"
+"Project-Id-Version: uv-kadence-child 0.8.1\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
