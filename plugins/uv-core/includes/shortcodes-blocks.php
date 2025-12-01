@@ -100,9 +100,14 @@ function uv_core_activities($atts){
 add_shortcode('uv_activities','uv_core_activities');
 
 function uv_core_experiences($atts){
+    if ( ! is_array( $atts ) ) {
+        $atts = [];
+    }
+
     $a = shortcode_atts(['count'=>3, 'layout' => 'grid'], $atts);
+    $count  = max( 1, intval( $a['count'] ) );
     $layout = in_array( $a['layout'], ['list', 'grid', 'timeline'], true ) ? $a['layout'] : 'grid';
-    $args = ['post_type'=>'uv_experience','posts_per_page'=>intval($a['count']),'no_found_rows'=>true];
+    $args = ['post_type'=>'uv_experience','posts_per_page'=>$count,'no_found_rows'=>true];
     $q = new WP_Query($args);
     ob_start();
     if($q->have_posts()){
