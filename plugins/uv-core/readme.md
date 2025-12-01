@@ -33,6 +33,8 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Production relies on **GTranslate** for automatic Norwegian↔English switching, but you can still add `.po/.mo` files in a `languages/` folder or use another translation tool if we later decide to manage translations manually.
 
 ## Changelog
+### 0.8.2
+- Version bump to package the refreshed child theme styling and updated documentation; no core plugin changes.
 ### 0.8.1
 - Set the Experiences block title directly in block metadata so the name shows correctly in the block inserter.
 ### 0.8.0

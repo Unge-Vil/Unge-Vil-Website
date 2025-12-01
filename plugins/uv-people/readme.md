@@ -39,6 +39,8 @@ Team assignment lookups are cached in transients for faster rendering. Cache ent
 All strings use the `uv-people` text domain. Production uses **GTranslate** for automatic language switching; person names, role titles, and quotes are marked `notranslate` so people data stays accurate. You can still add `.po/.mo` files in `languages/` if manual translations are needed later.
 
 ## Changelog
+### 0.8.2
+- Version bump to align with the refreshed child theme styling and documentation updates; no UV People functionality changes.
 ### 0.8.1
 - Added a Tools → Clear Team Cache page and broadened cache invalidation so team grids refresh after user/location updates.
 ### 0.8.0
