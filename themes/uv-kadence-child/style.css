@@ -2,54 +2,308 @@
  Theme Name: UV Kadence Child
  Template: kadence
  Text Domain: uv-kadence-child
-Author: Unge Vil
-Author URI: https://www.ungevil.no/
+ Author: Unge Vil
+ Author URI: https://www.ungevil.no/
  Version: 0.8.1
  Update URI: https://github.com/Unge-Vil/Unge-Vil-Website/themes/uv-kadence-child
 */
 
+:root {
+    /* Colors */
+    --uv-color-brand: #7a00cc;
+    --uv-color-brand-strong: #5a0099;
+    --uv-color-brand-soft: rgba(122, 0, 204, 0.12);
+    --uv-color-surface: #ffffff;
+    --uv-color-surface-muted: #f6f1ff;
+    --uv-color-text: #1a1028;
+    --uv-color-text-muted: #433655;
+    --uv-color-border: rgba(26, 16, 40, 0.08);
+
+    /* Radii */
+    --uv-radius-xs: 6px;
+    --uv-radius-sm: 10px;
+    --uv-radius-md: 14px;
+    --uv-radius-lg: 18px;
+    --uv-radius-pill: 999px;
+
+    /* Shadows */
+    --uv-shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.06);
+    --uv-shadow-lift: 0 16px 40px rgba(0, 0, 0, 0.08);
+    --uv-shadow-focus: 0 0 0 3px rgba(122, 0, 204, 0.18);
+
+    /* Transitions */
+    --uv-transition-fast: 150ms ease;
+    --uv-transition-base: 220ms ease;
+    --uv-transition-slow: 320ms ease;
+
+    /* Spacing */
+    --uv-space-xs: 0.5rem;
+    --uv-space-sm: 0.75rem;
+    --uv-space-md: 1.25rem;
+    --uv-space-lg: 2rem;
+    --uv-space-xl: 3rem;
+}
+
+/* Global styling */
+body {
+    color: var(--uv-color-text);
+    background: radial-gradient(circle at 10% 20%, rgba(122, 0, 204, 0.06), transparent 30%),
+        radial-gradient(circle at 90% 10%, rgba(90, 0, 153, 0.05), transparent 28%),
+        #fdfbff;
+    line-height: 1.6;
+}
+
+img {
+    border-radius: var(--uv-radius-md);
+}
+
+.entry-content > * + * {
+    margin-top: var(--uv-space-lg);
+}
+
+.entry-content > *:last-child {
+    margin-bottom: var(--uv-space-lg);
+}
+
+.single-uv_experience .entry-content-wrap,
+.uv-team-container {
+    max-width: min(800px, 100%);
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 5vw, 2rem);
+}
+
+/* Header */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: var(--uv-shadow-soft);
+    border-bottom: 1px solid var(--uv-color-border);
+}
+
+.site-header .site-header-inner,
+.site-header .site-main-header-wrap,
+.site-header .site-main-header-inner {
+    border-radius: var(--uv-radius-lg);
+}
+
+.site-header .menu a {
+    border-radius: var(--uv-radius-pill);
+    padding: 0.6rem 1rem;
+    transition: background-color var(--uv-transition-base), color var(--uv-transition-base), transform var(--uv-transition-base), box-shadow var(--uv-transition-base);
+}
+
+.site-header .menu a:hover,
+.site-header .menu a:focus {
+    background-color: var(--uv-color-brand-soft);
+    color: var(--uv-color-brand);
+    box-shadow: var(--uv-shadow-soft);
+}
+
+/* Buttons */
+button,
+input[type="submit"],
+input[type="button"],
+.wp-block-button__link,
+.kadence-blocks-button, 
+.kadence-blocks-button > a,
+.kb-button,
+a.kadence-blocks-button,
+.kt-btn, .kt-button,
+.button,
+.more-link {
+    border-radius: var(--uv-radius-pill);
+    background-color: var(--uv-color-brand);
+    color: #fff;
+    padding: 0.75rem 1.4rem;
+    border: none;
+    box-shadow: var(--uv-shadow-soft);
+    transition: transform var(--uv-transition-base), box-shadow var(--uv-transition-base), background-color var(--uv-transition-base), color var(--uv-transition-base);
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.wp-block-button__link:hover,
+.kadence-blocks-button:hover,
+.kadence-blocks-button > a:hover,
+.kb-button:hover,
+a.kadence-blocks-button:hover,
+.kt-btn:hover, .kt-button:hover,
+.button:hover,
+.more-link:hover,
+button:focus,
+input[type="submit"]:focus,
+input[type="button"]:focus,
+.wp-block-button__link:focus,
+.kadence-blocks-button:focus,
+.kadence-blocks-button > a:focus,
+.kb-button:focus,
+a.kadence-blocks-button:focus,
+.kt-btn:focus, .kt-button:focus,
+.button:focus,
+.more-link:focus {
+    transform: translateY(-2px);
+    box-shadow: var(--uv-shadow-lift);
+    background-color: var(--uv-color-brand-strong);
+    color: #fff;
+    outline: none;
+}
+
+button:focus-visible,
+input[type="submit"]:focus-visible,
+input[type="button"]:focus-visible,
+.wp-block-button__link:focus-visible,
+.kadence-blocks-button:focus-visible,
+.kadence-blocks-button > a:focus-visible,
+.kb-button:focus-visible,
+a.kadence-blocks-button:focus-visible,
+.kt-btn:focus-visible, .kt-button:focus-visible,
+.button:focus-visible,
+.more-link:focus-visible {
+    box-shadow: var(--uv-shadow-focus);
+}
+
+/* Related content */
 .uv-related-link {
-    margin-top: 2rem;
+    margin-top: var(--uv-space-xl);
 }
 
 .uv-related-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: var(--uv-space-sm);
     width: 100%;
-    background-color: var(--uv-purple, #7a00cc);
+    background-color: var(--uv-color-brand);
     color: #fff;
-    padding: 0.75rem 1rem;
-    border-radius: var(--uv-radius, 8px);
+    padding: var(--uv-space-sm) var(--uv-space-md);
+    border-radius: var(--uv-radius-lg);
     text-decoration: none;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition: transform var(--uv-transition-base), box-shadow var(--uv-transition-base), background-color var(--uv-transition-base), color var(--uv-transition-base);
+    box-shadow: var(--uv-shadow-soft);
 }
 
 .uv-related-button:hover,
 .uv-related-button:focus {
-    background-color: #5a0099;
+    background-color: var(--uv-color-brand-strong);
     color: #fff;
+    transform: translateY(-2px);
+    box-shadow: var(--uv-shadow-lift);
 }
 
 .uv-related-button__icon {
     display: inline-flex;
     align-items: center;
-}
-
-.uv-related-button__icon svg {
+    justify-content: center;
     width: 1.25rem;
     height: 1.25rem;
 }
 
-.single-uv_experience .entry-content-wrap {
-    max-width: min(800px, 100%);
-    margin: 0 auto;
-    padding: 0 clamp(1rem, 5vw, 2rem);
+.uv-related-button__icon svg {
+    width: 100%;
+    height: 100%;
 }
 
+/* Cards */
+.uv-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--uv-space-md);
+    background: var(--uv-color-surface);
+    border-radius: var(--uv-radius-lg);
+    padding: var(--uv-space-lg);
+    box-shadow: var(--uv-shadow-soft);
+    border: 1px solid var(--uv-color-border);
+    transition: transform var(--uv-transition-base), box-shadow var(--uv-transition-base);
+}
+
+.uv-card:hover,
+.uv-card:focus-within {
+    transform: translateY(-6px);
+    box-shadow: var(--uv-shadow-lift);
+}
+
+.uv-card img {
+    width: 100%;
+    border-radius: var(--uv-radius-md);
+    transition: transform var(--uv-transition-slow);
+}
+
+.uv-card--zoom img:hover,
+.uv-card--zoom img:focus {
+    transform: scale(1.04);
+}
+
+/* Animation helper */
+.uv-animate {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: uv-fade-in var(--uv-transition-slow) ease forwards;
+}
+
+@keyframes uv-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .uv-animate {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Department chips */
+.uv-departments {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--uv-space-sm);
+    padding: 0;
+    margin: var(--uv-space-md) 0 0;
+}
+
+.uv-departments li {
+    background: var(--uv-color-surface-muted);
+    color: var(--uv-color-text);
+    border-radius: var(--uv-radius-pill);
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--uv-color-border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    transition: background-color var(--uv-transition-base), color var(--uv-transition-base), transform var(--uv-transition-fast);
+}
+
+.uv-departments li:hover,
+.uv-departments li:focus-within {
+    background: var(--uv-color-brand-soft);
+    color: var(--uv-color-brand-strong);
+    transform: translateY(-2px);
+}
+
+/* Single experience layout */
+.single-uv_experience .entry-content-wrap {
+    background: var(--uv-color-surface);
+    border-radius: var(--uv-radius-lg);
+    padding: clamp(1.5rem, 5vw, 2.5rem);
+    box-shadow: var(--uv-shadow-soft);
+    border: 1px solid var(--uv-color-border);
+}
+
+/* Team container */
 .uv-team-container {
-    max-width: min(800px, 100%);
-    margin: 0 auto;
-    padding: 0 clamp(1rem, 5vw, 2rem);
+    background: linear-gradient(180deg, rgba(122, 0, 204, 0.05), rgba(90, 0, 153, 0.02)), var(--uv-color-surface);
+    border-radius: var(--uv-radius-lg);
+    padding: clamp(1.5rem, 5vw, 2.5rem);
+    box-shadow: var(--uv-shadow-soft);
+    border: 1px solid var(--uv-color-border);
 }
