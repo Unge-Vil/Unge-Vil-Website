@@ -1,6 +1,8 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.7.9
+- Remove Polylang lookups for team pages, mark names/roles as `notranslate`, and simplify Experience template layout wrappers.
 ### 0.7.8
 - Restyled related links on Experience pages with icons and consistent button styling.
 - Adjusted partner logo sizing and alignment for more balanced cards.
