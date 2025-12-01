@@ -2,6 +2,40 @@
     display: grid;
     gap: 1.5rem;
 }
+
+.uv-experiences {
+    padding: 0;
+    margin: 0;
+}
+
+.uv-experiences--grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.uv-experiences--list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.uv-experiences--timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .uv-experiences--grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 900px) {
+    .uv-card-grid.columns-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 .uv-card {
     list-style: none;
 }
