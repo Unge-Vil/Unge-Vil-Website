@@ -107,10 +107,24 @@ function uv_core_experiences($atts){
     if($q->have_posts()){
         echo '<ul class="uv-card-list" style="grid-template-columns:repeat(3,1fr)">';
         while($q->have_posts()){ $q->the_post();
-            echo '<li class="uv-card"><a href="'.esc_url(get_permalink()).'">';
-            if(has_post_thumbnail()) the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
+            $has_thumb = has_post_thumbnail();
+            $classes   = $has_thumb ? 'uv-card' : 'uv-card uv-card--experience';
+            echo '<li class="' . $classes . '"><a href="' . esc_url( get_permalink() ) . '">';
+            if($has_thumb){
+                the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
+            } else {
+                echo '<div class="uv-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M12 3.75a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5.25 19.5a6.75 6.75 0 0 1 13.5 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>';
+            }
             echo '<div class="uv-card-body"><h3>'.esc_html(get_the_title()).'</h3>';
-            if(has_excerpt()) echo '<div>'.esc_html(get_the_excerpt()).'</div>';
+            $org   = get_post_meta(get_the_ID(), 'uv_experience_org', true);
+            $dates = get_post_meta(get_the_ID(), 'uv_experience_dates', true);
+            if($org || $dates){
+                echo '<div class="uv-card-meta">';
+                if($org)  echo '<div class="uv-card-meta__org">'.esc_html($org).'</div>';
+                if($dates) echo '<div class="uv-card-meta__dates">'.esc_html($dates).'</div>';
+                echo '</div>';
+            }
+            if(has_excerpt()) echo '<div class="uv-card-excerpt">'.esc_html(get_the_excerpt()).'</div>';
             echo '</div></a></li>';
         }
         echo '</ul>';
