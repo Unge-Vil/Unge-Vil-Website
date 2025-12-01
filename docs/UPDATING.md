@@ -4,7 +4,7 @@
 
 ## 1. Get the new ZIPs
 1. Visit the repository's [Releases](https://github.com/ungevil/Unge-Vil-Website/releases) page.
-2. Download the newest `uv-kadence-child` theme ZIP and plugin ZIPs (`uv-core`, `uv-people`, `uv-events-bridge`) for the latest version (e.g. `0.7.8`).
+2. Download the newest `uv-kadence-child` theme ZIP and plugin ZIPs (`uv-core`, `uv-people`) for the latest version (e.g. `0.7.8`).
 
 ## 2. Back up the site
 1. In your hosting panel or backup plugin (e.g. UpdraftPlus), run a full backup.
@@ -19,7 +19,7 @@
 
 ### Plugins
 1. Go to **Plugins → Add New → Upload Plugin**.
-2. Upload each plugin ZIP (`uv-core`, `uv-people`, `uv-events-bridge`) one at a time.
+2. Upload each plugin ZIP (`uv-core`, `uv-people`) one at a time.
 3. Click **Install Now**, choose **Replace current version** when asked, then **Activate**.
 
 ## 4. Verify versions
