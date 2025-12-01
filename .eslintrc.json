@@ -1,0 +1,27 @@
+{
+  "root": true,
+  "extends": ["plugin:@wordpress/eslint-plugin/recommended"],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "jquery": true
+  },
+  "globals": {
+    "UVPeople": "readonly",
+    "UVTeamManager": "readonly",
+    "uvTermImage": "readonly",
+    "useTaxonomy": "readonly"
+  },
+  "rules": {
+    "prettier/prettier": "off",
+    "no-var": "off",
+    "prefer-const": "off",
+    "object-shorthand": "off",
+    "camelcase": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "jsdoc/check-line-alignment": "off",
+    "jsdoc/check-tag-names": "off"
+  }
+}

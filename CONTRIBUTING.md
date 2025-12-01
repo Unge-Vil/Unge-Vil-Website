@@ -8,6 +8,7 @@ If you know WordPress, PHP, accessibility, or design, please jump in.
 2. Keep code lightweight and accessible (semantic HTML, WCAG AA).
 3. Write in English for code/comments; end-user copy can be Norwegian.
 4. Open a Pull Request describing changes and screenshots.
+5. Run `npm install` once, then `npm run lint` (or `npm test`) before pushing to catch JavaScript issues early.
 
 ## Areas where help is welcome
 - Code review and security hardening
