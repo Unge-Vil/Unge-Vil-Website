@@ -50,7 +50,7 @@
                     );
                 ?>
                 <article class="uv-person" role="listitem">
-                    <a href="<?php echo esc_url( $url ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'View profile for %s', 'uv-kadence-child' ), $user->display_name ) ); ?>">
+                    <a href="<?php echo esc_url( $url ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Se profil for %s', 'uv-kadence-child' ), $user->display_name ) ); ?>">
                         <div class="uv-avatar">
                             <?php
                             if ( function_exists( 'uv_people_get_avatar' ) ) {
@@ -73,8 +73,8 @@
                     $show_phone = get_user_meta( $user_id, 'uv_show_phone', true ) === '1';
 
                     if ( ( $phone && $show_phone ) || $email ) :
-                        $email_label = __( 'Email:', 'uv-kadence-child' );
-                        $phone_label = __( 'Mobile:', 'uv-kadence-child' );
+                        $email_label = __( 'E-post:', 'uv-kadence-child' );
+                        $phone_label = __( 'Mobil:', 'uv-kadence-child' );
                     ?>
                     <div class="uv-contact">
                         <?php if ( $email ) : ?>
@@ -110,7 +110,7 @@
                 );
                 if ( $partner_query->have_posts() ) :
             ?>
-            <h2><?php esc_html_e( 'Partners', 'uv-core' ); ?></h2>
+            <h2><?php esc_html_e( 'Partnere', 'uv-core' ); ?></h2>
             <ul class="uv-card-list uv-card-grid">
                 <?php
                 while ( $partner_query->have_posts() ) :
@@ -191,7 +191,7 @@
                             <path d="M14.25 7.5H5.25A2.25 2.25 0 0 0 3 9.75v9A2.25 2.25 0 0 0 5.25 21h9a2.25 2.25 0 0 0 2.25-2.25v-9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
                         </svg>
                     </span>
-                    <span class="uv-related-button__text"><?php esc_html_e( 'Visit website', 'uv-kadence-child' ); ?></span>
+                    <span class="uv-related-button__text"><?php esc_html_e( 'Besøk nettsiden', 'uv-kadence-child' ); ?></span>
                 </a>
             </div>
             <?php endif; ?>
@@ -209,7 +209,7 @@
                         <path d="M6.75 8.25h10.5M6.75 12h3m-3 3.75h3m3-3.75h3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
                     </svg>
                 </span>
-                <span class="uv-related-button__text"><?php esc_html_e( 'Read blog post', 'uv-kadence-child' ); ?></span>
+                <span class="uv-related-button__text"><?php esc_html_e( 'Les blogginnlegget', 'uv-kadence-child' ); ?></span>
             </a>
         </div>
         <?php endif; ?>
