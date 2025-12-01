@@ -14,7 +14,7 @@ If you know WordPress, PHP, accessibility, or design, please jump in.
 - Code review and security hardening
 - Gutenberg block patterns for our components
 - Import/export tools (CSV) for team assignments and partners
-- Polylang enhancements (multi-language quotes beyond nb/en)
+- Translation polish for GTranslate fallbacks or future manual `.po` files
 - Performance & testing
 
 © 2025 Unge Vil — MIT License.

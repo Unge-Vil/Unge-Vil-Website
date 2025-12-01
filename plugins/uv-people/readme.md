@@ -34,10 +34,9 @@ Team assignment lookups are cached in transients for faster rendering. Cache ent
 
 ## Requirements
 - WordPress 6.0+
-- Polylang for multilingual quotes (optional but recommended).
 
 ## Translation
-All strings use the `uv-people` text domain. Place translation files in `languages/` or manage translations through Polylang or another translation plugin.
+All strings use the `uv-people` text domain. Production uses **GTranslate** for automatic language switching; person names, role titles, and quotes are marked `notranslate` so people data stays accurate. You can still add `.po/.mo` files in `languages/` if manual translations are needed later.
 
 ## Changelog
 ### 0.8.1
