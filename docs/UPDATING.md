@@ -1,6 +1,6 @@
 # Updating from GitHub releases
 
-*Latest release: 0.8.1 – Added a Tools → Clear Team Cache action with broader auto-invalidation and fixed the Experiences block title metadata.*
+*Latest release: 0.8.2 – Refactored the child theme CSS with design tokens, interactive cards/buttons/chips, and refreshed volunteer docs for location-aware guides.*
 
 ## 1. Get the new ZIPs
 1. Visit the repository's [Releases](https://github.com/ungevil/Unge-Vil-Website/releases) page.
