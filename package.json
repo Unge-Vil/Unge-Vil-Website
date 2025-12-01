@@ -3,7 +3,8 @@
   "version": "1.0.10",
   "private": true,
   "scripts": {
-    "test": "echo \"No JS tests configured\" && exit 0",
+    "test": "npm run lint",
+    "lint": "wp-scripts lint-js",
     "build": "wp-scripts build plugins/uv-core/blocks/activities/index.js --output-path=plugins/uv-core/blocks/activities/build && wp-scripts build plugins/uv-core/blocks/experiences/index.js --output-path=plugins/uv-core/blocks/experiences/build && wp-scripts build plugins/uv-core/blocks/locations-grid/index.js --output-path=plugins/uv-core/blocks/locations-grid/build && wp-scripts build plugins/uv-core/blocks/news/index.js --output-path=plugins/uv-core/blocks/news/build && wp-scripts build plugins/uv-core/blocks/partners/index.js --output-path=plugins/uv-core/blocks/partners/build"
   },
   "devDependencies": {

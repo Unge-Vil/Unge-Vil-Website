@@ -46,6 +46,11 @@ It’s designed for **shared hosting**, with a focus on **accessibility, perform
 - `docs/` – Admin setup, staging plan, GDPR notes, and content guides.
 - `.github/` – Issue templates and a GitHub Actions workflow to package ZIPs on tags.
 
+## Development tooling
+- Install dependencies once with `npm install`.
+- Run `npm run lint` (also available as `npm test`) to lint JavaScript with the WordPress ESLint rules.
+- Linting is used in CI to keep block and theme scripts consistent.
+
 > All code is **translation-ready**. Use Polylang (free) when you’re ready.
 
 
