@@ -100,12 +100,22 @@ function uv_core_activities($atts){
 add_shortcode('uv_activities','uv_core_activities');
 
 function uv_core_experiences($atts){
-    $a = shortcode_atts(['count'=>3], $atts);
+    $a = shortcode_atts(['count'=>3, 'layout' => 'grid'], $atts);
+    $layout = in_array( $a['layout'], ['list', 'grid', 'timeline'], true ) ? $a['layout'] : 'grid';
     $args = ['post_type'=>'uv_experience','posts_per_page'=>intval($a['count']),'no_found_rows'=>true];
     $q = new WP_Query($args);
     ob_start();
     if($q->have_posts()){
-        echo '<ul class="uv-card-list" style="grid-template-columns:repeat(3,1fr)">';
+        $classes = [ 'uv-experiences', 'uv-experiences--' . $layout ];
+        if ( 'grid' === $layout ) {
+            $classes[] = 'uv-card-list';
+            $classes[] = 'uv-card-grid';
+            $classes[] = 'columns-3';
+        } elseif ( 'timeline' === $layout ) {
+            $classes[] = 'uv-card-list';
+        }
+
+        echo '<ul class="' . esc_attr( implode( ' ', $classes ) ) . '">';
         while($q->have_posts()){ $q->the_post();
             $has_thumb = has_post_thumbnail();
             $classes   = $has_thumb ? 'uv-card' : 'uv-card uv-card--experience';
