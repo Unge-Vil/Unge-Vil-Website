@@ -52,13 +52,15 @@ It’s designed for **shared hosting**, with a focus on **accessibility, perform
 - Run `npm run lint` (also available as `npm test`) to lint JavaScript with the WordPress ESLint rules.
 - Linting is used in CI to keep block and theme scripts consistent.
 
-> All code is **translation-ready**. Use Polylang (free) when you’re ready.
+> All code is **translation-ready**, but production uses **GTranslate** for automatic Norwegian↔English translation. Names and roles are flagged `notranslate` to keep people data intact.
 
 
 ## About Unge Vil
-**Unge Vil** is a Norwegian non‑profit that empowers young people to explore and create across **music, film, gaming, and other creative fields**. 
-We collaborate with local communities across multiple cities and run initiatives like **Create A Spark (international)** and the **Unge Vil model**. 
+**Unge Vil** is a Norwegian non‑profit that empowers young people to explore and create across **music, film, gaming, and other creative fields**.
+We collaborate with local communities across multiple cities and run initiatives like **Create A Spark (international)** and the **Unge Vil model**.
 The website prioritizes **accessibility**, **privacy**, and **performance**, and is built to let volunteers and staff contribute content safely.
+
+Our WordPress stack is now stable for locations/avdelinger, team profiles, partners, and experiences. The only feature still on the backlog is **event integrations**, which will ship after we receive the Påmeldinger.no API details.
 
 - Contact (volunteering, partnerships): **org@ungevil.no**
 - Organization type: Non‑profit / volunteer‑driven
@@ -76,7 +78,7 @@ The website prioritizes **accessibility**, **privacy**, and **performance**, and
    - `uv-people`
 4. In **Settings → Permalinks**, click **Save** once.
 5. Create **Location** terms (e.g., Haugesund, Oslo) under **Locations** (taxonomy) and set images for each term.
-6. Build a **Department page** per location using shortcodes/blocks (see below).
+6. Build a **Department page** per location using shortcodes/blocks (see below). Each location/avdeling gets its own page and tailored partner, activity, and news feeds.
 
 ## Shortcodes
 - **Locations grid** (front page):  
@@ -96,8 +98,9 @@ The website prioritizes **accessibility**, **privacy**, and **performance**, and
 - Slider not included (use Kadence/blocks); keep motion minimal and respect prefers-reduced-motion.
 
 ## Translation
-- All strings use `__()` with text domains: `uv-core`, `uv-people`, `uv-kadence-child`.
-- Provide translations via Polylang or `.po` files in each plugin’s `languages/` folder.
+- The site uses **GTranslate** for automatic language switching; no manual Polylang setup is required.
+- All strings use `__()` with text domains: `uv-core`, `uv-people`, `uv-kadence-child`, so `.po/.mo` files still work if we add manual translations later.
+- Person names and role titles are marked `notranslate`; avoid overriding that behavior so people data stays consistent across languages.
 
 ## Staging on Shared Host
 - In **DirectAdmin → Subdomain Management**, create `staging.ungevil.no` (or a `/staging` subfolder). Then use **MySQL Management** to add a fresh database and user.

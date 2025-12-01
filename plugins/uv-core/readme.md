@@ -28,10 +28,9 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 
 ## Requirements
 - WordPress 6.0+
-- Optional: Polylang for translating taxonomy terms.
 
 ## Translation
-All strings use the `uv-core` text domain. Add `.po/.mo` files in a `languages/` folder or use a translation plugin like Polylang.
+All strings use the `uv-core` text domain. Production relies on **GTranslate** for automatic Norwegian↔English switching, but you can still add `.po/.mo` files in a `languages/` folder or use another translation tool if we later decide to manage translations manually.
 
 ## Changelog
 ### 0.8.1
