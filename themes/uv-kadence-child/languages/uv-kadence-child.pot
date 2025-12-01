@@ -12,11 +12,14 @@ msgstr "Erfaringer"
 msgid "Articles"
 msgstr "Artikler"
 
-msgid "Read blog post"
-msgstr "Les blogginnlegg"
+msgid "Les blogginnlegget"
+msgstr "Les blogginnlegget"
 
-msgid "Email:"
+msgid "Besøk nettsiden"
+msgstr "Besøk nettsiden"
+
+msgid "E-post:"
 msgstr "E-post:"
 
-msgid "Mobile:"
+msgid "Mobil:"
 msgstr "Mobil:"

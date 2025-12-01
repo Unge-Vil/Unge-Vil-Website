@@ -17,14 +17,14 @@ msgstr "Erfaringer"
 msgid "Articles"
 msgstr "Artikler"
 
-msgid "Read blog post"
+msgid "Les blogginnlegget"
 msgstr "Les blogginnlegget"
 
-msgid "Visit website"
+msgid "Besøk nettsiden"
 msgstr "Besøk nettsiden"
 
-msgid "Email:"
+msgid "E-post:"
 msgstr "E-post:"
 
-msgid "Mobile:"
+msgid "Mobil:"
 msgstr "Mobil:"
