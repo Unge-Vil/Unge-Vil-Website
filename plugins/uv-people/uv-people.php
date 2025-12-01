@@ -694,7 +694,7 @@ function uv_people_team_grid($atts){
         echo '<a href="'.esc_url($url).'" aria-label="'.esc_attr($label).'">';
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
-        echo '<h3>'.esc_html($name).'</h3>';
+        echo '<h3 class="notranslate">'.esc_html($name).'</h3>';
         if($a['show_age']){
             $birthdate = get_user_meta($uid,'uv_birthdate',true);
             if($birthdate){
@@ -730,7 +730,7 @@ function uv_people_team_grid($atts){
             $role_en = $it['role_en'] ?: get_user_meta($uid,'uv_position_en',true);
             $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
         }
-        if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
+        if($role) echo '<div class="uv-role notranslate">'.esc_html($role).'</div>';
 
         // choose quote by language
         $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
@@ -978,7 +978,7 @@ function uv_people_all_team_grid($atts){
         echo '<a href="'.esc_url($url).'" aria-label="'.esc_attr($label).'">';
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
-        echo '<h3>'.esc_html($name).'</h3>';
+        echo '<h3 class="notranslate">'.esc_html($name).'</h3>';
         $role = '';
         $role_term = get_user_meta($uid,'uv_position_term',true);
         if($role_term){
@@ -1000,7 +1000,7 @@ function uv_people_all_team_grid($atts){
             $role_en = get_user_meta($uid,'uv_position_en',true);
             $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
         }
-        if($role) echo '<div class="uv-role">'.esc_html($role).'</div>';
+        if($role) echo '<div class="uv-role notranslate">'.esc_html($role).'</div>';
         if($a['showAge']){
             $birthdate = get_user_meta($uid,'uv_birthdate',true);
             if($birthdate){
