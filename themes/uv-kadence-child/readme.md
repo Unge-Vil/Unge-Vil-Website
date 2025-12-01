@@ -1,6 +1,9 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.7.8
+- Restyled related links on Experience pages with icons and consistent button styling.
+- Adjusted partner logo sizing and alignment for more balanced cards.
 ### 0.7.7
 - Version bump for release; no functional changes.
 ### 0.7.6

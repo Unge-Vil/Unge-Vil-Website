@@ -1,7 +1,7 @@
 <?php
 /*
 Theme Name: UV Kadence Child
-Version: 0.7.7
+Version: 0.7.8
 */
 $update_checker_path = dirname(__DIR__, 2) . '/plugin-update-checker/plugin-update-checker.php';
 if (file_exists($update_checker_path)) {
