@@ -11,7 +11,6 @@ get_header();
 $user = get_queried_object();
 if ($user instanceof WP_User) :
     $uid  = $user->ID;
-    $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(), 0, 2);
     ?>
     <div class="uv-team-container">
         <article class="uv-team-member">
@@ -28,21 +27,13 @@ if ($user instanceof WP_User) :
             if ($position_term) {
                 $t = get_term($position_term, 'uv_position');
                 if (!is_wp_error($t) && $t) {
-                    if (function_exists('pll_get_term') && $lang) {
-                        $tid = pll_get_term($t->term_id, $lang);
-                        if ($tid) {
-                            $t = get_term($tid, 'uv_position');
-                        }
-                    }
                     if ($t && !is_wp_error($t)) {
                         $position = $t->name;
                     }
                 }
             }
             if (!$position) {
-                $position_nb = get_user_meta($uid, 'uv_position_nb', true);
-                $position_en = get_user_meta($uid, 'uv_position_en', true);
-                $position    = ($lang === 'en') ? ($position_en ?: $position_nb) : ($position_nb ?: $position_en);
+                $position = get_user_meta($uid, 'uv_position_nb', true);
             }
             if ($position) {
                 echo '<div class="uv-position">' . esc_html($position) . '</div>';
@@ -72,10 +63,8 @@ if ($user instanceof WP_User) :
             }
 
             $quote_nb = get_user_meta($uid, 'uv_quote_nb', true);
-            $quote_en = get_user_meta($uid, 'uv_quote_en', true);
-            $quote    = ($lang === 'en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
-            if ($quote) {
-                echo '<blockquote class="uv-quote">“' . esc_html($quote) . '”</blockquote>';
+            if ($quote_nb) {
+                echo '<blockquote class="uv-quote">“' . esc_html($quote_nb) . '”</blockquote>';
             }
             ?>
         </header>
@@ -102,12 +91,6 @@ if ($user instanceof WP_User) :
                 foreach ($locations as $loc_id) {
                     $loc_term = get_term($loc_id, 'uv_location');
                     if (!is_wp_error($loc_term) && $loc_term) {
-                        if (function_exists('pll_get_term') && $lang) {
-                            $tid = pll_get_term($loc_term->term_id, $lang);
-                            if ($tid) {
-                                $loc_term = get_term($tid, 'uv_location');
-                            }
-                        }
                         if ($loc_term && !is_wp_error($loc_term)) {
                             echo '<span class="uv-location-pill">' . esc_html($loc_term->name) . '</span>';
                         }
@@ -117,10 +100,8 @@ if ($user instanceof WP_User) :
             echo '</div>';
         }
         $bio_nb = get_user_meta( $uid, 'uv_bio_nb', true );
-        $bio_en = get_user_meta( $uid, 'uv_bio_en', true );
-        $bio    = ( $lang === 'en' ) ? ( $bio_en ?: $bio_nb ) : ( $bio_nb ?: $bio_en );
-        if ( $bio ) {
-            echo '<div class="uv-bio">' . wp_kses_post( wpautop( $bio ) ) . '</div>';
+        if ( $bio_nb ) {
+            echo '<div class="uv-bio">' . wp_kses_post( wpautop( $bio_nb ) ) . '</div>';
         }
 
         if (function_exists('uv_core_get_experiences_for_user')) {
