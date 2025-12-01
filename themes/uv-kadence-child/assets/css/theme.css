@@ -8,9 +8,15 @@
  .uv-card-list{list-style:none;display:grid;gap:1rem;padding:0}
  .uv-card-grid{margin:0;padding:0;list-style:none;display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
  @media (max-width:600px){.uv-card-grid{grid-template-columns:1fr}}
- .uv-card{display:flex;flex-direction:column;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
+.uv-card{display:flex;flex-direction:column;border-radius:var(--uv-radius);box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden;background:#fff}
 .uv-card a{display:block;text-decoration:none;position:relative}
 .uv-card a:hover,.uv-card a:focus{text-decoration:underline}
+.uv-card--experience a{display:flex;align-items:flex-start;gap:.75rem;padding:12px;height:100%}
+.uv-card--experience .uv-card-body{padding:0;display:flex;flex-direction:column;gap:.35rem}
+.uv-card-icon{width:52px;height:52px;border-radius:14px;background:var(--uv-yellow);color:var(--uv-purple);display:inline-flex;align-items:center;justify-content:center}
+.uv-card-icon svg{width:28px;height:28px}
+.uv-card-meta{display:flex;flex-direction:column;gap:.15rem;color:#444;font-size:.95rem}
+.uv-card-excerpt{color:#222;line-height:1.4}
 .uv-card img{width:100%;aspect-ratio:4/3;object-fit:cover}
 .uv-card .uv-card-body{padding:12px}
 .uv-card:focus-visible,.uv-card a:focus-visible,a:focus-visible,.uv-person:focus-visible,.uv-card:focus,.uv-card a:focus,a:focus,.uv-person:focus{outline:3px solid var(--uv-purple);outline-offset:4px;transition:outline-offset .2s ease-in-out}
