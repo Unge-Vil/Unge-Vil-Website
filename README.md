@@ -7,7 +7,7 @@
 - **Future-proof:** Small, readable plugins; easy to extend. Volunteers welcome — this is largely vibe-coded with help from ChatGPT, so expert contributors are invited!
 
 
-This repository bootstraps the **Kadence child theme** and three lightweight plugins for the Unge Vil website.
+This repository bootstraps the **Kadence child theme** and two lightweight plugins for the Unge Vil website.
 It’s designed for **shared hosting**, with a focus on **accessibility, performance, and translation readiness**.
 
 ## Roadmap
@@ -41,7 +41,6 @@ It’s designed for **shared hosting**, with a focus on **accessibility, perform
 - `themes/uv-kadence-child/` – Kadence child theme (styles, small a11y tweaks).
 - `plugins/uv-core/` – CPTs & taxonomies (Locations, Activities, Partners, Experiences) + basic shortcodes and term image fields.
 - `plugins/uv-people/` – User extensions, per-location assignments, team grid shortcode, and **media-library avatars** (no Gravatar).
-- `plugins/uv-events-bridge/` – Adds Location taxonomy to Events (The Events Calendar) + upcoming events shortcode.
 - `docs/` – Admin setup, staging plan, GDPR notes, and content guides.
 - `.github/` – Issue templates and a GitHub Actions workflow to package ZIPs on tags.
 
@@ -67,7 +66,6 @@ The website prioritizes **accessibility**, **privacy**, and **performance**, and
 3. Upload & activate the plugins in this order:
    - `uv-core`
    - `uv-people`
-   - `uv-events-bridge` (optional; only if using The Events Calendar)
 4. In **Settings → Permalinks**, click **Save** once.
 5. Create **Location** terms (e.g., Haugesund, Oslo) under **Locations** (taxonomy) and set images for each term.
 6. Build a **Department page** per location using shortcodes/blocks (see below).
@@ -83,15 +81,14 @@ The website prioritizes **accessibility**, **privacy**, and **performance**, and
   `[uv_news location="haugesund" count="3"]`
 - **Team grid** (primary contacts first):  
   `[uv_team location="haugesund" columns="4" highlight_primary="1"]`
-- **Upcoming events** (Events Calendar required):  
-  `[uv_upcoming_events location="haugesund" count="5"]`
+- Event integrations will be added later.
 
 ## Accessibility Defaults
 - Semantic lists for cards; focus-visible styles; alt text required in UI fields.
 - Slider not included (use Kadence/blocks); keep motion minimal and respect prefers-reduced-motion.
 
 ## Translation
-- All strings use `__()` with text domains: `uv-core`, `uv-people`, `uv-events-bridge`, `uv-kadence-child`.
+- All strings use `__()` with text domains: `uv-core`, `uv-people`, `uv-kadence-child`.
 - Provide translations via Polylang or `.po` files in each plugin’s `languages/` folder.
 
 ## Staging on Shared Host
