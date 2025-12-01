@@ -19,7 +19,7 @@ if ($user instanceof WP_User) :
                 <?php if (function_exists('uv_people_get_avatar')) : ?>
                     <div class="uv-avatar"><?php echo uv_people_get_avatar($uid); ?></div>
                 <?php endif; ?>
-                <h1><?php echo esc_html($user->display_name); ?></h1>
+                <h1 class="notranslate"><?php echo esc_html($user->display_name); ?></h1>
             </div>
             <?php
             $position = '';
@@ -36,7 +36,7 @@ if ($user instanceof WP_User) :
                 $position = get_user_meta($uid, 'uv_position_nb', true);
             }
             if ($position) {
-                echo '<div class="uv-position">' . esc_html($position) . '</div>';
+                echo '<div class="uv-position notranslate">' . esc_html($position) . '</div>';
             }
 
             $phone      = get_user_meta($uid, 'uv_phone', true);
@@ -92,7 +92,7 @@ if ($user instanceof WP_User) :
                     $loc_term = get_term($loc_id, 'uv_location');
                     if (!is_wp_error($loc_term) && $loc_term) {
                         if ($loc_term && !is_wp_error($loc_term)) {
-                            echo '<span class="uv-location-pill">' . esc_html($loc_term->name) . '</span>';
+                            echo '<span class="uv-location-pill notranslate">' . esc_html($loc_term->name) . '</span>';
                         }
                     }
                 }
