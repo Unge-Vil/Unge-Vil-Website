@@ -19,7 +19,7 @@
             ?>
             <div class="uv-experience-users uv-team-grid" role="list">
                 <?php
-                $lang = function_exists( 'pll_current_language' ) ? pll_current_language( 'slug' ) : substr( get_locale(), 0, 2 );
+                $lang = substr( get_locale(), 0, 2 );
                 foreach ( $users as $user_id ) :
                     $user_id = absint( $user_id );
                     $user    = get_user_by( 'id', $user_id );
@@ -32,16 +32,8 @@
                     $role_term = get_user_meta( $user_id, 'uv_position_term', true );
                     if ( $role_term ) {
                         $t = get_term( $role_term, 'uv_position' );
-                        if ( ! is_wp_error( $t ) && $t ) {
-                            if ( function_exists( 'pll_get_term' ) && $lang ) {
-                                $tid = pll_get_term( $t->term_id, $lang );
-                                if ( $tid ) {
-                                    $t = get_term( $tid, 'uv_position' );
-                                }
-                            }
-                            if ( $t && ! is_wp_error( $t ) ) {
-                                $role = $t->name;
-                            }
+                        if ( $t && ! is_wp_error( $t ) ) {
+                            $role = $t->name;
                         }
                     }
                     if ( ! $role ) {
@@ -69,9 +61,9 @@
                             ?>
                         </div>
                         <div class="uv-info">
-                            <h3><?php echo esc_html( $user->display_name ); ?></h3>
+                            <h3 class="notranslate"><?php echo esc_html( $user->display_name ); ?></h3>
                             <?php if ( $role ) : ?>
-                                <div class="uv-role"><?php echo esc_html( $role ); ?></div>
+                                <div class="uv-role notranslate"><?php echo esc_html( $role ); ?></div>
                             <?php endif; ?>
                         </div>
                     </a>
