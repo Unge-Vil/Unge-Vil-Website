@@ -665,7 +665,7 @@ function uv_people_team_grid($atts){
         $bn = get_the_author_meta('display_name', $b['user_id']);
         return strcasecmp($an, $bn);
     });
-    $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
+    $lang = substr(get_locale(),0,2);
 
     $total_pages = (int) ceil(count($items) / $per_page);
     $page = min($page, $total_pages ? $total_pages : 1);
@@ -713,16 +713,8 @@ function uv_people_team_grid($atts){
         }
         if($role_term){
             $t = get_term($role_term, 'uv_position');
-            if(!is_wp_error($t) && $t){
-                if(function_exists('pll_get_term') && $lang){
-                    $tid = pll_get_term($t->term_id, $lang);
-                    if($tid){
-                        $t = get_term($tid, 'uv_position');
-                    }
-                }
-                if($t && !is_wp_error($t)){
-                    $role = $t->name;
-                }
+            if($t && !is_wp_error($t)){
+                $role = $t->name;
             }
         }
         if(!$role){
@@ -953,7 +945,7 @@ function uv_people_all_team_grid($atts){
     $total_pages = ceil($total_users / $per_page);
 
     $cols = max(1, min(6, intval($a['columns'])));
-    $lang = function_exists('pll_current_language') ? pll_current_language('slug') : substr(get_locale(),0,2);
+    $lang = substr(get_locale(),0,2);
     ob_start();
     echo '<div class="uv-team-grid columns-'.$cols.'" role="list">';
     foreach($items as $it){
@@ -983,16 +975,8 @@ function uv_people_all_team_grid($atts){
         $role_term = get_user_meta($uid,'uv_position_term',true);
         if($role_term){
             $t = get_term($role_term, 'uv_position');
-            if(!is_wp_error($t) && $t){
-                if(function_exists('pll_get_term') && $lang){
-                    $tid = pll_get_term($t->term_id, $lang);
-                    if($tid){
-                        $t = get_term($tid, 'uv_position');
-                    }
-                }
-                if($t && !is_wp_error($t)){
-                    $role = $t->name;
-                }
+            if($t && !is_wp_error($t)){
+                $role = $t->name;
             }
         }
         if(!$role){
