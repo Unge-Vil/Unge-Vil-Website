@@ -1,6 +1,6 @@
 # Updating from GitHub releases
 
-*Latest release: 0.8.2 – Refactored the child theme CSS with design tokens, interactive cards/buttons/chips, and refreshed volunteer docs for location-aware guides.*
+*Latest release: 0.8.3 – Rebuilt the Erfaringer block with server-side rendering shared with the shortcode, richer editor previews, and safer Select2 loading for Experience admin fields.*
 
 ## 1. Get the new ZIPs
 1. Visit the repository's [Releases](https://github.com/ungevil/Unge-Vil-Website/releases) page.

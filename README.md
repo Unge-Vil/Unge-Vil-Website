@@ -37,7 +37,7 @@ It’s designed for **shared hosting**, with a focus on **accessibility, perform
 - **0.7.8:** Experience CTAs refreshed, partner logos sized consistently, and admin selectors improved.
 - **0.7.9:** Removed Polylang dependencies from team displays, prevented auto-translation of names/roles, and cleaned up Experience templates.
 - **0.8.0:** Added grid/list/timeline layouts for Experiences, refreshed card styling with fallbacks, translated Experience UI labels to Norwegian, and narrowed Experience page content for readability.
-- **0.8.2:** Refactored the child theme CSS with design tokens, reusable cards/buttons/chips, and refreshed volunteer guides for location-aware, no-code updates.
+- **0.8.3:** Rebuilt the Erfaringer block with shared server-side rendering/shortcodes, richer editor previews, and a fallback Select2 loader for experience metaboxes.
 - **0.8.1:** Added manual/automatic team cache clearing and set block metadata for the Experiences title.
 - **1.0.0:** Fully bilingual content with streamlined deployment and contributor workflows.
 
