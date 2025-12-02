@@ -8,7 +8,26 @@ import metadata from './block.json';
 import './editor.css';
 import './style.css';
 
-const ExperienceCard = ( { post } ) => {
+const getExperienceYear = ( post ) => {
+    const metaDates = post.meta?.uv_experience_dates ?? '';
+    const matchedYear = metaDates.match( /\b(\d{4})\b/ );
+
+    if ( matchedYear?.[ 1 ] ) {
+        return matchedYear[ 1 ];
+    }
+
+    if ( post.date ) {
+        const publishedDate = new Date( post.date );
+
+        if ( ! Number.isNaN( publishedDate.getFullYear() ) ) {
+            return String( publishedDate.getFullYear() );
+        }
+    }
+
+    return '';
+};
+
+const ExperienceCard = ( { post, year } ) => {
     const metaOrg = post.meta?.uv_experience_org;
     const metaDates = post.meta?.uv_experience_dates;
     const thumbnail = post._embedded?.['wp:featuredmedia']?.[ 0 ]?.source_url;
@@ -42,6 +61,7 @@ const ExperienceCard = ( { post } ) => {
                 </div>
             ) }
             <div className="uv-card-body">
+                <div className="uv-card-meta__year">{ year }</div>
                 <h3>{ post.title.rendered }</h3>
                 { ( metaOrg || metaDates ) && (
                     <div className="uv-card-meta">
@@ -61,12 +81,29 @@ const ExperienceCard = ( { post } ) => {
 
 const ExperiencesPreview = ( { posts, layout, isLoading } ) => {
     const baseClasses = [ 'uv-experiences', `uv-experiences--${ layout }` ];
+    const groupListClasses = [ 'uv-experiences__year-list' ];
+
     if ( layout !== 'list' ) {
-        baseClasses.push( 'uv-card-list' );
+        groupListClasses.push( 'uv-card-list' );
     }
     if ( layout === 'grid' ) {
-        baseClasses.push( 'uv-card-grid', 'columns-3' );
+        groupListClasses.push( 'uv-card-grid', 'columns-3' );
     }
+
+    const groupedPosts = Object.entries(
+        ( posts ?? [] ).reduce( ( groups, post ) => {
+            const year = getExperienceYear( post );
+
+            if ( ! groups[ year ] ) {
+                groups[ year ] = [];
+            }
+
+            groups[ year ].push( post );
+            return groups;
+        }, {} ),
+    )
+        .sort( ( [ yearA ], [ yearB ] ) => yearB.localeCompare( yearA ) )
+        .map( ( [ year, items ] ) => ( { year, items } ) );
 
     if ( isLoading ) {
         return (
@@ -86,8 +123,19 @@ const ExperiencesPreview = ( { posts, layout, isLoading } ) => {
 
     return (
         <ul className={ baseClasses.join( ' ' ) }>
-            { posts.map( ( post ) => (
-                <ExperienceCard key={ post.id } post={ post } />
+            { groupedPosts.map( ( { year, items } ) => (
+                <li key={ year } className="uv-experiences__year-group">
+                    <div className="uv-experiences__year-heading">{ year }</div>
+                    <ul className={ groupListClasses.join( ' ' ) }>
+                        { items.map( ( post ) => (
+                            <ExperienceCard
+                                key={ post.id }
+                                post={ post }
+                                year={ getExperienceYear( post ) }
+                            />
+                        ) ) }
+                    </ul>
+                </li>
             ) ) }
         </ul>
     );
@@ -109,7 +157,7 @@ registerBlockType( metadata.name, {
                 per_page: count,
                 page,
                 _embed: true,
-                _fields: [ 'id', 'title', 'excerpt', 'link', 'meta', 'featured_media' ],
+                _fields: [ 'id', 'title', 'excerpt', 'link', 'meta', 'featured_media', 'date' ],
             }
         );
 

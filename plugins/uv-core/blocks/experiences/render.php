@@ -9,6 +9,21 @@ declare(strict_types=1);
 
 if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
     /**
+     * Extract a year from the experience dates meta value.
+     *
+     * @param string $dates   Experience dates.
+     * @param int    $post_id Post ID.
+     * @return string
+     */
+    function uv_core_get_experience_year( string $dates, int $post_id ): string {
+        if ( preg_match( '/\b(\d{4})\b/', $dates, $matches ) ) {
+            return $matches[1];
+        }
+
+        return get_the_date( 'Y', $post_id );
+    }
+
+    /**
      * Render callback for the experiences block.
      *
      * @param array $attributes Block attributes.
@@ -42,22 +57,27 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
         ob_start();
 
         if ( $query->have_posts() ) {
-            $wrapper_classes = [ 'uv-experiences', 'uv-experiences--' . $layout ];
+            $wrapper_classes    = [ 'uv-experiences', 'uv-experiences--' . $layout ];
+            $group_list_classes = [];
+
             if ( 'grid' === $layout || 'timeline' === $layout ) {
-                $wrapper_classes[] = 'uv-card-list';
+                $group_list_classes[] = 'uv-card-list';
             }
             if ( 'grid' === $layout ) {
-                $wrapper_classes[] = 'uv-card-grid';
-                $wrapper_classes[] = 'columns-3';
+                $group_list_classes[] = 'uv-card-grid';
+                $group_list_classes[] = 'columns-3';
             }
 
-            echo '<ul class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
+            $experiences_by_year = [];
+
             while ( $query->have_posts() ) {
                 $query->the_post();
                 $org       = get_post_meta( get_the_ID(), 'uv_experience_org', true );
                 $dates     = get_post_meta( get_the_ID(), 'uv_experience_dates', true );
                 $has_thumb = has_post_thumbnail();
+                $year      = uv_core_get_experience_year( (string) $dates, get_the_ID() );
 
+                ob_start();
                 echo '<li class="uv-card uv-card--experience">';
                 echo '<a href="' . esc_url( get_permalink() ) . '">';
                 if ( $has_thumb ) {
@@ -74,6 +94,7 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
                 }
 
                 echo '<div class="uv-card-body">';
+                echo '<div class="uv-card-meta__year">' . esc_html( $year ) . '</div>';
                 echo '<h3>' . esc_html( get_the_title() ) . '</h3>';
                 if ( $org || $dates ) {
                     echo '<div class="uv-card-meta">';
@@ -89,6 +110,21 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
                     echo '<div class="uv-card-excerpt">' . esc_html( get_the_excerpt() ) . '</div>';
                 }
                 echo '</div></a></li>';
+                $experiences_by_year[ $year ][] = ob_get_clean();
+            }
+
+            krsort( $experiences_by_year );
+
+            echo '<ul class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
+            foreach ( $experiences_by_year as $year => $cards ) {
+                echo '<li class="uv-experiences__year-group">';
+                echo '<div class="uv-experiences__year-heading">' . esc_html( (string) $year ) . '</div>';
+                echo '<ul class="uv-experiences__year-list ' . esc_attr( implode( ' ', $group_list_classes ) ) . '">';
+                foreach ( $cards as $card_html ) {
+                    echo $card_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                }
+                echo '</ul>';
+                echo '</li>';
             }
             echo '</ul>';
         } elseif ( is_admin() || wp_is_json_request() ) {
