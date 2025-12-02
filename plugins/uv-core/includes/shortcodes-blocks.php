@@ -8,6 +8,8 @@ add_filter('block_categories_all', function($categories) {
     return $categories;
 }, 10, 2);
 
+require_once __DIR__ . '/../blocks/experiences/render.php';
+
 function uv_core_locations_grid($atts){
     $a = shortcode_atts(['columns'=>3,'show_links'=>1], $atts);
     $terms = get_terms(['taxonomy'=>'uv_location','hide_empty'=>false]);
@@ -104,52 +106,15 @@ function uv_core_experiences($atts){
         $atts = [];
     }
 
-    $a = shortcode_atts(['count'=>3, 'layout' => 'grid'], $atts);
-    $count  = max( 1, intval( $a['count'] ) );
-    $layout = in_array( $a['layout'], ['list', 'grid', 'timeline'], true ) ? $a['layout'] : 'grid';
-    $args = ['post_type'=>'uv_experience','posts_per_page'=>$count,'no_found_rows'=>true];
-    $q = new WP_Query($args);
-    ob_start();
-    if($q->have_posts()){
-        $classes = [ 'uv-experiences', 'uv-experiences--' . $layout ];
-        if ( 'grid' === $layout ) {
-            $classes[] = 'uv-card-list';
-            $classes[] = 'uv-card-grid';
-            $classes[] = 'columns-3';
-        } elseif ( 'timeline' === $layout ) {
-            $classes[] = 'uv-card-list';
-        }
+    $atts = shortcode_atts(
+        [
+            'count'  => 3,
+            'layout' => 'grid',
+        ],
+        $atts
+    );
 
-        echo '<ul class="' . esc_attr( implode( ' ', $classes ) ) . '">';
-        while($q->have_posts()){ $q->the_post();
-            $has_thumb = has_post_thumbnail();
-            $classes   = $has_thumb ? 'uv-card' : 'uv-card uv-card--experience';
-            echo '<li class="' . $classes . '"><a href="' . esc_url( get_permalink() ) . '">';
-            if($has_thumb){
-                the_post_thumbnail('uv_card',['alt'=>esc_attr(get_the_title())]);
-            } else {
-                echo '<div class="uv-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M12 3.75a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5.25 19.5a6.75 6.75 0 0 1 13.5 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>';
-            }
-            echo '<div class="uv-card-body"><h3>'.esc_html(get_the_title()).'</h3>';
-            $org   = get_post_meta(get_the_ID(), 'uv_experience_org', true);
-            $dates = get_post_meta(get_the_ID(), 'uv_experience_dates', true);
-            if($org || $dates){
-                echo '<div class="uv-card-meta">';
-                if($org)  echo '<div class="uv-card-meta__org">'.esc_html($org).'</div>';
-                if($dates) echo '<div class="uv-card-meta__dates">'.esc_html($dates).'</div>';
-                echo '</div>';
-            }
-            if(has_excerpt()) echo '<div class="uv-card-excerpt">'.esc_html(get_the_excerpt()).'</div>';
-            echo '</div></a></li>';
-        }
-        echo '</ul>';
-    } else {
-        if(is_admin() || (defined('REST_REQUEST') && REST_REQUEST)){
-            echo '<div class="uv-block-placeholder">'.esc_html__('Ingen erfaringer funnet.', 'uv-core').'</div>';
-        }
-    }
-    wp_reset_postdata();
-    return ob_get_clean();
+    return uv_core_render_experiences_block( $atts );
 }
 add_shortcode('uv_experiences','uv_core_experiences');
 
@@ -273,7 +238,7 @@ add_action('init', function(){
         'render_callback' => 'uv_core_posts_news'
     ]);
     register_block_type(__DIR__ . '/../blocks/experiences', [
-        'render_callback' => 'uv_core_experiences'
+        'render_callback' => 'uv_core_render_experiences_block'
     ]);
     register_block_type(__DIR__ . '/../blocks/activities', [
         'render_callback' => 'uv_core_activities'
