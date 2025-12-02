@@ -366,6 +366,20 @@ add_action('init', function(){
         'sanitize_callback' => 'absint',
         'auth_callback' => function(){ return current_user_can('edit_posts'); },
     ]);
+    register_post_meta('uv_experience', 'uv_experience_org', [
+        'single' => true,
+        'type' => 'string',
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function(){ return current_user_can('edit_posts'); },
+    ]);
+    register_post_meta('uv_experience', 'uv_experience_dates', [
+        'single' => true,
+        'type' => 'string',
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function(){ return current_user_can('edit_posts'); },
+    ]);
 });
 
 function uv_core_get_experiences_for_user($user_id){
