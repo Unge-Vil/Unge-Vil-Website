@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: uv-kadence-child 0.8.3\n"
+"Project-Id-Version: uv-kadence-child 0.8.4\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
@@ -28,3 +28,9 @@ msgstr "E-post:"
 
 msgid "Mobil:"
 msgstr "Mobil:"
+
+msgid "Vis flere"
+msgstr "Vis flere"
+
+msgid "Vis færre"
+msgstr "Vis færre"

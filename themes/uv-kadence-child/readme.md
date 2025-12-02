@@ -1,6 +1,9 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.8.4
+- Added show/hide controls for long experience lists on author pages and paginated author article archives.
+- Updated the author experience heading and increased top spacing on team/experience layouts to clear the sticky header.
 ### 0.8.3
 - Version bump to ship with the updated Erfaringer block; no child theme changes.
 ### 0.8.2
