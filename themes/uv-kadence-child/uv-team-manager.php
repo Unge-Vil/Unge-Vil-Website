@@ -16,7 +16,7 @@ class UV_Team_Manager_Table extends WP_List_Table {
             'phone'     => __('Telefon', 'uv-kadence-child'),
             'position'  => __('Stilling', 'uv-kadence-child'),
             'locations' => __('Steder', 'uv-kadence-child'),
-            'primary'   => __('Primære steder', 'uv-kadence-child'),
+            'primary'   => __('Primær kontaktperson steder', 'uv-kadence-child'),
         ];
     }
 
@@ -125,7 +125,7 @@ class UV_Team_Manager_Table extends WP_List_Table {
                 $options .= '<option value="' . $term->term_id . '" ' . selected(in_array($term->term_id, $selected, true), true, false) . '>' . esc_html($term->name) . '</option>';
             }
         }
-        return '<select multiple class="uv-location-select" name="uv_team_manager[' . $user->ID . '][locations][]">' . $options . '</select>';
+        return '<select multiple class="uv-location-select" name="uv_team_manager[' . $user->ID . '][locations][]"><option value=""></option>' . $options . '</select>';
     }
 
     protected function column_primary($user) {
@@ -143,7 +143,7 @@ class UV_Team_Manager_Table extends WP_List_Table {
                 $options .= '<option value="' . $term->term_id . '" ' . selected(in_array($term->term_id, $selected, true), true, false) . '>' . esc_html($term->name) . '</option>';
             }
         }
-        return '<select multiple class="uv-primary-location-select" name="uv_team_manager[' . $user->ID . '][primary_locations][]">' . $options . '</select>';
+        return '<select multiple class="uv-primary-location-select" name="uv_team_manager[' . $user->ID . '][primary_locations][]"><option value=""></option>' . $options . '</select>';
     }
 }
 
