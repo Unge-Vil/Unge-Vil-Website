@@ -34,25 +34,37 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
             'count'      => 3,
             'layout'     => 'grid',
             'pagination' => false,
+            'year'       => '',
         ];
         $attributes = wp_parse_args( $attributes, $defaults );
 
         $count  = max( 1, (int) $attributes['count'] );
         $layout = in_array( $attributes['layout'], [ 'list', 'grid', 'timeline' ], true ) ? $attributes['layout'] : 'grid';
+        $year   = sanitize_text_field( (string) $attributes['year'] );
 
         $paged         = ! empty( $attributes['pagination'] ) ? max( 1, (int) get_query_var( 'paged', 1 ) ) : 1;
         $offset        = max( 0, ( $paged - 1 ) * $count );
         $should_paginate = ! empty( $attributes['pagination'] );
 
-        $query = new WP_Query(
-            [
-                'post_type'      => 'uv_experience',
-                'posts_per_page' => $count,
-                'paged'          => $paged,
-                'offset'         => $offset,
-                'no_found_rows'  => ! $should_paginate,
-            ]
-        );
+        $query_args = [
+            'post_type'      => 'uv_experience',
+            'posts_per_page' => $count,
+            'paged'          => $paged,
+            'offset'         => $offset,
+            'no_found_rows'  => ! $should_paginate,
+        ];
+
+        if ( ! empty( $year ) ) {
+            $query_args['date_query'] = [
+                [
+                    'after'     => sprintf( '%s-01-01 00:00:00', $year ),
+                    'before'    => sprintf( '%s-12-31 23:59:59', $year ),
+                    'inclusive' => true,
+                ],
+            ];
+        }
+
+        $query = new WP_Query( $query_args );
 
         ob_start();
 

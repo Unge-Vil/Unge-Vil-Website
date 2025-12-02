@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, RangeControl, SelectControl, Spinner, ToggleControl } from '@wordpress/components';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { Fragment, useEffect, useMemo, useState } from '@wordpress/element';
 import { useEntityRecords } from '@wordpress/core-data';
 import metadata from './block.json';
 import './editor.css';
@@ -142,9 +142,13 @@ const ExperiencesPreview = ( { posts, layout, isLoading } ) => {
 };
 
 registerBlockType( metadata.name, {
-    edit( { attributes: { count, layout, pagination }, setAttributes } ) {
+    edit( { attributes: { count, layout, pagination, year }, setAttributes } ) {
         const [ page, setPage ] = useState( 1 );
         const [ loadedPosts, setLoadedPosts ] = useState( [] );
+        const { records: yearPosts } = useEntityRecords( 'postType', 'uv_experience', {
+            per_page: 100,
+            _fields: [ 'id', 'meta', 'date' ],
+        } );
         const {
             records: posts,
             isResolving,
@@ -158,13 +162,19 @@ registerBlockType( metadata.name, {
                 page,
                 _embed: true,
                 _fields: [ 'id', 'title', 'excerpt', 'link', 'meta', 'featured_media', 'date' ],
+                ...( year
+                    ? {
+                            after: `${ year }-01-01T00:00:00`,
+                            before: `${ year }-12-31T23:59:59`,
+                        }
+                    : {} ),
             }
         );
 
         useEffect( () => {
             setPage( 1 );
             setLoadedPosts( [] );
-        }, [ count, pagination ] );
+        }, [ count, pagination, year ] );
 
         useEffect( () => {
             if ( ! hasResolved || ! Array.isArray( posts ) ) {
@@ -190,6 +200,25 @@ registerBlockType( metadata.name, {
 
         const hasMorePages = pagination && ( totalPages ? page < totalPages : false );
 
+        const yearOptions = useMemo( () => {
+            const years = new Set( [ '' ] );
+
+            ( yearPosts ?? [] ).forEach( ( post ) => {
+                const postYear = getExperienceYear( post );
+
+                if ( postYear ) {
+                    years.add( postYear );
+                }
+            } );
+
+            return Array.from( years )
+                .filter( Boolean )
+                .sort( ( a, b ) => b.localeCompare( a ) )
+                .map( ( value ) => ( { label: value, value } ) )
+                .concat( [ { label: __( 'Alle år', 'uv-core' ), value: '' } ] )
+                .reverse();
+        }, [ yearPosts ] );
+
         return (
             <Fragment>
                 <InspectorControls>
@@ -210,6 +239,13 @@ registerBlockType( metadata.name, {
                                 { label: __( 'Rutenett', 'uv-core' ), value: 'grid' },
                                 { label: __( 'Tidslinje', 'uv-core' ), value: 'timeline' },
                             ] }
+                        />
+                        <SelectControl
+                            label={ __( 'År', 'uv-core' ) }
+                            value={ year }
+                            options={ yearOptions }
+                            onChange={ ( value ) => setAttributes( { year: value } ) }
+                            help={ __( 'Filtrer erfaringer etter år.', 'uv-core' ) }
                         />
                         <ToggleControl
                             label={ __( 'Aktiver paginering', 'uv-core' ) }

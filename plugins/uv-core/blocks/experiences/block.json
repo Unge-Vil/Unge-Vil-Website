@@ -8,7 +8,8 @@
   "attributes": {
     "count": {"type": "number", "default": 3},
     "layout": {"type": "string", "default": "grid"},
-    "pagination": {"type": "boolean", "default": false}
+    "pagination": {"type": "boolean", "default": false},
+    "year": {"type": "string", "default": ""}
   },
   "editorScript": "file:./build/index.js",
   "style": "file:./style.css",
