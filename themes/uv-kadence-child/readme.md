@@ -1,6 +1,8 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.8.3
+- Version bump to ship with the updated Erfaringer block; no child theme changes.
 ### 0.8.2
 - Refactored the child theme CSS around design tokens for colors, radii, shadows, spacing, and transitions to keep branding consistent.
 - Added reusable card, related-link button, chip, and animation helpers that lift content, improve focus states, and make interactive elements feel responsive.

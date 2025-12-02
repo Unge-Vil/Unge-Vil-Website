@@ -33,6 +33,12 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Production relies on **GTranslate** for automatic Norwegian↔English switching, but you can still add `.po/.mo` files in a `languages/` folder or use another translation tool if we later decide to manage translations manually.
 
 ## Changelog
+### 0.8.3
+- Refactored the Erfaringer block to share server-side rendering with the shortcode, keeping front-end markup consistent and lin
+king cards to their posts.
+- Improved the block preview with REST-powered cards, loading feedback, and the same grid/list/timeline styles used on the fron
+t-end.
+- Added a fallback Select2 registration path for Experience metaboxes so the admin scripts load even if UV People is inactive.
 ### 0.8.2
 - Version bump to package the refreshed child theme styling and updated documentation; no core plugin changes.
 ### 0.8.1
