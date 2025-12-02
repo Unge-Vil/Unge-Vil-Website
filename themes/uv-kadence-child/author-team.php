@@ -107,10 +107,19 @@ if ($user instanceof WP_User) :
         if (function_exists('uv_core_get_experiences_for_user')) {
             $experiences = uv_core_get_experiences_for_user($uid);
             if ($experiences) {
+                $experiences_per_page = 5;
+                $has_extra            = count($experiences) > $experiences_per_page;
+
                 echo '<h2>' . esc_html__('Erfaringer i Unge Vil', 'uv-kadence-child') . '</h2>';
                 echo '<ul class="uv-experiences">';
-                foreach ($experiences as $exp) {
+                foreach (array_slice($experiences, 0, $experiences_per_page) as $exp) {
                     echo '<li><a href="' . esc_url(get_permalink($exp)) . '">' . esc_html(get_the_title($exp)) . '</a></li>';
+                }
+                if ($has_extra) {
+                    foreach (array_slice($experiences, $experiences_per_page) as $exp) {
+                        echo '<li class="uv-experiences-extra" hidden><a href="' . esc_url(get_permalink($exp)) . '">' . esc_html(get_the_title($exp)) . '</a></li>';
+                    }
+                    echo '<li class="uv-experiences-toggle-wrap"><button type="button" class="uv-experiences-toggle">' . esc_html__('Vis flere', 'uv-kadence-child') . '</button></li>';
                 }
                 echo '</ul>';
             } elseif (current_user_can('edit_users')) {
@@ -118,12 +127,14 @@ if ($user instanceof WP_User) :
             }
         }
 
+        $paged = max(1, absint(get_query_var('paged')), absint(get_query_var('page')));
         $articles_query = new WP_Query(
             array(
-                'author'        => $uid,
-                'post_type'     => 'post',
-                'posts_per_page' => -1,
-                'post_status'   => 'publish',
+                'author'         => $uid,
+                'post_type'      => 'post',
+                'posts_per_page' => 10,
+                'post_status'    => 'publish',
+                'paged'          => $paged,
             )
         );
         if ($articles_query->have_posts()) {
@@ -134,8 +145,42 @@ if ($user instanceof WP_User) :
                 echo '<li><a href="' . esc_url(get_permalink()) . '">' . esc_html(get_the_title()) . '</a></li>';
             }
             echo '</ul>';
+            echo '<div class="uv-articles-pagination">';
+            echo paginate_links(
+                array(
+                    'total'   => $articles_query->max_num_pages,
+                    'current' => $paged,
+                )
+            );
+            echo '</div>';
         }
         wp_reset_postdata();
+        ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var toggleButtons = document.querySelectorAll('.uv-experiences-toggle');
+                toggleButtons.forEach(function (button) {
+                    var list = button.closest('.uv-experiences');
+                    if (!list) {
+                        return;
+                    }
+                    var hiddenItems = list.querySelectorAll('.uv-experiences-extra');
+
+                    button.addEventListener('click', function () {
+                        var isHidden = hiddenItems.length && hiddenItems[0].hasAttribute('hidden');
+                        hiddenItems.forEach(function (item) {
+                            if (isHidden) {
+                                item.removeAttribute('hidden');
+                            } else {
+                                item.setAttribute('hidden', 'hidden');
+                            }
+                        });
+                        button.textContent = isHidden ? '<?php echo esc_js(esc_html__('Vis færre', 'uv-kadence-child')); ?>' : '<?php echo esc_js(esc_html__('Vis flere', 'uv-kadence-child')); ?>';
+                    });
+                });
+            });
+        </script>
+        <?php
         ?>
         </article>
     </div>
