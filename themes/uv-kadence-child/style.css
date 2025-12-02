@@ -68,7 +68,7 @@ img {
 .single-uv_experience .entry-content-wrap,
 .uv-team-container {
     max-width: min(800px, 100%);
-    margin: 0 auto;
+    margin: clamp(1.5rem, 5vw, 3rem) auto 0;
     padding: 0 clamp(1rem, 5vw, 2rem);
 }
 
