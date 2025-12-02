@@ -107,7 +107,7 @@ if ($user instanceof WP_User) :
         if (function_exists('uv_core_get_experiences_for_user')) {
             $experiences = uv_core_get_experiences_for_user($uid);
             if ($experiences) {
-                echo '<h2>' . esc_html__('Erfaringer', 'uv-kadence-child') . '</h2>';
+                echo '<h2>' . esc_html__('Erfaringer i Unge Vil', 'uv-kadence-child') . '</h2>';
                 echo '<ul class="uv-experiences">';
                 foreach ($experiences as $exp) {
                     echo '<li><a href="' . esc_url(get_permalink($exp)) . '">' . esc_html(get_the_title($exp)) . '</a></li>';

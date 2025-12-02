@@ -6,8 +6,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Experiences"
-msgstr "Erfaringer"
+msgid "Erfaringer i Unge Vil"
+msgstr "Erfaringer i Unge Vil"
 
 msgid "Articles"
 msgstr "Artikler"
