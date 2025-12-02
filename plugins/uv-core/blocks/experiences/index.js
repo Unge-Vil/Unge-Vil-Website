@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { PanelBody, RangeControl, SelectControl, Spinner } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
+import { PanelBody, RangeControl, SelectControl, Spinner, ToggleControl } from '@wordpress/components';
+import { Fragment, useEffect, useState } from '@wordpress/element';
 import { useEntityRecords } from '@wordpress/core-data';
 import metadata from './block.json';
 import './editor.css';
@@ -94,16 +94,53 @@ const ExperiencesPreview = ( { posts, layout, isLoading } ) => {
 };
 
 registerBlockType( metadata.name, {
-    edit( { attributes: { count, layout }, setAttributes } ) {
-        const { records: posts, isResolving, hasResolved } = useEntityRecords(
+    edit( { attributes: { count, layout, pagination }, setAttributes } ) {
+        const [ page, setPage ] = useState( 1 );
+        const [ loadedPosts, setLoadedPosts ] = useState( [] );
+        const {
+            records: posts,
+            isResolving,
+            hasResolved,
+            totalPages,
+        } = useEntityRecords(
             'postType',
             'uv_experience',
             {
                 per_page: count,
+                page,
                 _embed: true,
                 _fields: [ 'id', 'title', 'excerpt', 'link', 'meta', 'featured_media' ],
             }
         );
+
+        useEffect( () => {
+            setPage( 1 );
+            setLoadedPosts( [] );
+        }, [ count, pagination ] );
+
+        useEffect( () => {
+            if ( ! hasResolved || ! Array.isArray( posts ) ) {
+                return;
+            }
+
+            setLoadedPosts( ( current ) => {
+                if ( page === 1 ) {
+                    return posts;
+                }
+
+                const seenIds = new Set( current.map( ( post ) => post.id ) );
+                const merged = [ ...current ];
+                posts.forEach( ( post ) => {
+                    if ( ! seenIds.has( post.id ) ) {
+                        merged.push( post );
+                    }
+                } );
+
+                return merged;
+            } );
+        }, [ posts, hasResolved, page ] );
+
+        const hasMorePages = pagination && ( totalPages ? page < totalPages : false );
 
         return (
             <Fragment>
@@ -112,7 +149,7 @@ registerBlockType( metadata.name, {
                         <RangeControl
                             label={ __( 'Antall', 'uv-core' ) }
                             min={ 1 }
-                            max={ 10 }
+                            max={ 20 }
                             value={ count }
                             onChange={ ( value ) => setAttributes( { count: value } ) }
                         />
@@ -126,14 +163,38 @@ registerBlockType( metadata.name, {
                                 { label: __( 'Tidslinje', 'uv-core' ), value: 'timeline' },
                             ] }
                         />
+                        <ToggleControl
+                            label={ __( 'Aktiver paginering', 'uv-core' ) }
+                            checked={ pagination }
+                            onChange={ ( value ) => setAttributes( { pagination: value } ) }
+                            help={ __( 'Vis en knapp for å hente flere erfaringer.', 'uv-core' ) }
+                        />
                     </PanelBody>
                 </InspectorControls>
 
                 <div { ...useBlockProps() }>
                     { hasResolved && Array.isArray( posts ) ? (
-                        <ExperiencesPreview posts={ posts } layout={ layout } isLoading={ false } />
+                        <ExperiencesPreview
+                            posts={ loadedPosts }
+                            layout={ layout }
+                            isLoading={ false }
+                        />
                     ) : (
                         <ExperiencesPreview posts={ [] } layout={ layout } isLoading={ isResolving } />
+                    ) }
+                    { pagination && (
+                        <div className="uv-block-pagination">
+                            <button
+                                className="uv-button"
+                                type="button"
+                                disabled={ isResolving || ! hasMorePages }
+                                onClick={ () => setPage( ( value ) => value + 1 ) }
+                            >
+                                { hasMorePages
+                                    ? __( 'Last inn flere', 'uv-core' )
+                                    : __( 'Alle erfaringer er lastet inn', 'uv-core' ) }
+                            </button>
+                        </div>
                     ) }
                 </div>
             </Fragment>

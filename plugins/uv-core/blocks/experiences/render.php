@@ -16,19 +16,26 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
      */
     function uv_core_render_experiences_block( array $attributes ): string {
         $defaults   = [
-            'count'  => 3,
-            'layout' => 'grid',
+            'count'      => 3,
+            'layout'     => 'grid',
+            'pagination' => false,
         ];
         $attributes = wp_parse_args( $attributes, $defaults );
 
         $count  = max( 1, (int) $attributes['count'] );
         $layout = in_array( $attributes['layout'], [ 'list', 'grid', 'timeline' ], true ) ? $attributes['layout'] : 'grid';
 
+        $paged         = ! empty( $attributes['pagination'] ) ? max( 1, (int) get_query_var( 'paged', 1 ) ) : 1;
+        $offset        = max( 0, ( $paged - 1 ) * $count );
+        $should_paginate = ! empty( $attributes['pagination'] );
+
         $query = new WP_Query(
             [
                 'post_type'      => 'uv_experience',
                 'posts_per_page' => $count,
-                'no_found_rows'  => true,
+                'paged'          => $paged,
+                'offset'         => $offset,
+                'no_found_rows'  => ! $should_paginate,
             ]
         );
 
