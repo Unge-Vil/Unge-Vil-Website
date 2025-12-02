@@ -1,8 +1,18 @@
 jQuery(function($){
     function initSelect2(){
-        if ($.fn.select2) {
-            $(".uv-location-select, .uv-primary-location-select").select2();
+        if (!$.fn.select2) {
+            return;
         }
+
+        $(".uv-location-select").select2({
+            allowClear: true,
+            placeholder: "Velg steder"
+        });
+
+        $(".uv-primary-location-select").select2({
+            allowClear: true,
+            placeholder: "Velg primærsteder"
+        });
     }
     initSelect2();
 
