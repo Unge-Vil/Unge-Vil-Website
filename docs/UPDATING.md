@@ -1,6 +1,6 @@
 # Updating from GitHub releases
 
-*Latest release: 0.8.3 – Rebuilt the Erfaringer block with server-side rendering shared with the shortcode, richer editor previews, and safer Select2 loading for Experience admin fields.*
+*Latest release: 0.8.4 – Experiences now group by year with optional year filtering, and author pages paginate experiences/articles with clearer headings.*
 
 ## 1. Get the new ZIPs
 1. Visit the repository's [Releases](https://github.com/ungevil/Unge-Vil-Website/releases) page.

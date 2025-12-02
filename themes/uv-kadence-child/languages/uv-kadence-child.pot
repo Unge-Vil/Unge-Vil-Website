@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: uv-kadence-child 0.8.3\n"
+"Project-Id-Version: uv-kadence-child 0.8.4\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,3 +23,9 @@ msgstr "E-post:"
 
 msgid "Mobil:"
 msgstr "Mobil:"
+
+msgid "Vis flere"
+msgstr "Vis flere"
+
+msgid "Vis færre"
+msgstr "Vis færre"
