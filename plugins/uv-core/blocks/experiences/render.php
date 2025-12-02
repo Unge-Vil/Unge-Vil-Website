@@ -38,7 +38,8 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
         ];
         $attributes = wp_parse_args( $attributes, $defaults );
 
-        $count  = max( 1, (int) $attributes['count'] );
+        $max_count = 100;
+        $count     = max( 1, min( $max_count, (int) $attributes['count'] ) );
         $layout = in_array( $attributes['layout'], [ 'list', 'grid', 'timeline' ], true ) ? $attributes['layout'] : 'grid';
         $year   = sanitize_text_field( (string) $attributes['year'] );
 
@@ -66,7 +67,26 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
 
         $query = new WP_Query( $query_args );
 
+        $has_more_pages = $should_paginate && ( $query->max_num_pages > $paged );
+        $wrapper_attributes = get_block_wrapper_attributes(
+            [
+                'data-count'         => (string) $count,
+                'data-layout'        => $layout,
+                'data-year'          => $year,
+                'data-pagination'    => $should_paginate ? '1' : '0',
+                'data-page'          => (string) $paged,
+                'data-total-pages'   => (string) max( 1, (int) $query->max_num_pages ),
+                'data-rest-url'      => esc_url_raw( rest_url( 'wp/v2/uv_experience' ) ),
+                'data-load-more-text' => esc_attr__( 'Last inn flere', 'uv-core' ),
+                'data-loaded-text'    => esc_attr__( 'Alle erfaringer er lastet inn', 'uv-core' ),
+                'data-loading-text'   => esc_attr__( 'Laster…', 'uv-core' ),
+                'data-error-text'     => esc_attr__( 'Kunne ikke laste flere erfaringer.', 'uv-core' ),
+            ]
+        );
+
         ob_start();
+
+        echo '<div ' . $wrapper_attributes . '>';
 
         if ( $query->have_posts() ) {
             $wrapper_classes    = [ 'uv-experiences', 'uv-experiences--' . $layout ];
@@ -129,9 +149,15 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
 
             echo '<ul class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
             foreach ( $experiences_by_year as $year => $cards ) {
-                echo '<li class="uv-experiences__year-group">';
+                echo '<li class="uv-experiences__year-group" data-year="' . esc_attr( (string) $year ) . '">';
                 echo '<div class="uv-experiences__year-heading">' . esc_html( (string) $year ) . '</div>';
-                echo '<ul class="uv-experiences__year-list ' . esc_attr( implode( ' ', $group_list_classes ) ) . '">';
+                $group_classes = 'uv-experiences__year-list';
+
+                if ( ! empty( $group_list_classes ) ) {
+                    $group_classes .= ' ' . implode( ' ', $group_list_classes );
+                }
+
+                echo '<ul class="' . esc_attr( $group_classes ) . '">';
                 foreach ( $cards as $card_html ) {
                     echo $card_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 }
@@ -142,6 +168,24 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
         } elseif ( is_admin() || wp_is_json_request() ) {
             echo '<div class="uv-block-placeholder">' . esc_html__( 'Ingen erfaringer funnet.', 'uv-core' ) . '</div>';
         }
+
+        if ( $should_paginate ) {
+            echo '<div class="uv-block-pagination">';
+            echo '<button class="uv-button uv-experiences__load-more" type="button" data-action="load-more"';
+            if ( ! $has_more_pages ) {
+                echo ' disabled aria-disabled="true"';
+            }
+            echo '>';
+            echo esc_html(
+                $has_more_pages
+                    ? __( 'Last inn flere', 'uv-core' )
+                    : __( 'Alle erfaringer er lastet inn', 'uv-core' )
+            );
+            echo '</button>';
+            echo '</div>';
+        }
+
+        echo '</div>';
 
         wp_reset_postdata();
 

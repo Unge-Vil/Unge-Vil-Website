@@ -226,7 +226,7 @@ registerBlockType( metadata.name, {
                         <RangeControl
                             label={ __( 'Antall', 'uv-core' ) }
                             min={ 1 }
-                            max={ 20 }
+                            max={ 100 }
                             value={ count }
                             onChange={ ( value ) => setAttributes( { count: value } ) }
                         />
