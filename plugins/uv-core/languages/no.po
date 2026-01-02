@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: uv-core 0.8.4\n"
+"Project-Id-Version: uv-core 0.8.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-08-29 19:58+0000\n"
 "PO-Revision-Date: 2025-09-19 09:17+0200\n"
