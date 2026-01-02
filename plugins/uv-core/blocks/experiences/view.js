@@ -54,7 +54,7 @@
             icon.className = 'uv-card-icon';
             icon.setAttribute('aria-hidden', 'true');
             icon.innerHTML =
-                '<svg viewBox="0 0 24 24" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M12 3.75a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5.25 19.5a6.75 6.75 0 0 1 13.5 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
             anchor.appendChild(icon);
         }
 
