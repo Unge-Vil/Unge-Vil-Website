@@ -34,47 +34,42 @@ const ExperienceCard = ( { post, year } ) => {
 
     return (
         <li className="uv-card uv-card--experience">
-            { thumbnail ? (
-                <img src={ thumbnail } alt={ post.title.rendered } />
-            ) : (
-                <div className="uv-card-icon" aria-hidden="true">
-                    <svg
-                        viewBox="0 0 24 24"
-                        role="img"
-                        focusable="false"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="M12 3.75a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"
+            <a href={ post.link ?? '#' } onClick={ ( event ) => event.preventDefault() }>
+                { thumbnail ? (
+                    <img src={ thumbnail } alt={ post.title.rendered } />
+                ) : (
+                    <div className="uv-card-icon" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
-                            strokeWidth="1.5"
-                        />
-                        <path
-                            d="M5.25 19.5a6.75 6.75 0 0 1 13.5 0"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
+                            strokeWidth="2"
                             strokeLinecap="round"
-                        />
-                    </svg>
+                            strokeLinejoin="round"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                        >
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                ) }
+                <div className="uv-card-body">
+                    <div className="uv-card-meta__year">{ year }</div>
+                    <h3>{ post.title.rendered }</h3>
+                    { ( metaOrg || metaDates ) && (
+                        <div className="uv-card-meta">
+                            { metaOrg && <div className="uv-card-meta__org">{ metaOrg }</div> }
+                            { metaDates && <div className="uv-card-meta__dates">{ metaDates }</div> }
+                        </div>
+                    ) }
+                    { post.excerpt?.rendered && (
+                        <div className="uv-card-excerpt">
+                            <span dangerouslySetInnerHTML={ { __html: post.excerpt.rendered } } />
+                        </div>
+                    ) }
                 </div>
-            ) }
-            <div className="uv-card-body">
-                <div className="uv-card-meta__year">{ year }</div>
-                <h3>{ post.title.rendered }</h3>
-                { ( metaOrg || metaDates ) && (
-                    <div className="uv-card-meta">
-                        { metaOrg && <div className="uv-card-meta__org">{ metaOrg }</div> }
-                        { metaDates && <div className="uv-card-meta__dates">{ metaDates }</div> }
-                    </div>
-                ) }
-                { post.excerpt?.rendered && (
-                    <div className="uv-card-excerpt">
-                        <span dangerouslySetInnerHTML={ { __html: post.excerpt.rendered } } />
-                    </div>
-                ) }
-            </div>
+            </a>
         </li>
     );
 };
