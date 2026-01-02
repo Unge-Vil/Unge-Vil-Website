@@ -1,6 +1,8 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.8.5
+- Clarified the team manager primary contact label and improved location selectors with placeholders and clearable options.
 ### 0.8.4
 - Added show/hide controls for long experience lists on author pages and paginated author article archives.
 - Updated the author experience heading and increased top spacing on team/experience layouts to clear the sticky header.

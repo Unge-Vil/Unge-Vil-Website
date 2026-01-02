@@ -33,6 +33,9 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Production relies on **GTranslate** for automatic Norwegian↔English switching, but you can still add `.po/.mo` files in a `languages/` folder or use another translation tool if we later decide to manage translations manually.
 
 ## Changelog
+### 0.8.5
+- Added load-more pagination to the Experiences block and exposed data attributes for front-end fetching.
+- Restyled experience cards (including icon updates), removed list markers, and raised the block count cap to support larger lists.
 ### 0.8.4
 - Group experiences by year in both the editor preview and front-end output with year headings.
 - Added an optional year filter/date query to the Experiences block plus proper pagination offsets so paged results stay in sync.
