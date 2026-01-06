@@ -1,7 +1,7 @@
 # Unge Vil Website – Starter Kit
 
 ## Executive Summary (Plain Language)
-- **Goal by Sept 1:** Launch a fast, accessible site with Home, core info pages, and location-based **Team pages** (primary contacts highlighted). Norwegian first; English ready.
+- **Goal by Sept 1:** Launch a fast, accessible site with Home, core info pages, and location-based **Team pages** (primary contacts highlighted). Public site content is written in Norwegian and translated automatically with GTranslate.
 - **Admin:** Clean, branded Control Panel in English; link to our Google Workspace docs.
 - **Accessibility & SEO:** Built-in best practices; editors add alt text and clear headings.
 - **Future-proof:** Small, readable plugins; easy to extend. Volunteers welcome — this is largely vibe-coded with help from ChatGPT, so expert contributors are invited!
@@ -44,7 +44,7 @@ It’s designed for **shared hosting**, with a focus on **accessibility, perform
 - **0.8.3:** Rebuilt the Erfaringer block with shared server-side rendering/shortcodes, richer editor previews, and a fallback Select2 loader for experience metaboxes.
 - **0.8.4:** Experiences are grouped and filterable by year with paginated results; author pages add show/hide controls for long experience lists and paginate related articles.
 - **0.8.5:** Experiences block adds load-more pagination and refreshed card styling; team manager selectors get clearer labels/placeholders.
-- **1.0.0:** Fully bilingual content with streamlined deployment and contributor workflows (first stable bilingual milestone).
+- **1.0.0:** GTranslate-based automatic translation; Norwegian-first content and streamlined deployment/contributor workflows.
 - **1.0.12:** Current release tracked in `package.json`.
 
 ## Contents
@@ -73,7 +73,7 @@ Our WordPress stack is now stable for locations/avdelinger, team profiles, partn
 - Organization type: Non‑profit / volunteer‑driven
 
 ## Admin & Docs
-- **WP Admin language:** English is the default for all custom UI. (Public site content can be Norwegian/English.)
+- **WP Admin language:** English is the default for all custom UI. (WP Admin UI can stay in English while public content is authored primarily in Norwegian with automatic translation.)
 - **Control Panel:** Create a WordPress page to serve as the Control Panel for editors. Build it with Kadence blocks and add big buttons linking to common admin tasks (News, Media, Pages, etc.).
 - **Docs:** Host internal guides on your Google Workspace Site and link to them from your Control Panel page.
 
@@ -107,6 +107,7 @@ Our WordPress stack is now stable for locations/avdelinger, team profiles, partn
 ## Translation
 - The site uses **GTranslate** for automatic language switching; no manual Polylang setup is required.
 - All strings use `__()` with text domains: `uv-core`, `uv-people`, `uv-kadence-child`, so `.po/.mo` files still work if we add manual translations later.
+- Optional manual translations can be added later if needed; the default strategy is Norwegian-first content with automatic translation.
 - Person names and role titles are marked `notranslate`; avoid overriding that behavior so people data stays consistent across languages.
 
 ## Staging on Shared Host
