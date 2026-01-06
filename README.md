@@ -10,7 +10,10 @@
 This repository bootstraps the **Kadence child theme** and two lightweight plugins for the Unge Vil website.
 It’s designed for **shared hosting**, with a focus on **accessibility, performance, and translation readiness**.
 
-## Roadmap
+## Roadmap (Planned)
+- **Next (1.0.x):** Event integrations once we receive the Påmeldinger.no API details.
+
+## Changelog (Released)
 - **0.5.1:** Runtime environment checks and unique version constants.
 - **0.5.2:** Bug fixes and maintenance release.
 - **0.5.3:** Version bump for release.
@@ -37,11 +40,12 @@ It’s designed for **shared hosting**, with a focus on **accessibility, perform
 - **0.7.8:** Experience CTAs refreshed, partner logos sized consistently, and admin selectors improved.
 - **0.7.9:** Removed Polylang dependencies from team displays, prevented auto-translation of names/roles, and cleaned up Experience templates.
 - **0.8.0:** Added grid/list/timeline layouts for Experiences, refreshed card styling with fallbacks, translated Experience UI labels to Norwegian, and narrowed Experience page content for readability.
-- **0.8.5:** Experiences block adds load-more pagination and refreshed card styling; team manager selectors get clearer labels/placeholders.
-- **0.8.4:** Experiences are grouped and filterable by year with paginated results; author pages add show/hide controls for long experience lists and paginate related articles.
-- **0.8.3:** Rebuilt the Erfaringer block with shared server-side rendering/shortcodes, richer editor previews, and a fallback Select2 loader for experience metaboxes.
 - **0.8.1:** Added manual/automatic team cache clearing and set block metadata for the Experiences title.
-- **1.0.0:** Fully bilingual content with streamlined deployment and contributor workflows.
+- **0.8.3:** Rebuilt the Erfaringer block with shared server-side rendering/shortcodes, richer editor previews, and a fallback Select2 loader for experience metaboxes.
+- **0.8.4:** Experiences are grouped and filterable by year with paginated results; author pages add show/hide controls for long experience lists and paginate related articles.
+- **0.8.5:** Experiences block adds load-more pagination and refreshed card styling; team manager selectors get clearer labels/placeholders.
+- **1.0.0:** Fully bilingual content with streamlined deployment and contributor workflows (first stable bilingual milestone).
+- **1.0.12:** Current release tracked in `package.json`.
 
 ## Contents
 - `themes/uv-kadence-child/` – Kadence child theme (styles, small a11y tweaks).
