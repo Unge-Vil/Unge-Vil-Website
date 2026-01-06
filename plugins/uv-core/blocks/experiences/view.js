@@ -32,10 +32,9 @@
         return classes.join(' ');
     };
 
-    const createCard = (post, year) => {
+    const createCard = (post) => {
         const metaOrg = post?.meta?.uv_experience_org;
         const metaDates = post?.meta?.uv_experience_dates;
-        const thumbnail = post?._embedded?.['wp:featuredmedia']?.[0]?.source_url;
 
         const item = document.createElement('li');
         item.className = 'uv-card uv-card--experience';
@@ -44,29 +43,10 @@
         anchor.href = post?.link ?? '#';
         anchor.rel = 'bookmark';
 
-        if (thumbnail) {
-            const img = document.createElement('img');
-            img.src = thumbnail;
-            img.alt = post?.title?.rendered ?? '';
-            anchor.appendChild(img);
-        } else {
-            const icon = document.createElement('div');
-            icon.className = 'uv-card-icon';
-            icon.setAttribute('aria-hidden', 'true');
-            icon.innerHTML =
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
-            anchor.appendChild(icon);
-        }
-
         const body = document.createElement('div');
         body.className = 'uv-card-body';
 
-        const yearEl = document.createElement('div');
-        yearEl.className = 'uv-card-meta__year';
-        yearEl.textContent = year;
-        body.appendChild(yearEl);
-
-        const heading = document.createElement('h3');
+        const heading = document.createElement('h4');
         heading.textContent = post?.title?.rendered ?? '';
         body.appendChild(heading);
 
@@ -117,7 +97,7 @@
         group.className = 'uv-experiences__year-group';
         group.dataset.year = year;
 
-        const heading = document.createElement('div');
+        const heading = document.createElement('h3');
         heading.className = 'uv-experiences__year-heading';
         heading.textContent = year;
 
@@ -150,7 +130,7 @@
             const year = getExperienceYear(post) || '';
             const yearList = ensureYearList(experiencesList, year, layout);
 
-            yearList.appendChild(createCard(post, year));
+            yearList.appendChild(createCard(post));
         });
     };
 
@@ -171,7 +151,6 @@
         const restUrl = block.dataset.restUrl || '/wp-json/wp/v2/uv_experience';
 
         const loadMoreText = block.dataset.loadMoreText || 'Last inn flere';
-        const loadedText = block.dataset.loadedText || 'Alle erfaringer er lastet inn';
         const loadingText = block.dataset.loadingText || 'Laster…';
         const errorText = block.dataset.errorText || 'Kunne ikke laste flere erfaringer.';
 
@@ -189,12 +168,13 @@
             const hasMore = page < totalPages;
 
             if (!hasMore) {
-                loadMoreButton.disabled = true;
-                loadMoreButton.textContent = loadedText;
-                loadMoreButton.setAttribute('aria-disabled', 'true');
+                loadMoreButton.hidden = true;
+                loadMoreButton.setAttribute('aria-hidden', 'true');
                 return;
             }
 
+            loadMoreButton.hidden = false;
+            loadMoreButton.removeAttribute('aria-hidden');
             loadMoreButton.disabled = isLoading;
             loadMoreButton.textContent = isLoading ? loadingText : loadMoreText;
             loadMoreButton.removeAttribute('aria-disabled');

@@ -27,36 +27,15 @@ const getExperienceYear = ( post ) => {
     return '';
 };
 
-const ExperienceCard = ( { post, year } ) => {
+const ExperienceCard = ( { post } ) => {
     const metaOrg = post.meta?.uv_experience_org;
     const metaDates = post.meta?.uv_experience_dates;
-    const thumbnail = post._embedded?.['wp:featuredmedia']?.[ 0 ]?.source_url;
 
     return (
         <li className="uv-card uv-card--experience">
             <a href={ post.link ?? '#' } onClick={ ( event ) => event.preventDefault() }>
-                { thumbnail ? (
-                    <img src={ thumbnail } alt={ post.title.rendered } />
-                ) : (
-                    <div className="uv-card-icon" aria-hidden="true">
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                        >
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
-                    </div>
-                ) }
                 <div className="uv-card-body">
-                    <div className="uv-card-meta__year">{ year }</div>
-                    <h3>{ post.title.rendered }</h3>
+                    <h4>{ post.title.rendered }</h4>
                     { ( metaOrg || metaDates ) && (
                         <div className="uv-card-meta">
                             { metaOrg && <div className="uv-card-meta__org">{ metaOrg }</div> }
@@ -120,13 +99,12 @@ const ExperiencesPreview = ( { posts, layout, isLoading } ) => {
         <ul className={ baseClasses.join( ' ' ) }>
             { groupedPosts.map( ( { year, items } ) => (
                 <li key={ year } className="uv-experiences__year-group">
-                    <div className="uv-experiences__year-heading">{ year }</div>
+                    <h3 className="uv-experiences__year-heading">{ year }</h3>
                     <ul className={ groupListClasses.join( ' ' ) }>
                         { items.map( ( post ) => (
                             <ExperienceCard
                                 key={ post.id }
                                 post={ post }
-                                year={ getExperienceYear( post ) }
                             />
                         ) ) }
                     </ul>
@@ -261,17 +239,15 @@ registerBlockType( metadata.name, {
                     ) : (
                         <ExperiencesPreview posts={ [] } layout={ layout } isLoading={ isResolving } />
                     ) }
-                    { pagination && (
+                    { pagination && hasMorePages && (
                         <div className="uv-block-pagination">
                             <button
                                 className="uv-button"
                                 type="button"
-                                disabled={ isResolving || ! hasMorePages }
+                                disabled={ isResolving }
                                 onClick={ () => setPage( ( value ) => value + 1 ) }
                             >
-                                { hasMorePages
-                                    ? __( 'Last inn flere', 'uv-core' )
-                                    : __( 'Alle erfaringer er lastet inn', 'uv-core' ) }
+                                { __( 'Last inn flere', 'uv-core' ) }
                             </button>
                         </div>
                     ) }
