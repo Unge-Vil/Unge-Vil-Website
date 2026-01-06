@@ -1,0 +1,44 @@
+body.login {
+    background: #0d0d0d url('../img/uvbackground.jpg') center center / cover no-repeat fixed;
+    min-height: 100vh;
+}
+
+body.login #login {
+    width: min(92vw, 420px);
+    padding: 0;
+}
+
+body.login #login h1 a {
+    background-image: url('../img/UngeVil_admin_logo.png');
+    background-position: center;
+    background-size: contain;
+    height: 120px;
+    width: 100%;
+}
+
+body.login #login form {
+    border-radius: 16px;
+    padding: 28px 28px 24px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+body.login .button-primary {
+    background: #9900ff;
+    border-color: #9900ff;
+    box-shadow: none;
+}
+
+body.login .button-primary:hover,
+body.login .button-primary:focus {
+    background: #7b00cc;
+    border-color: #7b00cc;
+}
+
+body.login a {
+    color: #9900ff;
+}
+
+body.login a:hover,
+body.login a:focus {
+    color: #7b00cc;
+}

@@ -37,6 +37,20 @@ add_action('wp_enqueue_scripts', function() {
     );
 });
 
+// Style the WordPress login page with UV branding.
+add_action('login_enqueue_scripts', function() {
+    wp_enqueue_style(
+        'uv-login',
+        get_stylesheet_directory_uri() . '/assets/css/login.css',
+        [],
+        wp_get_theme()->get('Version')
+    );
+});
+
+add_filter('login_headerurl', function() {
+    return home_url('/');
+});
+
 // Image sizes for cards/avatars
 add_action('after_setup_theme', function() {
     add_image_size('uv_card', 800, 600, true);
