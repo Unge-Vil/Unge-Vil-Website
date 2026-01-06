@@ -13,10 +13,10 @@
 
 ## Day 2–4: Team
 - Add users for each team member (editors if they publish posts, authors otherwise).
-- For each user: avatar, role per location (Team Assignments), primary contact flag, phone/email toggles, quotes (NB + EN).
+- For each user: avatar, role per location (Team Assignments), primary contact flag, phone/email toggles, quotes (write in Norwegian; GTranslate handles English).
 
 ## Day 3–6: Content
-- Write short blurbs (80–140 words) for each page. Add 1–2 images with alt text.
+- Write short blurbs (80–140 words) for each page in Norwegian; GTranslate handles English. Add 1–2 images with alt text.
 - Add 3–6 news posts (assign Location when relevant).
 
 ## Day 6–7: Review
@@ -24,4 +24,4 @@
 - SEO pass (titles, slugs, meta; internal links).
 - Set up sitemaps in SEO plugin; submit to Google Search Console.
 
-*Optional after launch: Partner directory, English translations, automation/import tools.*
+*Optional after launch: Partner directory, manual translation improvements if needed, automation/import tools.*
