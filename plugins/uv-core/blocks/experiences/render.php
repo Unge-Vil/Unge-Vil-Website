@@ -78,7 +78,6 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
                 'data-total-pages'   => (string) max( 1, (int) $query->max_num_pages ),
                 'data-rest-url'      => esc_url_raw( rest_url( 'wp/v2/uv_experience' ) ),
                 'data-load-more-text' => esc_attr__( 'Last inn flere', 'uv-core' ),
-                'data-loaded-text'    => esc_attr__( 'Alle erfaringer er lastet inn', 'uv-core' ),
                 'data-loading-text'   => esc_attr__( 'Laster…', 'uv-core' ),
                 'data-error-text'     => esc_attr__( 'Kunne ikke laste flere erfaringer.', 'uv-core' ),
             ]
@@ -106,28 +105,13 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
                 $query->the_post();
                 $org       = get_post_meta( get_the_ID(), 'uv_experience_org', true );
                 $dates     = get_post_meta( get_the_ID(), 'uv_experience_dates', true );
-                $has_thumb = has_post_thumbnail();
                 $year      = uv_core_get_experience_year( (string) $dates, get_the_ID() );
 
                 ob_start();
                 echo '<li class="uv-card uv-card--experience">';
                 echo '<a href="' . esc_url( get_permalink() ) . '">';
-                if ( $has_thumb ) {
-                    echo wp_get_attachment_image(
-                        get_post_thumbnail_id(),
-                        'uv_card',
-                        false,
-                        [
-                            'alt' => esc_attr( get_the_title() ),
-                        ]
-                    );
-                } else {
-                    echo '<div class="uv-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>';
-                }
-
                 echo '<div class="uv-card-body">';
-                echo '<div class="uv-card-meta__year">' . esc_html( $year ) . '</div>';
-                echo '<h3>' . esc_html( get_the_title() ) . '</h3>';
+                echo '<h4>' . esc_html( get_the_title() ) . '</h4>';
                 if ( $org || $dates ) {
                     echo '<div class="uv-card-meta">';
                     if ( $org ) {
@@ -150,7 +134,7 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
             echo '<ul class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
             foreach ( $experiences_by_year as $year => $cards ) {
                 echo '<li class="uv-experiences__year-group" data-year="' . esc_attr( (string) $year ) . '">';
-                echo '<div class="uv-experiences__year-heading">' . esc_html( (string) $year ) . '</div>';
+                echo '<h3 class="uv-experiences__year-heading">' . esc_html( (string) $year ) . '</h3>';
                 $group_classes = 'uv-experiences__year-list';
 
                 if ( ! empty( $group_list_classes ) ) {
@@ -169,18 +153,11 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
             echo '<div class="uv-block-placeholder">' . esc_html__( 'Ingen erfaringer funnet.', 'uv-core' ) . '</div>';
         }
 
-        if ( $should_paginate ) {
+        if ( $should_paginate && $has_more_pages ) {
             echo '<div class="uv-block-pagination">';
             echo '<button class="uv-button uv-experiences__load-more" type="button" data-action="load-more"';
-            if ( ! $has_more_pages ) {
-                echo ' disabled aria-disabled="true"';
-            }
             echo '>';
-            echo esc_html(
-                $has_more_pages
-                    ? __( 'Last inn flere', 'uv-core' )
-                    : __( 'Alle erfaringer er lastet inn', 'uv-core' )
-            );
+            echo esc_html( __( 'Last inn flere', 'uv-core' ) );
             echo '</button>';
             echo '</div>';
         }
@@ -192,4 +169,3 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
         return ob_get_clean();
     }
 }
-

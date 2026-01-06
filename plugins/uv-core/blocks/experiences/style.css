@@ -1,6 +1,6 @@
 .uv-card-list {
     display: grid;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: stretch;
 }
 
@@ -11,7 +11,7 @@
 }
 
 .uv-experiences--grid {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .uv-experiences--list {
@@ -34,7 +34,7 @@
 
 @media (min-width: 900px) {
     .uv-card-grid.columns-3 {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
@@ -49,10 +49,10 @@
 .uv-card--experience > a {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: stretch;
     height: 100%;
-    padding: 1.25rem;
+    padding: 1rem;
     border-radius: 16px;
     border: 1px solid #e6eaf2;
     background: #fff;
@@ -75,31 +75,6 @@
     outline-offset: 3px;
 }
 
-.uv-card--experience img,
-.uv-card--experience .uv-card-icon {
-    width: 100%;
-    height: 180px;
-    border-radius: 12px;
-}
-
-.uv-card--experience img {
-    object-fit: cover;
-}
-
-.uv-card-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #f5f0ff, #fff8d7);
-    color: var(--uv-purple, #7a00cc);
-    border: 1px solid #ece4ff;
-}
-
-.uv-card-icon svg {
-    width: 48px;
-    height: 48px;
-}
-
 .uv-card--experience .uv-card-body {
     padding: 0;
     display: flex;
@@ -108,15 +83,14 @@
     flex: 1;
 }
 
-.uv-card-meta__year {
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--uv-purple, #7a00cc);
+.uv-experiences__year-heading {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
     font-weight: 700;
+    color: #1f2937;
 }
 
-.uv-card--experience h3 {
+.uv-card--experience h4 {
     margin: 0;
     font-size: 1.15rem;
 }
