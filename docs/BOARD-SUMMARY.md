@@ -4,11 +4,11 @@
 - Home page (hero, locations, two call-to-action banners, latest news)
 - “Who we are” pages, donation info, concept/model pages
 - Team pages per location with primary contacts clearly highlighted
-- English-ready (we start in Norwegian but can translate later)
+- English-ready via automatic translation (GTranslate)
 
 **Later phases (after launch):**
 - Partner directory
-- Advanced translations for content
+- Optional manual translations if needed (not a planned milestone)
 - More automation/import tools
 
 **Why this approach:** It is low-cost, accessible, fast, and easy to maintain. Editors can add news and update team info without technical skills.
@@ -21,11 +21,11 @@
 **How volunteers help:**
 - Write short “who we are” and “what we do” texts.
 - Provide photos (landscape 16:9 for pages, square for avatars/logos).
-- Add team quotes (Norwegian + optional English).
+- Add team quotes (Norwegian only is sufficient; GTranslate handles English display).
 
 **Risks & mitigations:**
 - Limited dev time → We intentionally keep code small and use WordPress standards.
-- Translations take time → We launch Norwegian first, add English gradually.
+- Translations take time → Norwegian first with automatic English via GTranslate; manual translations optional only if needed.
 - Content bottleneck → We run a short “content sprint” (checklist provided) to gather everything quickly.
 
 **Looking for helpers:** Much of the code was created with assistance from ChatGPT (“vibe-coded”). We welcome contributors who know WordPress/PHP to review and improve it.
