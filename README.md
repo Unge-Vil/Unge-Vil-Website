@@ -45,7 +45,8 @@ It’s designed for **shared hosting**, with a focus on **accessibility, perform
 - **0.8.4:** Experiences are grouped and filterable by year with paginated results; author pages add show/hide controls for long experience lists and paginate related articles.
 - **0.8.5:** Experiences block adds load-more pagination and refreshed card styling; team manager selectors get clearer labels/placeholders.
 - **1.0.0:** GTranslate-based automatic translation; Norwegian-first content and streamlined deployment/contributor workflows.
-- **1.0.12:** Current release tracked in `package.json`.
+- **1.0.12:** Previous release tracked in `package.json`.
+- **1.0.13:** Refreshed Experiences cards and pagination UI, added UV-branded login styling, and updated translation guidance across docs.
 
 ## Contents
 - `themes/uv-kadence-child/` – Kadence child theme (styles, small a11y tweaks).

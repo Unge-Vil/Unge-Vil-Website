@@ -1,6 +1,8 @@
 Kadence child theme for Unge Vil.
 
 ## Changelog
+### 0.8.6
+- Added UV-branded login page styling with a custom background image.
 ### 0.8.5
 - Clarified the team manager primary contact label and improved location selectors with placeholders and clearable options.
 ### 0.8.4
