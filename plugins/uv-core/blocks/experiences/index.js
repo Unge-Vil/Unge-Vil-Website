@@ -120,7 +120,6 @@ registerBlockType( metadata.name, {
         const [ loadedPosts, setLoadedPosts ] = useState( [] );
         const { records: yearPosts } = useEntityRecords( 'postType', 'uv_experience', {
             per_page: 100,
-            _fields: [ 'id', 'meta', 'date' ],
         } );
         const {
             records: posts,
@@ -133,8 +132,6 @@ registerBlockType( metadata.name, {
             {
                 per_page: count,
                 page,
-                _embed: true,
-                _fields: [ 'id', 'title', 'excerpt', 'link', 'meta', 'featured_media', 'date' ],
                 ...( year
                     ? {
                             after: `${ year }-01-01`,

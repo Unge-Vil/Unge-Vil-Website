@@ -33,6 +33,8 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Production relies on **GTranslate** for automatic Norwegian↔English switching, but you can still add `.po/.mo` files in a `languages/` folder or use another translation tool if we later decide to manage translations manually.
 
 ## Changelog
+### 0.8.8
+- Hardened Experiences editor REST queries by removing strict WAF-sensitive parameters (`_fields`/`_embed`) to reduce 406 errors during post editing in production.
 ### 0.8.7
 - Version bump for release to support clean upgrade installs (406 hotfix release).
 ### 0.8.6
