@@ -1,10 +1,10 @@
 # Updating from GitHub releases
 
-*Latest release: 0.8.6 – Experiences cards were refreshed with tighter layouts and streamlined pagination, plus a UV-branded login screen.*
+*Latest release: 0.8.7 – Plugin version bump to support clean upgrade installs (406 hotfix release).*
 
 ## 1. Get the new ZIPs
 1. Visit the repository's [Releases](https://github.com/ungevil/Unge-Vil-Website/releases) page.
-2. Download the newest `uv-kadence-child` theme ZIP and plugin ZIPs (`uv-core`, `uv-people`) for the latest version (e.g. `0.8.6`).
+2. Download the newest `uv-kadence-child` theme ZIP and plugin ZIPs (`uv-core`, `uv-people`) for the latest version (e.g. `0.8.7`).
 
 ## 2. Back up the site
 1. In your hosting panel or backup plugin (e.g. UpdraftPlus), run a full backup.
@@ -23,6 +23,6 @@
 3. Click **Install Now**, choose **Replace current version** when asked, then **Activate**.
 
 ## 4. Verify versions
-1. In **Plugins**, confirm each plugin lists the new version number (e.g. `0.8.6`).
+1. In **Plugins**, confirm each plugin lists the new version number (e.g. `0.8.7`).
 2. In **Appearance → Themes**, open the child theme details and verify its version.
 3. Browse a few pages on the front‑end to confirm the site loads as expected.
