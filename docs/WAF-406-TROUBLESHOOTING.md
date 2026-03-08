@@ -12,6 +12,17 @@ Examples from production logs:
 - `GET /wp-json/wp/v2/uv_location?...`
 - `POST /wp-admin/admin-ajax.php` (heartbeat)
 
+## Confirmed root cause on ungevil.no
+
+From ModSecurity audit logs:
+
+- OWASP CRS rule ID: `942290`
+- Rule file: `REQUEST-942-APPLICATION-ATTACK-SQLI.conf`
+- Matched variable: `REQUEST_COOKIES:mp_..._mixpanel`
+- Trigger content: Mixpanel JSON cookie values with `$...` keys (for example `$device`, `$initial_referrer`), which can false-positive as MongoDB/SQLi patterns.
+
+This means requests can be blocked before WordPress runs, even for harmless URLs (such as `/favicon.ico`) if the cookie is present.
+
 ## What the host/WAF must allow
 
 1. Allow authenticated editor/admin requests to:
@@ -35,7 +46,19 @@ Create scoped WAF Skip rules for logged-in WordPress users:
 2. Apply targeted exception for those IDs on:
    - `/wp-json/*`
    - `/wp-admin/admin-ajax.php`
+   - `REQUEST_COOKIES:mp_*_mixpanel` (Mixpanel cookie target)
 3. Do not disable ModSecurity globally.
+
+Example exception patterns host can use (adapt to their policy):
+
+```apache
+# Exclude Mixpanel cookie from CRS 942290 inspection
+SecRuleUpdateTargetById 942290 "!REQUEST_COOKIES:/^mp_.*_mixpanel$/"
+
+# Or scope by path and remove only this rule
+SecRule REQUEST_URI "@beginsWith /wp-json/" "id:100001,phase:1,pass,nolog,ctl:ruleRemoveById=942290"
+SecRule REQUEST_URI "@streq /wp-admin/admin-ajax.php" "id:100002,phase:1,pass,nolog,ctl:ruleRemoveById=942290"
+```
 
 ## Message to send hosting support
 
@@ -44,6 +67,7 @@ We are getting 406 Not Acceptable in WordPress block editor for authenticated us
 Please whitelist/allow authenticated requests to /wp-json/* and /wp-admin/admin-ajax.php,
 and add targeted exceptions for the ModSecurity/ WAF rule IDs that block Gutenberg query parameters
 such as _locale, _fields, context, per_page, orderby, order, page.
+Our audit log shows CRS rule 942290 matching REQUEST_COOKIES:mp_*_mixpanel (Mixpanel cookie).
 Please share the blocked rule IDs and timestamps so we can verify.
 ```
 
