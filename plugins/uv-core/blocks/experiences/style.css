@@ -79,7 +79,7 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.7rem;
     flex: 1;
 }
 
@@ -93,6 +93,34 @@
 .uv-card--experience h4 {
     margin: 0;
     font-size: 1.15rem;
+    line-height: 1.35;
+}
+
+.uv-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.uv-card-tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.18rem 0.6rem;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+.uv-card-tag--dates {
+    color: #113b6b;
+    background: #e9f2ff;
+}
+
+.uv-card-tag--org {
+    color: #0e5a4f;
+    background: #e8f8f3;
 }
 
 .uv-card-meta {
@@ -111,4 +139,71 @@
 .uv-card-excerpt {
     color: #1f2937;
     line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.uv-card-cta {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--uv-purple, #7a00cc);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.uv-card-cta::after {
+    content: "->";
+    transition: transform 180ms ease;
+}
+
+.uv-card--experience > a:hover .uv-card-cta::after,
+.uv-card--experience > a:focus-visible .uv-card-cta::after {
+    transform: translateX(2px);
+}
+
+.uv-experiences--timeline > .uv-experiences__year-group {
+    position: relative;
+    padding-left: 1.1rem;
+}
+
+.uv-experiences--timeline > .uv-experiences__year-group::before {
+    content: "";
+    position: absolute;
+    left: 0.18rem;
+    top: 0.25rem;
+    bottom: 0.1rem;
+    width: 2px;
+    background: linear-gradient(180deg, #d4dded, #e8edf7);
+}
+
+.uv-experiences--timeline .uv-experiences__year-heading {
+    position: relative;
+    padding-left: 1.15rem;
+}
+
+.uv-experiences--timeline .uv-experiences__year-heading::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 0.58rem;
+    height: 0.58rem;
+    border-radius: 999px;
+    background: var(--uv-purple, #7a00cc);
+    box-shadow: 0 0 0 4px rgba(122, 0, 204, 0.14);
+}
+
+.uv-block-pagination {
+    margin-top: 1.2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.uv-experiences__load-more {
+    min-width: 11rem;
+    font-weight: 700;
 }

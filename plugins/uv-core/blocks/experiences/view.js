@@ -1,4 +1,50 @@
 (() => {
+    const buildRequestUrl = ({ restUrl, count, page, year, includeSlimFields }) => {
+        const requestUrl = new URL(restUrl, window.location.origin);
+        requestUrl.searchParams.set('per_page', count);
+        requestUrl.searchParams.set('page', page);
+
+        // Keep the query conservative to reduce false positives in strict WAF setups.
+        if (includeSlimFields) {
+            requestUrl.searchParams.set('_fields', 'id,title,excerpt,link,meta,date');
+        }
+
+        if (year) {
+            requestUrl.searchParams.set('after', `${year}-01-01`);
+            requestUrl.searchParams.set('before', `${year}-12-31`);
+        }
+
+        return requestUrl;
+    };
+
+    const fetchExperiencesPage = async ({ restUrl, count, page, year }) => {
+        let response = await fetch(
+            buildRequestUrl({
+                restUrl,
+                count,
+                page,
+                year,
+                includeSlimFields: true,
+            }).toString(),
+            { credentials: 'same-origin' },
+        );
+
+        if (response.status === 406) {
+            response = await fetch(
+                buildRequestUrl({
+                    restUrl,
+                    count,
+                    page,
+                    year,
+                    includeSlimFields: false,
+                }).toString(),
+                { credentials: 'same-origin' },
+            );
+        }
+
+        return response;
+    };
+
     const getExperienceYear = (post) => {
         const metaDates = (post?.meta?.uv_experience_dates ?? '').toString();
         const matchedYear = metaDates.match(/\b(\d{4})\b/);
@@ -32,7 +78,7 @@
         return classes.join(' ');
     };
 
-    const createCard = (post) => {
+    const createCard = (post, readMoreText) => {
         const metaOrg = post?.meta?.uv_experience_org;
         const metaDates = post?.meta?.uv_experience_dates;
 
@@ -46,30 +92,30 @@
         const body = document.createElement('div');
         body.className = 'uv-card-body';
 
+        if (metaOrg || metaDates) {
+            const tags = document.createElement('div');
+            tags.className = 'uv-card-tags';
+
+            if (metaDates) {
+                const datesTag = document.createElement('span');
+                datesTag.className = 'uv-card-tag uv-card-tag--dates';
+                datesTag.textContent = metaDates;
+                tags.appendChild(datesTag);
+            }
+
+            if (metaOrg) {
+                const orgTag = document.createElement('span');
+                orgTag.className = 'uv-card-tag uv-card-tag--org';
+                orgTag.textContent = metaOrg;
+                tags.appendChild(orgTag);
+            }
+
+            body.appendChild(tags);
+        }
+
         const heading = document.createElement('h4');
         heading.textContent = post?.title?.rendered ?? '';
         body.appendChild(heading);
-
-        if (metaOrg || metaDates) {
-            const metaWrapper = document.createElement('div');
-            metaWrapper.className = 'uv-card-meta';
-
-            if (metaOrg) {
-                const orgEl = document.createElement('div');
-                orgEl.className = 'uv-card-meta__org';
-                orgEl.textContent = metaOrg;
-                metaWrapper.appendChild(orgEl);
-            }
-
-            if (metaDates) {
-                const datesEl = document.createElement('div');
-                datesEl.className = 'uv-card-meta__dates';
-                datesEl.textContent = metaDates;
-                metaWrapper.appendChild(datesEl);
-            }
-
-            body.appendChild(metaWrapper);
-        }
 
         if (post?.excerpt?.rendered) {
             const excerpt = document.createElement('div');
@@ -77,6 +123,11 @@
             excerpt.innerHTML = post.excerpt.rendered;
             body.appendChild(excerpt);
         }
+
+        const cta = document.createElement('span');
+        cta.className = 'uv-card-cta';
+        cta.textContent = readMoreText;
+        body.appendChild(cta);
 
         anchor.appendChild(body);
         item.appendChild(anchor);
@@ -125,12 +176,12 @@
         return list;
     };
 
-    const appendPosts = (experiencesList, posts, layout) => {
+    const appendPosts = (experiencesList, posts, layout, readMoreText) => {
         posts.forEach((post) => {
             const year = getExperienceYear(post) || '';
             const yearList = ensureYearList(experiencesList, year, layout);
 
-            yearList.appendChild(createCard(post));
+            yearList.appendChild(createCard(post, readMoreText));
         });
     };
 
@@ -153,6 +204,7 @@
         const loadMoreText = block.dataset.loadMoreText || 'Last inn flere';
         const loadingText = block.dataset.loadingText || 'Laster…';
         const errorText = block.dataset.errorText || 'Kunne ikke laste flere erfaringer.';
+        const readMoreText = block.dataset.readMoreText || 'Les mer';
 
         let isLoading = false;
         let lastError = '';
@@ -188,26 +240,18 @@
             }
 
             const nextPage = page + 1;
-            const requestUrl = new URL(restUrl, window.location.origin);
-            requestUrl.searchParams.set('per_page', count);
-            requestUrl.searchParams.set('page', nextPage);
-            requestUrl.searchParams.set('_embed', '1');
-            requestUrl.searchParams.set(
-                '_fields',
-                'id,title,excerpt,link,meta,featured_media,date,_links.wp:featuredmedia',
-            );
-
-            if (year) {
-                requestUrl.searchParams.set('after', `${year}-01-01T00:00:00`);
-                requestUrl.searchParams.set('before', `${year}-12-31T23:59:59`);
-            }
 
             try {
                 lastError = '';
                 isLoading = true;
                 updateButtonState();
 
-                const response = await fetch(requestUrl.toString());
+                const response = await fetchExperiencesPage({
+                    restUrl,
+                    count,
+                    page: nextPage,
+                    year,
+                });
 
                 if (!response.ok) {
                     throw new Error('Request failed');
@@ -224,7 +268,7 @@
                 }
 
                 const posts = await response.json();
-                appendPosts(experiencesList, posts, layout);
+                appendPosts(experiencesList, posts, layout, readMoreText);
 
                 page = nextPage;
                 block.dataset.page = String(page);

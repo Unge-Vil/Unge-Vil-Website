@@ -45,6 +45,68 @@ function uv_people_get_all_team_grid_cache_key($location_ids){
     return 'uv_people_all_team_grid_' . md5(implode(',', $location_ids));
 }
 
+function uv_people_shortcode_bool($value, $default = false){
+    if (is_bool($value)) {
+        return $value;
+    }
+
+    if ($value === null) {
+        return (bool) $default;
+    }
+
+    $normalized = strtolower(trim((string) $value));
+    if ($normalized === '') {
+        return (bool) $default;
+    }
+
+    if (in_array($normalized, ['1', 'true', 'yes', 'on'], true)) {
+        return true;
+    }
+
+    if (in_array($normalized, ['0', 'false', 'no', 'off'], true)) {
+        return false;
+    }
+
+    return (bool) $default;
+}
+
+function uv_people_location_meta_query($term_id, $include_primary = false){
+    $term_id = absint($term_id);
+
+    // Support both legacy string serialization and current integer serialization.
+    $string_pattern = '"' . $term_id . '"';
+    $int_pattern    = 'i:' . $term_id . ';';
+
+    $meta_query = [
+        'relation' => 'OR',
+        [
+            'key'     => 'uv_location_terms',
+            'value'   => $int_pattern,
+            'compare' => 'LIKE',
+        ],
+        [
+            'key'     => 'uv_location_terms',
+            'value'   => $string_pattern,
+            'compare' => 'LIKE',
+        ],
+    ];
+
+    if ($include_primary) {
+        $meta_query[] = [
+            'key'     => 'uv_primary_locations',
+            'value'   => $int_pattern,
+            'compare' => 'LIKE',
+        ];
+        $meta_query[] = [
+            'key'     => 'uv_primary_locations',
+            'value'   => $string_pattern,
+            'compare' => 'LIKE',
+        ];
+    }
+
+    return $meta_query;
+}
+
 function uv_people_get_team_cache_prefixes(){
     return [
         'uv_people_team_grid_',
@@ -587,6 +649,9 @@ function uv_people_team_grid($atts){
         'sortBy'            => 'default',
         'sort_by'           => 'default',
     ], $atts);
+    $highlight_primary = uv_people_shortcode_bool($a['highlight_primary'], true);
+    $show_nav = uv_people_shortcode_bool($a['show_nav'], false);
+    $show_age = uv_people_shortcode_bool($a['show_age'], false);
     $placeholder = function($msg){
         return (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
             ? '<div class="uv-block-placeholder">'.esc_html($msg).'</div>'
@@ -624,19 +689,7 @@ function uv_people_team_grid($atts){
         $users = get_users([
             'number'     => -1,
             'fields'     => ['ID'],
-            'meta_query' => [
-                'relation' => 'OR',
-                [
-                    'key'     => 'uv_location_terms',
-                    'value'   => '"' . $term->term_id . '"',
-                    'compare' => 'LIKE',
-                ],
-                [
-                    'key'     => 'uv_primary_locations',
-                    'value'   => '"' . $term->term_id . '"',
-                    'compare' => 'LIKE',
-                ],
-            ],
+            'meta_query' => uv_people_location_meta_query($term->term_id, true),
         ]);
         $items = [];
         foreach ($users as $u) {
@@ -716,7 +769,7 @@ function uv_people_team_grid($atts){
         $phone = get_user_meta($uid,'uv_phone',true);
         $email = get_the_author_meta('user_email', $uid);
         $classes = 'uv-person';
-        if($a['highlight_primary'] && $it['primary']) $classes .= ' uv-primary-contact';
+        if($highlight_primary && $it['primary']) $classes .= ' uv-primary-contact';
         // Link each card to custom team template
         $url = add_query_arg(
             [
@@ -731,7 +784,7 @@ function uv_people_team_grid($atts){
         echo '<div class="uv-avatar">'.uv_people_get_avatar($uid).'</div>';
         echo '<div class="uv-info">';
         echo '<h3 class="notranslate">'.esc_html($name).'</h3>';
-        if($a['show_age']){
+        if($show_age){
             $birthdate = get_user_meta($uid,'uv_birthdate',true);
             if($birthdate){
                 $bd = DateTime::createFromFormat('Y-m-d',$birthdate);
@@ -754,8 +807,8 @@ function uv_people_team_grid($atts){
             }
         }
         if(!$role){
-            $role_nb = $it['role_nb'] ?: get_user_meta($uid,'uv_position_nb',true);
-            $role_en = $it['role_en'] ?: get_user_meta($uid,'uv_position_en',true);
+            $role_nb = get_user_meta($uid,'uv_position_nb',true);
+            $role_en = get_user_meta($uid,'uv_position_en',true);
             $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
         }
         if($role) echo '<div class="uv-role notranslate">'.esc_html($role).'</div>';
@@ -784,7 +837,7 @@ function uv_people_team_grid($atts){
         echo '</article>';
     }
     echo '</div>';
-    if($a['show_nav'] && $total_pages > 1){
+    if($show_nav && $total_pages > 1){
         $base_url = remove_query_arg('uv_page');
         $base     = esc_url(add_query_arg('uv_page', '%#%', $base_url));
         echo '<nav class="uv-pagination">'.paginate_links([
@@ -814,9 +867,15 @@ function uv_people_all_team_grid($atts){
         'sortBy'       => 'default',
         'sort_by'      => 'default',
     ], $atts);
+    $all_locations = uv_people_shortcode_bool($a['allLocations'], true);
+    $show_nav = uv_people_shortcode_bool($a['show_nav'], false);
+    $show_quote = uv_people_shortcode_bool($a['showQuote'], true);
+    $show_bio = uv_people_shortcode_bool($a['showBio'], false);
+    $show_email = uv_people_shortcode_bool($a['showEmail'], false);
+    $show_age = uv_people_shortcode_bool($a['showAge'], false);
 
     $location_ids = [];
-    if( ! empty( $a['locations'] ) && empty( $a['allLocations'] ) ){
+    if( ! empty( $a['locations'] ) && ! $all_locations ){
         $terms = get_terms([
             'taxonomy'   => 'uv_location',
             'slug'       => (array) $a['locations'],
@@ -991,7 +1050,7 @@ function uv_people_all_team_grid($atts){
         $phone = get_user_meta($uid,'uv_phone',true);
         $email = $user->user_email;
         $classes = 'uv-person';
-        if (empty($a['allLocations']) && !empty($it['primary'])) {
+        if (!$all_locations && !empty($it['primary'])) {
             $classes .= ' uv-primary-contact';
         }
         $url = add_query_arg(
@@ -1021,7 +1080,7 @@ function uv_people_all_team_grid($atts){
             $role = ($lang==='en') ? ($role_en ?: $role_nb) : ($role_nb ?: $role_en);
         }
         if($role) echo '<div class="uv-role notranslate">'.esc_html($role).'</div>';
-        if($a['showAge']){
+        if($show_age){
             $birthdate = get_user_meta($uid,'uv_birthdate',true);
             if($birthdate){
                 $bd = DateTime::createFromFormat('Y-m-d', $birthdate);
@@ -1034,29 +1093,29 @@ function uv_people_all_team_grid($atts){
         }
         echo '</div>';
         echo '</a>';
-        if($a['showBio']){
+        if($show_bio){
             $bio_nb = get_user_meta($uid,'uv_bio_nb',true);
             $bio_en = get_user_meta($uid,'uv_bio_en',true);
             $bio = ($lang==='en') ? ($bio_en ?: $bio_nb) : ($bio_nb ?: $bio_en);
             if($bio) echo '<div class="uv-bio">'.wp_kses_post(wpautop($bio)).'</div>';
         }
         $show_phone = get_user_meta($uid,'uv_show_phone',true)==='1';
-        if(($phone && $show_phone) || ($a['showEmail'] && $email)){
+        if(($phone && $show_phone) || ($show_email && $email)){
             $email_label = ($lang==='en') ? __('Email:','uv-people') : __('E-post:','uv-people');
             $phone_label = ($lang==='en') ? __('Mobile:','uv-people') : __('Mobil:','uv-people');
             echo '<div class="uv-contact">';
-            if($a['showEmail'] && $email) echo '<div class="uv-email"><span class="label">'.esc_html($email_label).'</span><a href="mailto:'.esc_attr($email).'">'.esc_html($email).'</a></div>';
+            if($show_email && $email) echo '<div class="uv-email"><span class="label">'.esc_html($email_label).'</span><a href="mailto:'.esc_attr($email).'">'.esc_html($email).'</a></div>';
             if($phone && $show_phone) echo '<div class="uv-mobile"><span class="label">'.esc_html($phone_label).'</span><a href="tel:'.esc_attr($phone).'">'.esc_html($phone).'</a></div>';
             echo '</div>';
         }
         $quote_nb = get_user_meta($uid,'uv_quote_nb',true);
         $quote_en = get_user_meta($uid,'uv_quote_en',true);
         $quote = ($lang==='en') ? ($quote_en ?: $quote_nb) : ($quote_nb ?: $quote_en);
-        if ($a['showQuote'] && $quote) echo '<div class="uv-quote"><span class="uv-quote-icon">&ldquo;</span>'.esc_html($quote).'</div>';
+        if ($show_quote && $quote) echo '<div class="uv-quote"><span class="uv-quote-icon">&ldquo;</span>'.esc_html($quote).'</div>';
         echo '</article>';
     }
     echo '</div>';
-    if($a['show_nav'] && $total_pages > 1){
+    if($show_nav && $total_pages > 1){
         $base_url = remove_query_arg('uv_page');
         $base     = esc_url(add_query_arg('uv_page', '%#%', $base_url));
         echo '<nav class="uv-pagination">'.paginate_links([
@@ -1252,13 +1311,7 @@ add_action('uv_location_edit_form_fields', function($term){
     $users = get_users([
         'number'     => -1,
         'fields'     => ['ID', 'display_name'],
-        'meta_query' => [
-            [
-                'key'     => 'uv_location_terms',
-                'value'   => '"' . $term_id . '"',
-                'compare' => 'LIKE',
-            ],
-        ],
+        'meta_query' => uv_people_location_meta_query($term_id, false),
     ]);
     $members = [];
     foreach ($users as $u) {
@@ -1317,13 +1370,7 @@ function uv_people_save_location_members($term_id){
     $users = get_users([
         'number'     => -1,
         'fields'     => ['ID'],
-        'meta_query' => [
-            [
-                'key'     => 'uv_location_terms',
-                'value'   => '"' . $term_id . '"',
-                'compare' => 'LIKE',
-            ],
-        ],
+        'meta_query' => uv_people_location_meta_query($term_id, false),
     ]);
     foreach ($users as $u) {
         $uid = $u->ID;

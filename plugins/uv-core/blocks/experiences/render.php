@@ -80,6 +80,7 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
                 'data-load-more-text' => esc_attr__( 'Last inn flere', 'uv-core' ),
                 'data-loading-text'   => esc_attr__( 'Laster…', 'uv-core' ),
                 'data-error-text'     => esc_attr__( 'Kunne ikke laste flere erfaringer.', 'uv-core' ),
+                'data-read-more-text' => esc_attr__( 'Les mer', 'uv-core' ),
             ]
         );
 
@@ -111,20 +112,21 @@ if ( ! function_exists( 'uv_core_render_experiences_block' ) ) {
                 echo '<li class="uv-card uv-card--experience">';
                 echo '<a href="' . esc_url( get_permalink() ) . '">';
                 echo '<div class="uv-card-body">';
-                echo '<h4>' . esc_html( get_the_title() ) . '</h4>';
                 if ( $org || $dates ) {
-                    echo '<div class="uv-card-meta">';
-                    if ( $org ) {
-                        echo '<div class="uv-card-meta__org">' . esc_html( $org ) . '</div>';
-                    }
+                    echo '<div class="uv-card-tags">';
                     if ( $dates ) {
-                        echo '<div class="uv-card-meta__dates">' . esc_html( $dates ) . '</div>';
+                        echo '<span class="uv-card-tag uv-card-tag--dates">' . esc_html( $dates ) . '</span>';
+                    }
+                    if ( $org ) {
+                        echo '<span class="uv-card-tag uv-card-tag--org">' . esc_html( $org ) . '</span>';
                     }
                     echo '</div>';
                 }
+                echo '<h4>' . esc_html( get_the_title() ) . '</h4>';
                 if ( has_excerpt() ) {
                     echo '<div class="uv-card-excerpt">' . esc_html( get_the_excerpt() ) . '</div>';
                 }
+                echo '<span class="uv-card-cta">' . esc_html__( 'Les mer', 'uv-core' ) . '</span>';
                 echo '</div></a></li>';
                 $experiences_by_year[ $year ][] = ob_get_clean();
             }

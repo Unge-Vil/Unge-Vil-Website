@@ -137,8 +137,8 @@ registerBlockType( metadata.name, {
                 _fields: [ 'id', 'title', 'excerpt', 'link', 'meta', 'featured_media', 'date' ],
                 ...( year
                     ? {
-                            after: `${ year }-01-01T00:00:00`,
-                            before: `${ year }-12-31T23:59:59`,
+                            after: `${ year }-01-01`,
+                            before: `${ year }-12-31`,
                         }
                     : {} ),
             }
