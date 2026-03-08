@@ -33,6 +33,12 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Production relies on **GTranslate** for automatic Norwegian↔English switching, but you can still add `.po/.mo` files in a `languages/` folder or use another translation tool if we later decide to manage translations manually.
 
 ## Changelog
+### 0.8.10
+- Removed the temporary classic-editor fallback so the Block Editor remains active for posts/pages.
+- Added host-facing 406 troubleshooting guidance; production must allow WordPress REST and `admin-ajax.php` requests for authenticated editors.
+### 0.8.9
+- Added a temporary classic-editor fallback for posts/pages to keep publishing possible on hosts that block Gutenberg REST/editor requests with 406.
+- Updated UV custom block metadata to `apiVersion: 3` to align with WordPress 6.9 iframe editor guidance.
 ### 0.8.8
 - Hardened Experiences editor REST queries by removing strict WAF-sensitive parameters (`_fields`/`_embed`) to reduce 406 errors during post editing in production.
 ### 0.8.7
