@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UV Core
  * Description: CPTs, taxonomies, term images, and lightweight shortcodes.
- * Version: 0.8.10
+ * Version: 0.8.12
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Unge Vil
@@ -39,8 +39,100 @@ if (!$uv_core_php_ok || !$uv_core_wp_ok) {
 }
 
 if (!defined('UV_CORE_VERSION')) {
-define('UV_CORE_VERSION', '0.8.10');
+define('UV_CORE_VERSION', '0.8.12');
 }
+
+/**
+ * Get likely domain variants for Mixpanel cookie cleanup.
+ */
+function uv_core_get_mixpanel_cookie_domains(): array {
+    $host = (string) wp_parse_url(home_url(), PHP_URL_HOST);
+    if ($host === '') {
+        return [];
+    }
+
+    $base_host = preg_replace('/^www\./i', '', $host) ?: $host;
+
+    return array_values(array_unique(array_filter([
+        $host,
+        '.' . ltrim($host, '.'),
+        $base_host,
+        '.' . ltrim($base_host, '.'),
+    ])));
+}
+
+/**
+ * Workaround for strict WAF setups that false-positive on Mixpanel cookie values.
+ * Clears mp_*_mixpanel cookies on wp-admin responses for logged-in users.
+ */
+function uv_core_expire_mixpanel_cookies(): void {
+    $domains = uv_core_get_mixpanel_cookie_domains();
+
+    foreach (array_keys($_COOKIE) as $cookie_name) {
+        if (!preg_match('/^mp_[A-Za-z0-9]+_mixpanel$/', (string) $cookie_name)) {
+            continue;
+        }
+
+        setcookie($cookie_name, '', time() - HOUR_IN_SECONDS, '/');
+        setcookie($cookie_name, '', time() - HOUR_IN_SECONDS, '/wp-admin');
+        foreach ($domains as $domain) {
+            setcookie($cookie_name, '', time() - HOUR_IN_SECONDS, '/', $domain);
+            setcookie($cookie_name, '', time() - HOUR_IN_SECONDS, '/wp-admin', $domain);
+        }
+        unset($_COOKIE[$cookie_name]);
+    }
+}
+
+add_action('admin_init', function () {
+    if (!is_user_logged_in()) {
+        return;
+    }
+
+    uv_core_expire_mixpanel_cookies();
+}, 1);
+
+add_action('admin_head', function () {
+    if (!is_user_logged_in()) {
+        return;
+    }
+
+    $domains = wp_json_encode(uv_core_get_mixpanel_cookie_domains());
+    ?>
+<script>
+(function () {
+    try {
+        const cookies = document.cookie ? document.cookie.split(';') : [];
+        const domains = <?php echo $domains ?: '[]'; ?>;
+        const paths = ['/', '/wp-admin'];
+        let removed = false;
+
+        cookies.forEach((entry) => {
+            const separatorIndex = entry.indexOf('=');
+            const name = (separatorIndex === -1 ? entry : entry.slice(0, separatorIndex)).trim();
+
+            if (!/^mp_[A-Za-z0-9]+_mixpanel$/.test(name)) {
+                return;
+            }
+
+            paths.forEach((path) => {
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}; SameSite=Lax`;
+                domains.forEach((domain) => {
+                    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}; domain=${domain}; SameSite=Lax`;
+                });
+            });
+
+            removed = true;
+        });
+
+        if (removed && window.sessionStorage && !sessionStorage.getItem('uv-mixpanel-cookie-reset')) {
+            sessionStorage.setItem('uv-mixpanel-cookie-reset', '1');
+            window.location.reload();
+        }
+    } catch (error) {}
+})();
+</script>
+    <?php
+}, 0);
 
 $update_checker_path = dirname(__DIR__, 2) . '/plugin-update-checker/plugin-update-checker.php';
 if (file_exists($update_checker_path)) {

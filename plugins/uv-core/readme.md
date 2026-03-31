@@ -33,6 +33,12 @@ UV Core registers CPTs, taxonomies, and shortcodes.
 All strings use the `uv-core` text domain. Production relies on **GTranslate** for automatic Norwegian↔English switching, but you can still add `.po/.mo` files in a `languages/` folder or use another translation tool if we later decide to manage translations manually.
 
 ## Changelog
+### 0.8.12
+- Disabled the in-progress Experiences block and its REST exposure as an emergency stabilization step so Gutenberg publishing is no longer tied to that feature.
+- Strengthened the temporary Mixpanel cookie cleanup in wp-admin to reduce repeated WAF-triggered editor failures during publishing.
+### 0.8.11
+- Added a temporary admin-side workaround that clears `mp_*_mixpanel` cookies for logged-in users to reduce ModSecurity false positives while host WAF exceptions are being applied.
+- Block Editor remains enabled; permanent fix is still targeted WAF rule exclusions (see `docs/WAF-406-TROUBLESHOOTING.md`).
 ### 0.8.10
 - Removed the temporary classic-editor fallback so the Block Editor remains active for posts/pages.
 - Added host-facing 406 troubleshooting guidance; production must allow WordPress REST and `admin-ajax.php` requests for authenticated editors.

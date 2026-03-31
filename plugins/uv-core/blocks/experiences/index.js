@@ -1,194 +1,31 @@
 import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { PanelBody, RangeControl, SelectControl, Spinner, ToggleControl } from '@wordpress/components';
-import { Fragment, useEffect, useMemo, useState } from '@wordpress/element';
-import { useEntityRecords } from '@wordpress/core-data';
+import { PanelBody, RangeControl, SelectControl, ToggleControl } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 import metadata from './block.json';
 import './editor.css';
 import './style.css';
 
-const getExperienceYear = ( post ) => {
-    const metaDates = post.meta?.uv_experience_dates ?? '';
-    const matchedYear = metaDates.match( /\b(\d{4})\b/ );
-
-    if ( matchedYear?.[ 1 ] ) {
-        return matchedYear[ 1 ];
-    }
-
-    if ( post.date ) {
-        const publishedDate = new Date( post.date );
-
-        if ( ! Number.isNaN( publishedDate.getFullYear() ) ) {
-            return String( publishedDate.getFullYear() );
-        }
-    }
-
-    return '';
-};
-
-const ExperienceCard = ( { post } ) => {
-    const metaOrg = post.meta?.uv_experience_org;
-    const metaDates = post.meta?.uv_experience_dates;
-
-    return (
-        <li className="uv-card uv-card--experience">
-            <a href={ post.link ?? '#' } onClick={ ( event ) => event.preventDefault() }>
-                <div className="uv-card-body">
-                    <h4>{ post.title.rendered }</h4>
-                    { ( metaOrg || metaDates ) && (
-                        <div className="uv-card-meta">
-                            { metaOrg && <div className="uv-card-meta__org">{ metaOrg }</div> }
-                            { metaDates && <div className="uv-card-meta__dates">{ metaDates }</div> }
-                        </div>
-                    ) }
-                    { post.excerpt?.rendered && (
-                        <div className="uv-card-excerpt">
-                            <span dangerouslySetInnerHTML={ { __html: post.excerpt.rendered } } />
-                        </div>
-                    ) }
-                </div>
-            </a>
-        </li>
-    );
-};
-
-const ExperiencesPreview = ( { posts, layout, isLoading } ) => {
-    const baseClasses = [ 'uv-experiences', `uv-experiences--${ layout }` ];
-    const groupListClasses = [ 'uv-experiences__year-list' ];
-
-    if ( layout !== 'list' ) {
-        groupListClasses.push( 'uv-card-list' );
-    }
-    if ( layout === 'grid' ) {
-        groupListClasses.push( 'uv-card-grid', 'columns-3' );
-    }
-
-    const groupedPosts = Object.entries(
-        ( posts ?? [] ).reduce( ( groups, post ) => {
-            const year = getExperienceYear( post );
-
-            if ( ! groups[ year ] ) {
-                groups[ year ] = [];
-            }
-
-            groups[ year ].push( post );
-            return groups;
-        }, {} ),
-    )
-        .sort( ( [ yearA ], [ yearB ] ) => yearB.localeCompare( yearA ) )
-        .map( ( [ year, items ] ) => ( { year, items } ) );
-
-    if ( isLoading ) {
-        return (
-            <p className="uv-block-placeholder">
-                <Spinner /> { __( 'Laster forhåndsvisning…', 'uv-core' ) }
-            </p>
-        );
-    }
-
-    if ( ! posts?.length ) {
-        return (
-            <div className="uv-block-placeholder">
-                { __( 'Ingen erfaringer funnet.', 'uv-core' ) }
-            </div>
-        );
-    }
-
-    return (
-        <ul className={ baseClasses.join( ' ' ) }>
-            { groupedPosts.map( ( { year, items } ) => (
-                <li key={ year } className="uv-experiences__year-group">
-                    <h3 className="uv-experiences__year-heading">{ year }</h3>
-                    <ul className={ groupListClasses.join( ' ' ) }>
-                        { items.map( ( post ) => (
-                            <ExperienceCard
-                                key={ post.id }
-                                post={ post }
-                            />
-                        ) ) }
-                    </ul>
-                </li>
-            ) ) }
-        </ul>
-    );
-};
+const ExperiencesEditorPlaceholder = ( { count, layout, pagination, year } ) => (
+    <div className="uv-block-placeholder">
+        <strong>{ __( 'Erfaringer', 'uv-core' ) }</strong>
+        <p>
+            { __(
+                'Forhandsvisning er midlertidig deaktivert i editoren for a unnga REST-feil under publisering.',
+                'uv-core',
+            ) }
+        </p>
+        <p>
+            { `${ __( 'Layout', 'uv-core' ) }: ${ layout } | ${ __( 'Antall', 'uv-core' ) }: ${ count }` }
+            { year ? ` | ${ __( 'Ar', 'uv-core' ) }: ${ year }` : '' }
+            { pagination ? ` | ${ __( 'Last inn flere', 'uv-core' ) }` : '' }
+        </p>
+    </div>
+);
 
 registerBlockType( metadata.name, {
     edit( { attributes: { count, layout, pagination, year }, setAttributes } ) {
-        const [ page, setPage ] = useState( 1 );
-        const [ loadedPosts, setLoadedPosts ] = useState( [] );
-        const { records: yearPosts } = useEntityRecords( 'postType', 'uv_experience', {
-            per_page: 100,
-        } );
-        const {
-            records: posts,
-            isResolving,
-            hasResolved,
-            totalPages,
-        } = useEntityRecords(
-            'postType',
-            'uv_experience',
-            {
-                per_page: count,
-                page,
-                ...( year
-                    ? {
-                            after: `${ year }-01-01`,
-                            before: `${ year }-12-31`,
-                        }
-                    : {} ),
-            }
-        );
-
-        useEffect( () => {
-            setPage( 1 );
-            setLoadedPosts( [] );
-        }, [ count, pagination, year ] );
-
-        useEffect( () => {
-            if ( ! hasResolved || ! Array.isArray( posts ) ) {
-                return;
-            }
-
-            setLoadedPosts( ( current ) => {
-                if ( page === 1 ) {
-                    return posts;
-                }
-
-                const seenIds = new Set( current.map( ( post ) => post.id ) );
-                const merged = [ ...current ];
-                posts.forEach( ( post ) => {
-                    if ( ! seenIds.has( post.id ) ) {
-                        merged.push( post );
-                    }
-                } );
-
-                return merged;
-            } );
-        }, [ posts, hasResolved, page ] );
-
-        const hasMorePages = pagination && ( totalPages ? page < totalPages : false );
-
-        const yearOptions = useMemo( () => {
-            const years = new Set( [ '' ] );
-
-            ( yearPosts ?? [] ).forEach( ( post ) => {
-                const postYear = getExperienceYear( post );
-
-                if ( postYear ) {
-                    years.add( postYear );
-                }
-            } );
-
-            return Array.from( years )
-                .filter( Boolean )
-                .sort( ( a, b ) => b.localeCompare( a ) )
-                .map( ( value ) => ( { label: value, value } ) )
-                .concat( [ { label: __( 'Alle år', 'uv-core' ), value: '' } ] )
-                .reverse();
-        }, [ yearPosts ] );
-
         return (
             <Fragment>
                 <InspectorControls>
@@ -211,43 +48,33 @@ registerBlockType( metadata.name, {
                             ] }
                         />
                         <SelectControl
-                            label={ __( 'År', 'uv-core' ) }
+                            label={ __( 'Ar', 'uv-core' ) }
                             value={ year }
-                            options={ yearOptions }
+                            options={ [
+                                { label: __( 'Alle ar', 'uv-core' ), value: '' },
+                            ] }
                             onChange={ ( value ) => setAttributes( { year: value } ) }
-                            help={ __( 'Filtrer erfaringer etter år.', 'uv-core' ) }
+                            help={ __(
+                                'Arsfiltrering ma eventuelt justeres i kode midlertidig mens vi stabiliserer editoren.',
+                                'uv-core',
+                            ) }
                         />
                         <ToggleControl
                             label={ __( 'Aktiver paginering', 'uv-core' ) }
                             checked={ pagination }
                             onChange={ ( value ) => setAttributes( { pagination: value } ) }
-                            help={ __( 'Vis en knapp for å hente flere erfaringer.', 'uv-core' ) }
+                            help={ __( 'Vis en knapp for a hente flere erfaringer.', 'uv-core' ) }
                         />
                     </PanelBody>
                 </InspectorControls>
 
                 <div { ...useBlockProps() }>
-                    { hasResolved && Array.isArray( posts ) ? (
-                        <ExperiencesPreview
-                            posts={ loadedPosts }
-                            layout={ layout }
-                            isLoading={ false }
-                        />
-                    ) : (
-                        <ExperiencesPreview posts={ [] } layout={ layout } isLoading={ isResolving } />
-                    ) }
-                    { pagination && hasMorePages && (
-                        <div className="uv-block-pagination">
-                            <button
-                                className="uv-button"
-                                type="button"
-                                disabled={ isResolving }
-                                onClick={ () => setPage( ( value ) => value + 1 ) }
-                            >
-                                { __( 'Last inn flere', 'uv-core' ) }
-                            </button>
-                        </div>
-                    ) }
+                    <ExperiencesEditorPlaceholder
+                        count={ count }
+                        layout={ layout }
+                        pagination={ pagination }
+                        year={ year }
+                    />
                 </div>
             </Fragment>
         );

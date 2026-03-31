@@ -43,7 +43,7 @@ add_action('init', function(){
     register_post_type('uv_experience', [
         'label' => esc_html__('Erfaringer', 'uv-core'),
         'public' => true,
-        'show_in_rest' => true,
+        'show_in_rest' => false,
         'has_archive' => true,
         'menu_icon' => 'dashicons-awards',
         'supports' => ['title','editor','thumbnail','excerpt','custom-fields'],

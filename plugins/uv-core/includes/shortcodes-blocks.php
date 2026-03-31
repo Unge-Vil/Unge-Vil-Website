@@ -237,9 +237,6 @@ add_action('init', function(){
     register_block_type(__DIR__ . '/../blocks/news', [
         'render_callback' => 'uv_core_posts_news'
     ]);
-    register_block_type(__DIR__ . '/../blocks/experiences', [
-        'render_callback' => 'uv_core_render_experiences_block'
-    ]);
     register_block_type(__DIR__ . '/../blocks/activities', [
         'render_callback' => 'uv_core_activities'
     ]);
@@ -250,7 +247,6 @@ add_action('init', function(){
         $lang_dir = dirname(__DIR__) . '/languages';
         wp_set_script_translations('uv-locations-grid-editor-script', 'uv-core', $lang_dir);
         wp_set_script_translations('uv-news-editor-script', 'uv-core', $lang_dir);
-        wp_set_script_translations('uv-experiences-editor-script', 'uv-core', $lang_dir);
         wp_set_script_translations('uv-activities-editor-script', 'uv-core', $lang_dir);
         wp_set_script_translations('uv-partners-editor-script', 'uv-core', $lang_dir);
     }

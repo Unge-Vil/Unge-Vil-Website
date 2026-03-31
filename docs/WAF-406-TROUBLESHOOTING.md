@@ -1,6 +1,6 @@
-# 406 troubleshooting for Block Editor (host/WAF)
+# 403/406 troubleshooting for Block Editor (host/WAF)
 
-If the WordPress editor returns `406 Not Acceptable` for `wp-json` or `admin-ajax.php`, the block is typically caused by server firewall/WAF rules (not plugin PHP logic).
+If the WordPress editor returns `403 Forbidden` or `406 Not Acceptable` for `wp-json` or `admin-ajax.php`, the block is typically caused by server firewall/WAF rules (not plugin PHP logic).
 
 ## Observed failing endpoints
 
@@ -63,7 +63,7 @@ SecRule REQUEST_URI "@streq /wp-admin/admin-ajax.php" "id:100002,phase:1,pass,no
 ## Message to send hosting support
 
 ```
-We are getting 406 Not Acceptable in WordPress block editor for authenticated users.
+We are getting 403/406 errors in WordPress block editor for authenticated users.
 Please whitelist/allow authenticated requests to /wp-json/* and /wp-admin/admin-ajax.php,
 and add targeted exceptions for the ModSecurity/ WAF rule IDs that block Gutenberg query parameters
 such as _locale, _fields, context, per_page, orderby, order, page.
@@ -71,8 +71,14 @@ Our audit log shows CRS rule 942290 matching REQUEST_COOKIES:mp_*_mixpanel (Mixp
 Please share the blocked rule IDs and timestamps so we can verify.
 ```
 
+## Temporary plugin-side mitigation
+
+`uv-core` `0.8.12` includes a stronger temporary admin-side cleanup for `mp_*_mixpanel` cookies on logged-in sessions and disables the unfinished Experiences block REST integration while host exceptions are pending.
+
+This is not a complete replacement for WAF configuration updates, because the permanent fix must happen at the host/WAF layer.
+
 ## Verification after host change
 
 1. Open post editor and check browser Network.
-2. Confirm no `406` on `/wp-json/...` and `/wp-admin/admin-ajax.php`.
+2. Confirm no `403` or `406` on `/wp-json/...` and `/wp-admin/admin-ajax.php`.
 3. Create and publish a normal post.

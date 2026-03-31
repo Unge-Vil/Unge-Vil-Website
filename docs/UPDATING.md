@@ -1,10 +1,10 @@
 # Updating from GitHub releases
 
-*Latest release: 0.8.10 – Keeps Block Editor enabled and includes guidance for fixing 406 responses at the host/WAF layer.*
+*Latest release: 0.8.12 – Emergency publishing stabilization release that disables the unfinished Experiences block integration and strengthens the temporary admin cookie cleanup for known WAF false positives.*
 
 ## 1. Get the new ZIPs
 1. Visit the repository's [Releases](https://github.com/ungevil/Unge-Vil-Website/releases) page.
-2. Download the newest `uv-kadence-child` theme ZIP and plugin ZIPs (`uv-core`, `uv-people`) for the latest version (e.g. `0.8.10`).
+2. Download the newest `uv-kadence-child` theme ZIP and plugin ZIPs (`uv-core`, `uv-people`) for the latest version (e.g. `0.8.12`).
 
 ## 2. Back up the site
 1. In your hosting panel or backup plugin (e.g. UpdraftPlus), run a full backup.
@@ -23,10 +23,10 @@
 3. Click **Install Now**, choose **Replace current version** when asked, then **Activate**.
 
 ## 4. Verify versions
-1. In **Plugins**, confirm each plugin lists the new version number (e.g. `0.8.10`).
+1. In **Plugins**, confirm each plugin lists the new version number (e.g. `0.8.12`).
 2. In **Appearance → Themes**, open the child theme details and verify its version.
 3. Browse a few pages on the front‑end to confirm the site loads as expected.
 
-## 5. If you still get 406 in the editor
+## 5. If you still get 403/406 in the editor
 1. Share `docs/WAF-406-TROUBLESHOOTING.md` with your host/WAF provider.
 2. Ask them to allow authenticated editor/admin traffic to `wp-json` and `wp-admin/admin-ajax.php`.

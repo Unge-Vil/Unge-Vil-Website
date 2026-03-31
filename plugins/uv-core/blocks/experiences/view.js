@@ -1,13 +1,8 @@
 (() => {
-    const buildRequestUrl = ({ restUrl, count, page, year, includeSlimFields }) => {
+    const buildRequestUrl = ({ restUrl, count, page, year }) => {
         const requestUrl = new URL(restUrl, window.location.origin);
         requestUrl.searchParams.set('per_page', count);
         requestUrl.searchParams.set('page', page);
-
-        // Keep the query conservative to reduce false positives in strict WAF setups.
-        if (includeSlimFields) {
-            requestUrl.searchParams.set('_fields', 'id,title,excerpt,link,meta,date');
-        }
 
         if (year) {
             requestUrl.searchParams.set('after', `${year}-01-01`);
@@ -18,31 +13,15 @@
     };
 
     const fetchExperiencesPage = async ({ restUrl, count, page, year }) => {
-        let response = await fetch(
+        return fetch(
             buildRequestUrl({
                 restUrl,
                 count,
                 page,
                 year,
-                includeSlimFields: true,
             }).toString(),
             { credentials: 'same-origin' },
         );
-
-        if (response.status === 406) {
-            response = await fetch(
-                buildRequestUrl({
-                    restUrl,
-                    count,
-                    page,
-                    year,
-                    includeSlimFields: false,
-                }).toString(),
-                { credentials: 'same-origin' },
-            );
-        }
-
-        return response;
     };
 
     const getExperienceYear = (post) => {
